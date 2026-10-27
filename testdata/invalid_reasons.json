@@ -1307,6 +1307,21 @@
       "type": "extra_forbidden"
     }
   },
+  "resolve_response/assignment_error_role_empty.json": {
+    "go": "resolve response: results: result: assignments: assignment: role: must not be empty",
+    "python": {
+      "loc": "results.0.assignments.0.role",
+      "type": "string_too_short"
+    }
+  },
+  "resolve_response/assignment_error_unit_lowercase.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit: \"kwh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "results.0.assignments.0.unit",
+      "type": "value_error",
+      "msg": "'kwh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)"
+    }
+  },
   "resolve_response/assignment_error_unit_raw_empty.json": {
     "go": "resolve response: results: result: assignments: assignment: unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
     "python": {
@@ -1461,29 +1476,43 @@
       "type": "greater_than_equal"
     }
   },
+  "system_info/caps_boolean.json": {
+    "go": "system info: caps: max_window_seconds: json: cannot unmarshal bool into Go value of type int64",
+    "python": {
+      "loc": "caps.max_window_seconds",
+      "type": "int_type"
+    }
+  },
   "system_info/caps_missing_max_values.json": {
-    "go": "system info: caps: caps: max_values: is required",
+    "go": "system info: caps: max_values: is required",
     "python": {
       "loc": "caps.max_values",
       "type": "missing"
     }
   },
   "system_info/caps_negative_values.json": {
-    "go": "system info: caps: caps: max_values: must be at least 1",
+    "go": "system info: caps: max_values: must be at least 1",
     "python": {
       "loc": "caps.max_values",
       "type": "greater_than_equal"
     }
   },
   "system_info/caps_not_integer.json": {
-    "go": "system info: caps: caps: max_resolve_window_seconds: json: cannot unmarshal number 1.5 into Go value of type int64",
+    "go": "system info: caps: max_resolve_window_seconds: json: cannot unmarshal number 1.5 into Go value of type int64",
     "python": {
       "loc": "caps.max_resolve_window_seconds",
       "type": "int_type"
     }
   },
+  "system_info/caps_overflow.json": {
+    "go": "system info: caps: max_values: json: cannot unmarshal number 9223372036854775808 into Go value of type int64",
+    "python": {
+      "loc": "caps.max_values",
+      "type": "less_than_equal"
+    }
+  },
   "system_info/caps_zero_window.json": {
-    "go": "system info: caps: caps: max_window_seconds: must be at least 1",
+    "go": "system info: caps: max_window_seconds: must be at least 1",
     "python": {
       "loc": "caps.max_window_seconds",
       "type": "greater_than_equal"
@@ -1537,6 +1566,13 @@
     "go": "system info: units: json: cannot unmarshal number into .0 of type string",
     "python": {
       "loc": "units.0",
+      "type": "string_type"
+    }
+  },
+  "system_info/units_null_entry.json": {
+    "go": "system info: units[1]: must not be null",
+    "python": {
+      "loc": "units.1",
       "type": "string_type"
     }
   },
@@ -1597,6 +1633,14 @@
       "loc": "results.0.assignments.0.unit_raw",
       "type": "value_error",
       "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)"
+    }
+  },
+  "versions_response/assignment_role_missing.json": {
+    "go": "versions response: results: result: assignments: assignment: role: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs role"
     }
   },
   "versions_response/assignment_unit_missing.json": {

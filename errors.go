@@ -16,41 +16,44 @@ type RequestErrorCode string
 // vocabulary (btpingo.ErrorCode in httperr.go), shared by the Hochfrequenz BTP services; the cursor
 // codes and upstream_timeout are Zeitreiher's own.
 const (
-	// RequestErrorInvalidRequest: The request is invalid: missing offset, fractional seconds, from not
-	// before to, bad selector shape, too many selectors, unsupported interval, unknown unit, or a window
-	// longer than the resolve limit. HTTP 400; gRPC INVALID_ARGUMENT.
+	// RequestErrorInvalidRequest is used when the request is invalid: missing offset, fractional seconds,
+	// from not before to, bad selector shape, too many selectors, unsupported interval, unknown unit,
+	// number with interval or unit, or a window longer than the resolve limit. HTTP 400; gRPC
+	// INVALID_ARGUMENT.
 	RequestErrorInvalidRequest RequestErrorCode = "invalid_request"
-	// RequestErrorUnauthorized: Authentication is missing or invalid. HTTP 401; gRPC UNAUTHENTICATED.
+	// RequestErrorUnauthorized is used when authentication is missing or invalid. HTTP 401; gRPC
+	// UNAUTHENTICATED.
 	RequestErrorUnauthorized RequestErrorCode = "unauthorized"
-	// RequestErrorForbidden: The caller is authenticated but not allowed to use the API. HTTP 403; gRPC
-	// PERMISSION_DENIED.
+	// RequestErrorForbidden is used when the caller is authenticated but not allowed to use the API. HTTP
+	// 403; gRPC PERMISSION_DENIED.
 	RequestErrorForbidden RequestErrorCode = "forbidden"
-	// RequestErrorNotFound: Unknown route. HTTP 404; gRPC NOT_FOUND.
+	// RequestErrorNotFound is used when the route is unknown. HTTP 404; gRPC NOT_FOUND.
 	RequestErrorNotFound RequestErrorCode = "not_found"
-	// RequestErrorMethodNotAllowed: The HTTP method is not allowed for the route. HTTP 405; gRPC
-	// UNIMPLEMENTED.
+	// RequestErrorMethodNotAllowed is used when the HTTP method is not allowed for the route. HTTP 405;
+	// gRPC UNIMPLEMENTED.
 	RequestErrorMethodNotAllowed RequestErrorCode = "method_not_allowed"
-	// RequestErrorRequestTooLarge: The request body exceeds the size limit. HTTP 413; gRPC
+	// RequestErrorRequestTooLarge is used when the request body exceeds the size limit. HTTP 413; gRPC
 	// RESOURCE_EXHAUSTED.
 	RequestErrorRequestTooLarge RequestErrorCode = "request_too_large"
-	// RequestErrorUpstreamUnreachable: The SAP system could not be reached, or failed in a way the service
-	// cannot pass on, before the first record. HTTP 502; gRPC UNAVAILABLE.
+	// RequestErrorUpstreamUnreachable is used when the SAP system cannot be reached, or fails in a way the
+	// service cannot pass on, before the first record. HTTP 502; gRPC UNAVAILABLE.
 	RequestErrorUpstreamUnreachable RequestErrorCode = "upstream_unreachable"
-	// RequestErrorInternal: Unexpected failure of the service before the first record. HTTP 500; gRPC
-	// INTERNAL.
+	// RequestErrorInternal is used when the service fails unexpectedly before the first record. HTTP 500;
+	// gRPC INTERNAL.
 	RequestErrorInternal RequestErrorCode = "internal"
-	// RequestErrorCursorInvalid: The cursor is malformed or its signature is bad. HTTP 400; gRPC
-	// INVALID_ARGUMENT.
+	// RequestErrorCursorInvalid is used when the cursor is malformed or its signature is bad. HTTP 400;
+	// gRPC INVALID_ARGUMENT.
 	RequestErrorCursorInvalid RequestErrorCode = "cursor_invalid"
-	// RequestErrorCursorMismatch: The cursor does not match this request. HTTP 400; gRPC INVALID_ARGUMENT.
+	// RequestErrorCursorMismatch is used when the cursor does not match the request. HTTP 400; gRPC
+	// INVALID_ARGUMENT.
 	RequestErrorCursorMismatch RequestErrorCode = "cursor_mismatch"
-	// RequestErrorCursorExpired: The cursor has expired. HTTP 400; gRPC INVALID_ARGUMENT.
+	// RequestErrorCursorExpired is used when the cursor has expired. HTTP 400; gRPC INVALID_ARGUMENT.
 	RequestErrorCursorExpired RequestErrorCode = "cursor_expired"
-	// RequestErrorCursorStale: The profile assignments changed since the cursor was issued; restart the
-	// query. HTTP 409; gRPC ABORTED.
+	// RequestErrorCursorStale is used when the profile assignments changed since the cursor was issued;
+	// restart the query. HTTP 409; gRPC ABORTED.
 	RequestErrorCursorStale RequestErrorCode = "cursor_stale"
-	// RequestErrorUpstreamTimeout: The SAP system did not answer in time before the first record. HTTP
-	// 504; gRPC DEADLINE_EXCEEDED.
+	// RequestErrorUpstreamTimeout is used when the SAP system does not answer in time before the first
+	// record. HTTP 504; gRPC DEADLINE_EXCEEDED.
 	RequestErrorUpstreamTimeout RequestErrorCode = "upstream_timeout"
 )
 
@@ -95,40 +98,44 @@ type RecordErrorCode string
 
 // Record-level error codes (spec §4.3, consolidated list).
 const (
-	// RecordErrorSelectorNotFound: The selector matches no business object (e.g. an unknown market
-	// location).
+	// RecordErrorSelectorNotFound is used when the selector matches no business object (e.g. an unknown
+	// market location).
 	RecordErrorSelectorNotFound RecordErrorCode = "selector_not_found"
-	// RecordErrorNoAssignment: The selector exists but has no profile assignment in the request window.
+	// RecordErrorNoAssignment is used when the selector exists but has no profile assignment in the
+	// request window.
 	RecordErrorNoAssignment RecordErrorCode = "no_assignment"
-	// RecordErrorUnknownSelector: The selector kind (by) is not known to this installation.
+	// RecordErrorUnknownSelector is used when the selector kind (by) is not known to this installation.
 	RecordErrorUnknownSelector RecordErrorCode = "unknown_selector"
-	// RecordErrorBadSelector: The selector's parameters are not acceptable to its resolver.
+	// RecordErrorBadSelector is used when the selector's parameters are not acceptable to its resolver.
 	RecordErrorBadSelector RecordErrorCode = "bad_selector"
-	// RecordErrorAccessDenied: The caller is not allowed to read this profile.
+	// RecordErrorAccessDenied is used when the caller is not allowed to read this profile.
 	RecordErrorAccessDenied RecordErrorCode = "access_denied"
-	// RecordErrorProfileNotFound: The profile does not exist.
+	// RecordErrorProfileNotFound is used when the profile does not exist.
 	RecordErrorProfileNotFound RecordErrorCode = "profile_not_found"
-	// RecordErrorProfileTimeZoneMissing: The profile has no time zone, so its values cannot be read.
+	// RecordErrorProfileTimeZoneMissing is used when the profile has no time zone, so its values cannot be
+	// read.
 	RecordErrorProfileTimeZoneMissing RecordErrorCode = "profile_time_zone_missing"
-	// RecordErrorIntervalSizeUnsupported: The profile's interval size is not supported.
+	// RecordErrorIntervalSizeUnsupported is used when the profile's interval size is not supported.
 	RecordErrorIntervalSizeUnsupported RecordErrorCode = "interval_size_unsupported"
-	// RecordErrorWindowUnaligned: The request window is not aligned to the profile's intervals.
+	// RecordErrorWindowUnaligned is used when the request window does not lie on the grid of the profile
+	// and the requested interval (the least common multiple of both interval lengths); the end of the
+	// window must lie on that grid too.
 	RecordErrorWindowUnaligned RecordErrorCode = "window_unaligned"
-	// RecordErrorAssignmentUnaligned: The bounds of the profile assignment are not aligned to the
-	// profile's intervals.
+	// RecordErrorAssignmentUnaligned is used when the bounds of the profile assignment are not aligned to
+	// the profile's intervals.
 	RecordErrorAssignmentUnaligned RecordErrorCode = "assignment_unaligned"
-	// RecordErrorVersionNotFound: The requested version number does not exist for the profile.
+	// RecordErrorVersionNotFound is used when the requested version number does not exist for the profile.
 	RecordErrorVersionNotFound RecordErrorCode = "version_not_found"
-	// RecordErrorVersionDeleted: The requested {"number": N} names a version that is flagged as deleted
-	// (it is still listed by the versions endpoint, with deleted: true).
+	// RecordErrorVersionDeleted is used when the requested {"number": N} names a version that is flagged
+	// as deleted (it is still listed by the versions endpoint, with deleted: true).
 	RecordErrorVersionDeleted RecordErrorCode = "version_deleted"
-	// RecordErrorConversionNotAllowed: The requested unit or interval conversion is not allowed for the
-	// profile.
+	// RecordErrorConversionNotAllowed is used when the requested unit or interval conversion is not
+	// allowed for the profile.
 	RecordErrorConversionNotAllowed RecordErrorCode = "conversion_not_allowed"
-	// RecordErrorAmbiguousLocalTime: A local time in the window occurs twice (daylight saving change) and
-	// cannot be mapped to one instant.
+	// RecordErrorAmbiguousLocalTime is used when a local time in the window occurs twice (daylight saving
+	// change) and cannot be mapped to one instant.
 	RecordErrorAmbiguousLocalTime RecordErrorCode = "ambiguous_local_time"
-	// RecordErrorBadiFailed: A customer BAdI (resolver or metadata) failed.
+	// RecordErrorBadiFailed is used when any customer BAdI (spec section 3.2) raised an exception.
 	RecordErrorBadiFailed RecordErrorCode = "badi_failed"
 )
 

@@ -2,7 +2,7 @@
 
 from typing import Any, ClassVar, Self
 
-from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
+from pydantic import Field, SerializerFunctionWrapHandler, ValidationInfo, model_serializer, model_validator
 
 from zeitreiher_models._base import ResponseModel
 from zeitreiher_models.errors import ResultError
@@ -16,6 +16,8 @@ class Assignment(ResponseModel):
     """A profile assignment, cut to the request window, or an assignment-level error.
 
     ``from``/``to`` are set together; they are required unless ``error`` is set.
+    Without ``error``, JSON input must carry ``role`` and ``unit`` (``null`` is allowed) and ``unit_raw``;
+    models built in Python may leave ``role`` and ``unit`` out (``None``), like the zero values in Go.
     """
 
     _omit_if_none: ClassVar[frozenset[str]] = frozenset({"from", "to", "error"})
@@ -62,9 +64,11 @@ class Assignment(ResponseModel):
         return data
 
     @model_validator(mode="after")
-    def _units(self) -> Self:
+    def _units(self, info: ValidationInfo) -> Self:
         if self.error is None:
-            missing = [k for k in ("role", "unit") if k not in self.model_fields_set]
+            # role and unit may be left out when building the model in Python (None is the default, as the Go
+            # zero value); JSON input must carry the keys (null is allowed).
+            missing = [k for k in ("role", "unit") if info.mode == "json" and k not in self.model_fields_set]
             if self.unit_raw is None:
                 missing.append("unit_raw")
             if missing:

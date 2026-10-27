@@ -224,9 +224,9 @@ func decodeWindowRequest(m map[string]json.RawMessage, sel *[]Selector, from, to
 type WindowRequest struct {
 	// Select lists one or more selectors; results come back per selector index.
 	Select []Selector
-	// From is the start of the request window (inclusive); RFC 3339 with an explicit offset.
+	// From is the start of the request window (inclusive); RFC 3339, whole seconds, explicit offset.
 	From time.Time
-	// To is the end of the request window (exclusive, after From); RFC 3339 with an explicit offset.
+	// To is the end of the request window (exclusive, after From); RFC 3339, whole seconds, explicit offset.
 	To time.Time
 }
 

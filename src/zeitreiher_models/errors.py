@@ -17,73 +17,79 @@ class RequestErrorCode(DocumentedStrEnum):
     """
 
     INVALID_REQUEST = "invalid_request"
-    """The request is invalid: missing offset, fractional seconds, from not before to, bad selector shape, too many
-    selectors, unsupported interval, unknown unit, or a window longer than the resolve limit. HTTP 400; gRPC
-    INVALID_ARGUMENT.
+    """Used when the request is invalid: missing offset, fractional seconds, from not before to, bad selector
+    shape, too many selectors, unsupported interval, unknown unit, number with interval or unit, or a window
+    longer than the resolve limit. HTTP 400; gRPC INVALID_ARGUMENT.
     """
     UNAUTHORIZED = "unauthorized"
-    """Authentication is missing or invalid. HTTP 401; gRPC UNAUTHENTICATED."""
+    """Used when authentication is missing or invalid. HTTP 401; gRPC UNAUTHENTICATED."""
     FORBIDDEN = "forbidden"
-    """The caller is authenticated but not allowed to use the API. HTTP 403; gRPC PERMISSION_DENIED."""
+    """Used when the caller is authenticated but not allowed to use the API. HTTP 403; gRPC PERMISSION_DENIED."""
     NOT_FOUND = "not_found"
-    """Unknown route. HTTP 404; gRPC NOT_FOUND."""
+    """Used when the route is unknown. HTTP 404; gRPC NOT_FOUND."""
     METHOD_NOT_ALLOWED = "method_not_allowed"
-    """The HTTP method is not allowed for the route. HTTP 405; gRPC UNIMPLEMENTED."""
+    """Used when the HTTP method is not allowed for the route. HTTP 405; gRPC UNIMPLEMENTED."""
     REQUEST_TOO_LARGE = "request_too_large"
-    """The request body exceeds the size limit. HTTP 413; gRPC RESOURCE_EXHAUSTED."""
+    """Used when the request body exceeds the size limit. HTTP 413; gRPC RESOURCE_EXHAUSTED."""
     UPSTREAM_UNREACHABLE = "upstream_unreachable"
-    """The SAP system could not be reached, or failed in a way the service cannot pass on, before the first record.
-    HTTP 502; gRPC UNAVAILABLE.
+    """Used when the SAP system cannot be reached, or fails in a way the service cannot pass on, before the first
+    record. HTTP 502; gRPC UNAVAILABLE.
     """
     INTERNAL = "internal"
-    """Unexpected failure of the service before the first record. HTTP 500; gRPC INTERNAL."""
+    """Used when the service fails unexpectedly before the first record. HTTP 500; gRPC INTERNAL."""
     CURSOR_INVALID = "cursor_invalid"
-    """The cursor is malformed or its signature is bad. HTTP 400; gRPC INVALID_ARGUMENT."""
+    """Used when the cursor is malformed or its signature is bad. HTTP 400; gRPC INVALID_ARGUMENT."""
     CURSOR_MISMATCH = "cursor_mismatch"
-    """The cursor does not match this request. HTTP 400; gRPC INVALID_ARGUMENT."""
+    """Used when the cursor does not match the request. HTTP 400; gRPC INVALID_ARGUMENT."""
     CURSOR_EXPIRED = "cursor_expired"
-    """The cursor has expired. HTTP 400; gRPC INVALID_ARGUMENT."""
+    """Used when the cursor has expired. HTTP 400; gRPC INVALID_ARGUMENT."""
     CURSOR_STALE = "cursor_stale"
-    """The profile assignments changed since the cursor was issued; restart the query. HTTP 409; gRPC ABORTED."""
+    """Used when the profile assignments changed since the cursor was issued; restart the query. HTTP 409; gRPC
+    ABORTED.
+    """
     UPSTREAM_TIMEOUT = "upstream_timeout"
-    """The SAP system did not answer in time before the first record. HTTP 504; gRPC DEADLINE_EXCEEDED."""
+    """Used when the SAP system does not answer in time before the first record. HTTP 504; gRPC DEADLINE_EXCEEDED."""
 
 
 class RecordErrorCode(DocumentedStrEnum):
     """Per-selector / per-assignment error codes (spec §4.3), carried by error records and results."""
 
     SELECTOR_NOT_FOUND = "selector_not_found"
-    """The selector matches no business object (e.g. an unknown market location)."""
+    """Used when the selector matches no business object (e.g. an unknown market location)."""
     NO_ASSIGNMENT = "no_assignment"
-    """The selector exists but has no profile assignment in the request window."""
+    """Used when the selector exists but has no profile assignment in the request window."""
     UNKNOWN_SELECTOR = "unknown_selector"
-    """The selector kind (by) is not known to this installation."""
+    """Used when the selector kind (by) is not known to this installation."""
     BAD_SELECTOR = "bad_selector"
-    """The selector's parameters are not acceptable to its resolver."""
+    """Used when the selector's parameters are not acceptable to its resolver."""
     ACCESS_DENIED = "access_denied"
-    """The caller is not allowed to read this profile."""
+    """Used when the caller is not allowed to read this profile."""
     PROFILE_NOT_FOUND = "profile_not_found"
-    """The profile does not exist."""
+    """Used when the profile does not exist."""
     PROFILE_TIME_ZONE_MISSING = "profile_time_zone_missing"
-    """The profile has no time zone, so its values cannot be read."""
+    """Used when the profile has no time zone, so its values cannot be read."""
     INTERVAL_SIZE_UNSUPPORTED = "interval_size_unsupported"
-    """The profile's interval size is not supported."""
+    """Used when the profile's interval size is not supported."""
     WINDOW_UNALIGNED = "window_unaligned"
-    """The request window is not aligned to the profile's intervals."""
+    """Used when the request window does not lie on the grid of the profile and the requested interval (the least
+    common multiple of both interval lengths); the end of the window must lie on that grid too.
+    """
     ASSIGNMENT_UNALIGNED = "assignment_unaligned"
-    """The bounds of the profile assignment are not aligned to the profile's intervals."""
+    """Used when the bounds of the profile assignment are not aligned to the profile's intervals."""
     VERSION_NOT_FOUND = "version_not_found"
-    """The requested version number does not exist for the profile."""
+    """Used when the requested version number does not exist for the profile."""
     VERSION_DELETED = "version_deleted"
-    """The requested {"number": N} names a version that is flagged as deleted (it is still listed by the versions
-    endpoint, with deleted: true).
+    """Used when the requested {"number": N} names a version that is flagged as deleted (it is still listed by the
+    versions endpoint, with deleted: true).
     """
     CONVERSION_NOT_ALLOWED = "conversion_not_allowed"
-    """The requested unit or interval conversion is not allowed for the profile."""
+    """Used when the requested unit or interval conversion is not allowed for the profile."""
     AMBIGUOUS_LOCAL_TIME = "ambiguous_local_time"
-    """A local time in the window occurs twice (daylight saving change) and cannot be mapped to one instant."""
+    """Used when a local time in the window occurs twice (daylight saving change) and cannot be mapped to one
+    instant.
+    """
     BADI_FAILED = "badi_failed"
-    """A customer BAdI (resolver or metadata) failed."""
+    """Used when any customer BAdI (spec section 3.2) raised an exception."""
 
 
 def _known(enum: type[StrEnum]) -> Any:

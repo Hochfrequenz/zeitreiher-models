@@ -6,14 +6,20 @@ import (
 	"fmt"
 )
 
-// Caps are the per-call self-protection caps of the service (spec §3.3, §4.4), as configured in the SAP system.
-// Longer windows or more values are answered with window_too_large.
+// Caps are the limits of one internal SAP call (spec section 3.1), reported so that clients know how the service
+// works.
+// The service splits query and versions windows into SAP calls under MaxWindowSeconds and MaxValues; a request
+// window longer than MaxResolveWindowSeconds is rejected with 400 invalid_request.
+// The internal window_too_large answer of SAP never reaches public clients.
 type Caps struct {
-	// MaxWindowSeconds is the longest window in seconds of one values or versions call (positive).
+	// MaxWindowSeconds is the longest window in seconds of one internal SAP values or versions call; the
+	// service splits longer request windows (at least 1).
 	MaxWindowSeconds int64
-	// MaxValues is the highest number of values of one values or versions call (positive).
+	// MaxValues is the highest number of values of one internal SAP values or versions call; the service
+	// splits the window accordingly (at least 1).
 	MaxValues int64
-	// MaxResolveWindowSeconds is the longest window in seconds of one resolve call (positive).
+	// MaxResolveWindowSeconds is the longest request window in seconds the service resolves; a longer window
+	// is a 400 invalid_request (at least 1).
 	MaxResolveWindowSeconds int64
 }
 
@@ -50,7 +56,7 @@ func (c *Caps) UnmarshalJSON(b []byte) error {
 		"max_window_seconds": required, "max_values": required, "max_resolve_window_seconds": required,
 	}, ignoreUnknown)
 	if err != nil {
-		return fmt.Errorf("caps: %w", err)
+		return err
 	}
 	var out Caps
 	for key, dst := range map[string]any{
@@ -58,11 +64,11 @@ func (c *Caps) UnmarshalJSON(b []byte) error {
 		"max_resolve_window_seconds": &out.MaxResolveWindowSeconds,
 	} {
 		if err := decodeField(m, key, dst); err != nil {
-			return fmt.Errorf("caps: %w", err)
+			return err
 		}
 	}
 	if err := out.Validate(); err != nil {
-		return fmt.Errorf("caps: %w", err)
+		return err
 	}
 	*c = out
 	return nil
@@ -160,14 +166,22 @@ func (s *SystemInfo) UnmarshalJSON(b []byte) error {
 	for key, dst := range map[string]any{
 		"service_version": &out.ServiceVersion, "abap_package_version": &out.AbapPackageVersion, "sid": &out.SID,
 		"client": &out.Client, "release": &out.Release, "business_time_zone": &out.BusinessTimeZone,
-		"intervals": &out.Intervals, "units": &out.Units, "caps": &out.Caps,
+		"intervals": &out.Intervals, "caps": &out.Caps,
 	} {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("system info: %w", err)
 		}
 	}
-	if out.Units == nil {
-		out.Units = []string{}
+	var units []*string // pointers, so that a null entry is reported as such
+	if err := decodeField(m, "units", &units); err != nil {
+		return fmt.Errorf("system info: %w", err)
+	}
+	out.Units = make([]string, len(units))
+	for i, u := range units {
+		if u == nil {
+			return fmt.Errorf("system info: units[%d]: must not be null", i)
+		}
+		out.Units[i] = *u
 	}
 	if err := out.Validate(); err != nil {
 		return fmt.Errorf("system info: %w", err)

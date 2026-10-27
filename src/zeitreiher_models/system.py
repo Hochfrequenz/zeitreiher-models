@@ -7,14 +7,24 @@ from zeitreiher_models.scalars import Interval, NonEmptyStr, PositiveInt, UnitCo
 
 
 class Caps(ResponseModel):
-    """Per-call self-protection caps (spec §3.3); exceeding one is answered with ``window_too_large``."""
+    """The limits of one internal SAP call (spec section 3.1), reported so that clients know how the service works.
+
+    The service splits query and versions windows into SAP calls under ``max_window_seconds`` and ``max_values``;
+    a request window longer than ``max_resolve_window_seconds`` is rejected with ``400 invalid_request``.
+    The internal ``window_too_large`` answer of SAP never reaches public clients.
+    """
 
     max_window_seconds: PositiveInt = Field(
-        description="Longest window in seconds of one values or versions call (at least 1)."
+        description="Longest window in seconds of one internal SAP values or versions call; the service splits "
+        "longer request windows (at least 1)."
     )
-    max_values: PositiveInt = Field(description="Highest number of values of one values or versions call (at least 1).")
+    max_values: PositiveInt = Field(
+        description="Highest number of values of one internal SAP values or versions call; the service splits the "
+        "window accordingly (at least 1)."
+    )
     max_resolve_window_seconds: PositiveInt = Field(
-        description="Longest window in seconds of one resolve call (at least 1)."
+        description="Longest request window in seconds the service resolves; a longer window is a 400 "
+        "invalid_request (at least 1)."
     )
 
 
@@ -34,4 +44,4 @@ class SystemInfo(ResponseModel):
         description="Canonical unit codes (UN/ECE Rec. 20, e.g. 'KWH') the system can map to SAP units; "
         "a request unit outside this list is a 400."
     )
-    caps: Caps = Field(description="Per-call self-protection caps.")
+    caps: Caps = Field(description="Limits of one internal SAP call; see the Caps model.")

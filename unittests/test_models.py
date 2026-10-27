@@ -466,3 +466,16 @@ def test_error_code_members_are_documented_in_the_json_schema(enum: type[Request
     descriptions = schema["$defs"][enum.__name__]["x-enum-descriptions"]
     assert set(descriptions) == {member.value for member in enum}
     assert all(text.strip() for text in descriptions.values())
+
+
+def test_assignment_built_in_python_may_leave_role_and_unit_out() -> None:
+    """Like the Go zero values; JSON input must carry the keys (pinned by the invalid fixtures)."""
+    assignment = Assignment(
+        profile="56",
+        from_=datetime(2026, 1, 1, tzinfo=UTC),
+        to=datetime(2026, 1, 2, tzinfo=UTC),
+        unit_raw="KWH",
+    )
+    assert assignment.role is None
+    assert assignment.unit is None
+    assert '"role":null' in assignment.model_dump_json()

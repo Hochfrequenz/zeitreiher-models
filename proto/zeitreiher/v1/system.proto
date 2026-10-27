@@ -18,16 +18,19 @@ message SystemResponse {
   repeated string intervals = 7;
   // Canonical unit codes (UN/ECE Rec. 20, e.g. "KWH") the system can map to SAP units.
   repeated string units = 8;
-  // Per-call self-protection caps.
+  // Limits of one internal SAP call (see Caps).
   Caps caps = 9;
 }
 
-// Caps are the per-call self-protection caps (exceeding one is answered with window_too_large).
+// Caps are the limits of one internal SAP call (spec section 3.1), reported so that clients know how the
+// service works: it splits query and versions windows into SAP calls under max_window_seconds and
+// max_values; a request window longer than max_resolve_window_seconds is rejected with invalid_request.
+// The internal window_too_large answer of SAP never reaches public clients.
 message Caps {
-  // Longest window in seconds of one values or versions call.
+  // Longest window in seconds of one internal SAP values or versions call.
   int64 max_window_seconds = 1;
-  // Highest number of values of one values or versions call.
+  // Highest number of values of one internal SAP values or versions call.
   int64 max_values = 2;
-  // Longest window in seconds of one resolve call.
+  // Longest request window in seconds the service resolves; a longer window is a 400 invalid_request.
   int64 max_resolve_window_seconds = 3;
 }
