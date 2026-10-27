@@ -275,3 +275,16 @@ def test_request_year_bounds_apply_to_the_utc_instant(instant: datetime) -> None
 def test_request_year_bounds_accept_the_utc_limits() -> None:
     VersionAsOf(as_of=datetime(1900, 1, 1, tzinfo=timezone(timedelta(hours=-1))))
     VersionAsOf(as_of=datetime(9999, 12, 31, 18, 59, 59, tzinfo=timezone(timedelta(hours=-5))))
+
+
+@pytest.mark.parametrize(
+    "instant",
+    [
+        datetime(9999, 12, 31, 22, tzinfo=timezone(timedelta(hours=-5))),  # 10000 in UTC
+        datetime(1, 1, 1, tzinfo=CET),  # year 0 in UTC
+    ],
+)
+def test_response_datetime_outside_the_utc_range_raises_validation_error(instant: datetime) -> None:
+    # Converting to UTC overflows; like Go's error, that must be a ValidationError, not an OverflowError.
+    with pytest.raises(ValidationError, match="outside the years 1900 to 9999 in UTC"):
+        ValueRecord(series=1, from_=instant, to=datetime(9999, 12, 31, tzinfo=UTC), value="1", status=[], version=None)

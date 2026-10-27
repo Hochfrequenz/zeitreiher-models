@@ -67,7 +67,10 @@ def _check(value: datetime) -> datetime:
 
 
 def _to_utc(value: datetime) -> datetime:
-    return value.astimezone(UTC)
+    try:
+        return value.astimezone(UTC)
+    except OverflowError as exc:  # the instant lies before year 1 or after year 9999 in UTC
+        raise _error(f"the instant is outside the years {MIN_UTC_YEAR} to {MAX_UTC_YEAR} in UTC", value) from exc
 
 
 def _format(value: datetime) -> str:

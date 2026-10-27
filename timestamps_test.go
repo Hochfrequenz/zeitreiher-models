@@ -110,6 +110,14 @@ func TestYearBoundsApplyToTheUTCInstant(t *testing.T) {
 	} {
 		assert.ErrorContains(t, validateInstant(tm, requestSide), "outside the years 1900 to 9999 in UTC")
 	}
+	// Response instants are converted to UTC; the same bound gives the same message (Python's
+	// datetime cannot convert them at all).
+	for _, tm := range []time.Time{
+		time.Date(9999, 12, 31, 22, 0, 0, 0, minusFive),
+		time.Date(1, 1, 1, 0, 0, 0, 0, plusOne),
+	} {
+		assert.ErrorContains(t, validateInstant(tm, responseSide), "outside the years 1900 to 9999 in UTC")
+	}
 	assert.NoError(t, validateInstant(time.Date(1900, 1, 1, 0, 0, 0, 0, time.FixedZone("", -3600)), requestSide))
 	assert.NoError(t, validateInstant(time.Date(9999, 12, 31, 18, 59, 59, 0, minusFive), requestSide))
 }

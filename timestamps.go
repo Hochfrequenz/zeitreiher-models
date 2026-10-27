@@ -85,8 +85,8 @@ func validateInstant(t time.Time, kind side) error {
 	if t.Nanosecond() != 0 {
 		return fmt.Errorf("%s: only whole seconds are allowed", t.Format(time.RFC3339Nano))
 	}
-	if t.Year() < 1 {
-		return fmt.Errorf("%s: year must be at least 1", t.Format(time.RFC3339))
+	if y := t.UTC().Year(); y < minUTCYear || y > maxUTCYear {
+		return fmt.Errorf("%s: the instant is outside the years %d to %d in UTC", t.Format(time.RFC3339), minUTCYear, maxUTCYear)
 	}
 	// The wire form must parse back to the same instant: RFC 3339 drops offset seconds (an LMT-style
 	// zone would move the instant) and a five-digit year does not match the grammar.
