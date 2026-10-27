@@ -156,7 +156,8 @@ func TestReadRecordsHandlesLongLines(t *testing.T) {
 func TestReadRecordsStopsEarly(t *testing.T) {
 	end := `{"type":"end","series":0,"values":0,"errors":0,"next":null}` + "\n"
 	n := 0
-	for range zrm.ReadRecords(strings.NewReader(end + end + end)) {
+	for _, err := range zrm.ReadRecords(strings.NewReader(end + end + end)) {
+		require.NoError(t, err)
 		n++
 		break
 	}
