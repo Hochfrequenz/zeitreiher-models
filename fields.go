@@ -100,9 +100,34 @@ func decodeField(m map[string]json.RawMessage, key string, v any) error {
 	if !ok || isNull(raw) {
 		return nil
 	}
+	if sm, isStringMap := v.(*map[string]string); isStringMap {
+		return wrapField(key, decodeStringMap(raw, sm))
+	}
 	if err := json.Unmarshal(raw, v); err != nil {
 		return fieldError(key, err)
 	}
+	return nil
+}
+
+// decodeStringMap decodes a JSON object of strings. encoding/json would turn a null member into "";
+// it is rejected instead, as the Python models do.
+func decodeStringMap(raw json.RawMessage, dst *map[string]string) error {
+	var members map[string]json.RawMessage
+	if err := json.Unmarshal(raw, &members); err != nil {
+		return err
+	}
+	out := make(map[string]string, len(members))
+	for k, member := range members {
+		if isNull(member) {
+			return fieldError(k, errors.New("must be a string, not null"))
+		}
+		var s string
+		if err := json.Unmarshal(member, &s); err != nil {
+			return fieldError(k, errors.New("must be a string"))
+		}
+		out[k] = s
+	}
+	*dst = out
 	return nil
 }
 
