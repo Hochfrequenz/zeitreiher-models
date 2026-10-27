@@ -14,6 +14,7 @@ query_request/custom_selector_empty_params.json	{"select":[{"by":"pod","params":
 query_request/custom_selector_params_key_order.json	{"select":[{"by":"contract_account","params":{"a":"\u2028","account":"000012345678","b":"\u003c\u0026\u003e","role":"supplier"}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/dst_autumn_day.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-10-25T00:00:00+02:00","to":"2026-10-26T00:00:00+01:00","interval":"PT15M"}
 query_request/dst_spring_day.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-03-29T00:00:00+01:00","to":"2026-03-30T00:00:00+02:00","interval":"PT15M"}
+query_request/duplicate_key_last_wins.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"mwh"}
 query_request/full_spec_example.json	{"select":[{"by":"malo","malo":"87253749908"},{"by":"profile","profile":"50000000000099"}],"from":"2026-01-01T00:00:00+01:00","to":"2026-02-01T00:00:00+01:00","version":{"current":{}},"interval":"PT60M","unit":"KWH"}
 query_request/minimal.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/offset_mixed.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-09-30T22:00:00Z","to":"2026-10-02T00:00:00+02:00"}
@@ -72,6 +73,7 @@ records/series_version_created_at_unknown.json	{"type":"series","series":1,"sele
 records/series_version_deleted.json	{"type":"series","series":1,"selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","from":"2025-12-31T23:00:00Z","to":"2026-01-31T23:00:00Z","unit":"KWH","interval":"PT60M","attributes":{},"versions":[{"number":3,"from":"2026-01-01T23:00:00Z","to":null,"created_at":"2026-02-03T08:12:00Z","created_at_unknown":false,"reason":"","description":"","deleted":true}]}
 records/unknown_field_ignored.json	{"type":"value","series":1,"from":"2025-12-31T23:00:00Z","to":"2026-01-01T00:00:00Z","value":"160","status":["IU015"],"version":null}
 records/uppercase_key_ignored.json	{"type":"value","series":1,"from":"2025-12-31T23:00:00Z","to":"2026-01-01T00:00:00Z","value":"160","status":["IU015"],"version":null}
+records/value_duplicate_key_last_wins.json	{"type":"value","series":1,"from":"2025-12-31T23:00:00Z","to":"2026-01-01T00:00:00Z","value":"0","status":["IU015"],"version":null}
 records/value_fraction_decimal.json	{"type":"value","series":1,"from":"2025-12-31T23:00:00Z","to":"2026-01-01T00:00:00Z","value":"0.022","status":["IU015"],"version":null}
 records/value_from_version.json	{"type":"value","series":1,"from":"2025-12-31T23:00:00Z","to":"2026-01-01T00:00:00Z","value":"160","status":["IU015"],"version":3}
 records/value_negative_decimal.json	{"type":"value","series":1,"from":"2025-12-31T23:00:00Z","to":"2026-01-01T00:00:00Z","value":"-12.5","status":["IU015"],"version":null}
