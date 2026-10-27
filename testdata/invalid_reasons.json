@@ -427,10 +427,18 @@
     }
   },
   "query_request/unit_control_char.json": {
-    "go": "unit: \"KW\\x1c\" is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+    "go": "unit: \"KW\\x1c\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'KW\\x1c' is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+      "msg": "'KW\\x1c' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_degree.json": {
+    "go": "unit: \"\u00b0C\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'\u00b0C' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
@@ -438,47 +446,119 @@
     "go": "unit: must not be empty",
     "python": {
       "loc": "unit",
-      "msg": "'' is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+      "msg": "'' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_four_chars.json": {
+    "go": "unit: \"KWHH\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'KWHH' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
   "query_request/unit_inner_space.json": {
-    "go": "unit: \"K H\" is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+    "go": "unit: \"K H\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'K H' is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+      "msg": "'K H' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_kvarh.json": {
+    "go": "unit: \"kvarh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'kvarh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_kwh_external.json": {
+    "go": "unit: \"kWh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'kWh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_lowercase.json": {
+    "go": "unit: \"mwh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'mwh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_micromolar.json": {
+    "go": "unit: \"\u00b5M\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'\u00b5M' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
   "query_request/unit_nbsp.json": {
-    "go": "unit: \"KW\\u00a0\" is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+    "go": "unit: \"KW\\u00a0\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'KW\\xa0' is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+      "msg": "'KW\\xa0' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_one_char.json": {
+    "go": "unit: \"K\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'K' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
   "query_request/unit_padded.json": {
-    "go": "unit: \" KWH\" is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+    "go": "unit: \" KWH\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "' KWH' is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+      "msg": "' KWH' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_percent.json": {
+    "go": "unit: \"%\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'%' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_six_chars.json": {
+    "go": "unit: \"Mio.m3\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'Mio.m3' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_superscript_digit.json": {
+    "go": "unit: \"m\u00b3\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'m\u00b3' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
   "query_request/unit_symbol.json": {
-    "go": "unit: \"kWh\u2022\" is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+    "go": "unit: \"kWh\u2022\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'kWh\u2022' is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+      "msg": "'kWh\u2022' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
   "query_request/unit_too_long.json": {
-    "go": "unit: \"kvarh/h\" is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+    "go": "unit: \"kvarh/h\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'kvarh/h' is not a unit (1 to 6 letters, digits or %\u00b0/._-)",
+      "msg": "'kvarh/h' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
@@ -805,27 +885,64 @@
       "type": "greater_than_equal"
     }
   },
-  "records/series_unit_control_char.json": {
-    "go": "unit: \"KWH\\x1c\" is not a unit (1 to 30 characters, no control characters)",
-    "python": {
-      "loc": "series.unit",
-      "msg": "'KWH\\x1c' is not a unit (1 to 30 characters, no control characters)",
-      "type": "value_error"
-    }
-  },
   "records/series_unit_empty.json": {
-    "go": "unit: \"\" is not a unit (1 to 30 characters, no control characters)",
+    "go": "unit: \"\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "series.unit",
-      "msg": "'' is not a unit (1 to 30 characters, no control characters)",
+      "msg": "'' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
-  "records/series_unit_too_long.json": {
-    "go": "unit: \"Mio. kWh (gerundet) \u2022 xxxxxxxxx\" is not a unit (1 to 30 characters, no control characters)",
+  "records/series_unit_lowercase.json": {
+    "go": "unit: \"kWh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "series.unit",
-      "msg": "'Mio. kWh (gerundet) \u2022 xxxxxxxxx' is not a unit (1 to 30 characters, no control characters)",
+      "msg": "'kWh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "records/series_unit_missing.json": {
+    "go": "unit: is required",
+    "python": {
+      "loc": "series.unit",
+      "type": "missing"
+    }
+  },
+  "records/series_unit_raw_control_char.json": {
+    "go": "unit_raw: \"KWH\\x1c\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "series.unit_raw",
+      "msg": "'KWH\\x1c' is not a SAP unit (1 to 30 characters, no control characters)",
+      "type": "value_error"
+    }
+  },
+  "records/series_unit_raw_empty.json": {
+    "go": "unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "series.unit_raw",
+      "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)",
+      "type": "value_error"
+    }
+  },
+  "records/series_unit_raw_missing.json": {
+    "go": "unit_raw: is required",
+    "python": {
+      "loc": "series.unit_raw",
+      "type": "missing"
+    }
+  },
+  "records/series_unit_raw_null.json": {
+    "go": "unit_raw: must not be null",
+    "python": {
+      "loc": "series.unit_raw",
+      "type": "string_type"
+    }
+  },
+  "records/series_unit_raw_too_long.json": {
+    "go": "unit_raw: \"Mio. kWh (gerundet) \u2022 xxxxxxxxx\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "series.unit_raw",
+      "msg": "'Mio. kWh (gerundet) \u2022 xxxxxxxxx' is not a SAP unit (1 to 30 characters, no control characters)",
       "type": "value_error"
     }
   },

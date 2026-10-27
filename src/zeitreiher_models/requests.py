@@ -6,7 +6,7 @@ from typing import Annotated, Any, ClassVar, Self
 from pydantic import AfterValidator, Discriminator, Field, Tag, field_validator, model_validator
 
 from zeitreiher_models._base import FrozenDict, RequestModel, freeze_sorted
-from zeitreiher_models.scalars import Interval, PositiveInt, RequestUnit, Token
+from zeitreiher_models.scalars import Interval, PositiveInt, Token, UnitCode
 from zeitreiher_models.selectors import Selector
 from zeitreiher_models.timestamps import RequestInstant, check_window
 
@@ -76,7 +76,8 @@ class QueryRequest(_WindowRequest):
 
     version: VersionSelector | None = None
     interval: Interval | None = None
-    unit: RequestUnit | None = None
+    #: A canonical unit code (UN/ECE Rec. 20, e.g. ``"KWH"``); the server maps it to the customer's SAP unit.
+    unit: UnitCode | None = None
     cursor: Token | None = None
 
 

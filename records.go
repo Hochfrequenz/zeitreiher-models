@@ -138,9 +138,13 @@ type SeriesRecord struct {
 	Profile string
 	// From and To bound the assignment, cut to the request window.
 	From, To time.Time
-	// Unit and Interval are those of the delivered values (after any conversion). Unit is passed
-	// through as SAP delivers it: any non-empty text of at most 30 characters without control characters.
-	Unit     string
+	// Unit is the canonical unit code (UN/ECE Rec. 20, e.g. "KWH") of the delivered values (after any
+	// conversion), or nil when the SAP unit has no mapping. The series is delivered either way.
+	Unit *string
+	// UnitRaw is the SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not: any non-empty text of
+	// at most 30 characters without control characters.
+	UnitRaw string
+	// Interval is that of the delivered values (after any conversion).
 	Interval string
 	// Attributes come from the customer's Metadata BAdI; never nil after unmarshalling.
 	Attributes map[string]string
@@ -169,8 +173,13 @@ func (r *SeriesRecord) Validate() error {
 	if err := validateWindow(r.From, r.To, responseSide); err != nil {
 		return err
 	}
-	if err := validateResponseUnit(r.Unit); err != nil {
-		return fieldError("unit", err)
+	if r.Unit != nil {
+		if err := validateUnitCode(*r.Unit); err != nil {
+			return fieldError("unit", err)
+		}
+	}
+	if err := validateRawUnit(r.UnitRaw); err != nil {
+		return fieldError("unit_raw", err)
 	}
 	if err := validateInterval(r.Interval); err != nil {
 		return fieldError("interval", err)
@@ -186,7 +195,7 @@ func (r *SeriesRecord) Validate() error {
 	return nil
 }
 
-// MarshalJSON validates and writes the record with "type" first.
+// MarshalJSON validates and writes the record with "type" first; a nil Unit is written as null.
 func (r *SeriesRecord) MarshalJSON() ([]byte, error) {
 	if err := r.Validate(); err != nil {
 		return nil, fmt.Errorf("series record: %w", err)
@@ -207,13 +216,14 @@ func (r *SeriesRecord) MarshalJSON() ([]byte, error) {
 		Profile    string            `json:"profile"`
 		From       string            `json:"from"`
 		To         string            `json:"to"`
-		Unit       string            `json:"unit"`
+		Unit       *string           `json:"unit"`
+		UnitRaw    string            `json:"unit_raw"`
 		Interval   string            `json:"interval"`
 		Attributes map[string]string `json:"attributes"`
 		Versions   []Version         `json:"versions"`
 	}{
 		RecordTypeSeries, r.Series, r.Selector, echoedSelector(r.Select), r.Profile,
-		formatInstant(r.From, responseSide), formatInstant(r.To, responseSide), r.Unit, r.Interval,
+		formatInstant(r.From, responseSide), formatInstant(r.To, responseSide), r.Unit, r.UnitRaw, r.Interval,
 		attributes, versions,
 	})
 }
@@ -222,7 +232,7 @@ func (r *SeriesRecord) MarshalJSON() ([]byte, error) {
 func (r *SeriesRecord) UnmarshalJSON(b []byte) error {
 	m, err := checkRecord(b, RecordTypeSeries, rules{
 		"series": required, "selector": required, "select": required, "profile": required,
-		"from": required, "to": required, "unit": required, "interval": required,
+		"from": required, "to": required, "unit": requiredNullable, "unit_raw": required, "interval": required,
 		"attributes": required, "versions": required,
 	})
 	if err != nil {
@@ -230,9 +240,13 @@ func (r *SeriesRecord) UnmarshalJSON(b []byte) error {
 	}
 	var out SeriesRecord
 	var sel echoedSelector
+	if !isNull(m["unit"]) {
+		out.Unit = new(string)
+	}
 	for key, dst := range map[string]any{
 		"series": &out.Series, "selector": &out.Selector, "select": &sel, "profile": &out.Profile,
-		"unit": &out.Unit, "interval": &out.Interval, "attributes": &out.Attributes, "versions": &out.Versions,
+		"unit": out.Unit, "unit_raw": &out.UnitRaw, "interval": &out.Interval, "attributes": &out.Attributes,
+		"versions": &out.Versions,
 	} {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("series record: %w", err)

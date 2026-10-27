@@ -9,8 +9,9 @@
   "profile": "50000000000056",
   "from": "2025-12-31T23:00:00Z",
   "to": "2026-01-31T23:00:00Z",
-  "unit": "\u00b5M",
-  "interval": "PT15M",
+  "unit": "KWH",
+  "unit_raw": "KWH\u001c",
+  "interval": "PT60M",
   "attributes": {},
   "versions": [
     {

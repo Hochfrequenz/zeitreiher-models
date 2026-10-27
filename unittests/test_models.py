@@ -167,6 +167,7 @@ def test_series_record_writes_empty_collections() -> None:
         from_=datetime(2026, 1, 1, tzinfo=UTC),
         to=datetime(2026, 1, 2, tzinfo=UTC),
         unit="KWH",
+        unit_raw="KWH",
         interval="PT15M",
         attributes={},
         versions=[],
@@ -320,6 +321,7 @@ _SERIES: dict[str, Any] = {
     "from_": _FROM,
     "to": _TO,
     "unit": "KWH",
+    "unit_raw": "KWH",
     "interval": "PT15M",
     "attributes": {},
     "versions": [],
@@ -362,7 +364,7 @@ _SYSTEM: dict[str, Any] = {
             lambda: ResolveRequest(select=[{"by": "x", "params": {"k": _BAD}}], from_=_FROM, to=_TO),
             id="resolve param value",
         ),
-        pytest.param(lambda: SeriesRecord(**{**_SERIES, "unit": "K\ud800"}), id="series unit"),
+        pytest.param(lambda: SeriesRecord(**{**_SERIES, "unit_raw": "K\ud800"}), id="series unit_raw"),
         pytest.param(lambda: SeriesRecord(**{**_SERIES, "attributes": {"k": _BAD}}), id="series attribute value"),
         pytest.param(lambda: SeriesRecord(**{**_SERIES, "attributes": {_BAD: "v"}}), id="series attribute key"),
         pytest.param(
@@ -410,3 +412,28 @@ def test_decimal_with_trailing_zeros_is_rejected(value: str, shortest: str) -> N
     """Responses carry the shortest canonical form: after parsing, 160.0 and 160 are the same number."""
     with pytest.raises(ValidationError, match=f"write '{shortest}'"):
         ValueRecord(series=1, from_=_FROM, to=_TO, value=value, status=[], version=None)
+
+
+def test_series_unit_is_a_canonical_code_or_null_and_unit_raw_is_the_sap_key() -> None:
+    unmapped = SeriesRecord(**{**_SERIES, "unit": None, "unit_raw": "µM"})
+    assert '"unit":null,"unit_raw":"µM"' in dump_record(unmapped)
+    assert parse_record(dump_record(unmapped)) == unmapped
+    mapped = SeriesRecord(**{**_SERIES, "unit": "KVR", "unit_raw": "kvarh"})
+    assert '"unit":"KVR","unit_raw":"kvarh"' in dump_record(mapped)
+
+
+@pytest.mark.parametrize("unit", ["kWh", "", "KWHH", "K", "°C"])
+def test_series_unit_must_be_a_canonical_code(unit: str) -> None:
+    with pytest.raises(ValidationError, match="is not a unit code"):
+        SeriesRecord(**{**_SERIES, "unit": unit})
+
+
+@pytest.mark.parametrize("unit", ["KWH", "KVR", "K3", "C62"])
+def test_request_unit_is_a_canonical_code(unit: str) -> None:
+    assert QueryRequest(select=[ProfileSelector(profile="56")], from_=_FROM, to=_TO, unit=unit).unit == unit
+
+
+@pytest.mark.parametrize("unit", ["kWh", "kvarh", "%", "Mio.m3"])
+def test_request_unit_rejects_sap_spellings(unit: str) -> None:
+    with pytest.raises(ValidationError, match="is not a unit code"):
+        QueryRequest(select=[ProfileSelector(profile="56")], from_=_FROM, to=_TO, unit=unit)

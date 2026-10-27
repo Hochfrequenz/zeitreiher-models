@@ -9,7 +9,8 @@
   "profile": "50000000000056",
   "from": "2025-12-31T23:00:00Z",
   "to": "2026-01-31T23:00:00Z",
-  "unit": "kvarh",
+  "unit": "KVR",
+  "unit_raw": "kvarh",
   "interval": "PT15M",
   "attributes": {},
   "versions": [

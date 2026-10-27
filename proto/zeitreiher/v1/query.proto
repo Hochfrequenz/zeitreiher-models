@@ -27,7 +27,8 @@ message QueryRequest {
   VersionSelector version = 4;
   // Optional sub-daily ISO 8601 duration in minutes, e.g. "PT15M".
   optional string interval = 5;
-  // Optional SAP unit, e.g. "KWH" or "kvarh": 1 to 6 letters, digits or %°/._- (see README).
+  // Optional canonical unit code (UN/ECE Rec. 20, e.g. "KWH", "MWH", "KVR": 2 or 3 upper-case letters
+  // or digits); the server maps it to the customer's SAP unit. An unknown code is INVALID_ARGUMENT.
   optional string unit = 6;
   // Optional cursor from the previous response's end record.
   optional string cursor = 7;
@@ -74,14 +75,18 @@ message SeriesRecord {
   string profile = 4;
   google.protobuf.Timestamp from = 5;
   google.protobuf.Timestamp to = 6;
-  // Unit and interval of the delivered values (after any conversion). The unit is passed through as
-  // SAP delivers it: non-empty, at most 30 characters, no control characters.
-  string unit = 7;
+  // Canonical unit code (UN/ECE Rec. 20, e.g. "KWH") of the delivered values (after any conversion);
+  // unset (JSON null) when the SAP unit has no mapping. The series is delivered either way.
+  optional string unit = 7;
+  // Interval of the delivered values (after any conversion).
   string interval = 8;
   // Metadata BAdI attributes; JSON always writes the object, possibly {}.
   map<string, string> attributes = 9;
   // Overlapping versions; JSON always writes the array, possibly [].
   repeated Version versions = 10;
+  // The SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not: non-empty, at most 30
+  // characters, no control characters.
+  string unit_raw = 11;
 }
 
 // Version is an EDM profile version overlapping a series.

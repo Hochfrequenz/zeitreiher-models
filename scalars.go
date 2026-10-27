@@ -19,6 +19,7 @@ var (
 	maloPattern            = regexp.MustCompile(`^[0-9]{11}$`)
 	customByPattern        = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
 	intervalPattern        = regexp.MustCompile(`^PT[1-9][0-9]*M$`)
+	unitCodePattern        = regexp.MustCompile(`^[A-Z0-9]{2,3}$`)
 )
 
 // Decimal is an already-scaled decimal number in its shortest canonical string form, e.g. "160",
@@ -106,44 +107,32 @@ func validateInterval(i string) error {
 	return nil
 }
 
-// Units are passed through as SAP delivers them; which T006 column (internal MSEHI such as "KWH" or an
-// external form such as "kWh") the API carries is still open, so the rules are deliberately lenient.
-const (
-	// maxRequestUnitLength bounds a requested unit, in characters (code points).
-	maxRequestUnitLength = 6
-	// maxResponseUnitLength bounds the unit of a series record, in characters (code points).
-	maxResponseUnitLength = 30
-	// unitSymbols are the non-alphanumeric characters a requested unit may contain.
-	unitSymbols = "%°/._-"
-)
+// maxRawUnitLength bounds unit_raw, the SAP unit key of a series record, in characters (code points).
+const maxRawUnitLength = 30
 
-// validateRequestUnit accepts 1 to 6 characters, each a Unicode letter (L*), a Unicode number (N*)
-// or one of % ° / . _ - — so no whitespace and no control characters. The Python models use the same
-// Unicode categories.
-func validateRequestUnit(u string) error {
+// validateUnitCode accepts a canonical unit: a UN/ECE Recommendation 20 code such as "KWH", "MWH" or
+// "KVR" — 2 or 3 upper-case ASCII letters or digits. Requests and series records use it; whether a
+// well-formed code is supported is the server's decision (an unknown code is a 400).
+func validateUnitCode(u string) error {
 	if err := validateText(u); err != nil {
 		return err
 	}
-	n := utf8.RuneCountInString(u)
-	ok := n >= 1 && n <= maxRequestUnitLength
-	for _, r := range u {
-		ok = ok && (unicode.IsLetter(r) || unicode.IsNumber(r) || strings.ContainsRune(unitSymbols, r))
-	}
-	if !ok {
-		return fmt.Errorf("%q is not a unit (1 to %d letters, digits or %s)", u, maxRequestUnitLength, unitSymbols)
+	if !unitCodePattern.MatchString(u) {
+		return fmt.Errorf("%q is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)", u)
 	}
 	return nil
 }
 
-// validateResponseUnit accepts any non-empty unit of at most 30 characters without control characters
-// (Unicode Cc); responses are read leniently so that a unit SAP delivers does not break clients.
-func validateResponseUnit(u string) error {
+// validateRawUnit accepts the SAP unit key of a series record (unit_raw) leniently: any non-empty text of
+// at most 30 characters without control characters (Unicode Cc), so that a customer unit does not break
+// clients.
+func validateRawUnit(u string) error {
 	if err := validateText(u); err != nil {
 		return err
 	}
 	n := utf8.RuneCountInString(u)
-	if n < 1 || n > maxResponseUnitLength || strings.ContainsFunc(u, unicode.IsControl) {
-		return fmt.Errorf("%q is not a unit (1 to %d characters, no control characters)", u, maxResponseUnitLength)
+	if n < 1 || n > maxRawUnitLength || strings.ContainsFunc(u, unicode.IsControl) {
+		return fmt.Errorf("%q is not a SAP unit (1 to %d characters, no control characters)", u, maxRawUnitLength)
 	}
 	return nil
 }

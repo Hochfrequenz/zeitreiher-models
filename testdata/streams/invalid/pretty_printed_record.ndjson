@@ -10,6 +10,7 @@
   "from": "2026-01-14T00:00:00Z",
   "to": "2026-01-14T04:00:00Z",
   "unit": "KWH",
+  "unit_raw": "KWH",
   "interval": "PT60M",
   "attributes": {},
   "versions": []

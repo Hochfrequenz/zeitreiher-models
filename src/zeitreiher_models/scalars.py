@@ -93,39 +93,36 @@ def _check_interval(value: str) -> str:
 #: (``"PT60M"``); ``"PT1H"`` is rejected so that every interval has exactly one spelling.
 Interval = Annotated[StrictStr, AfterValidator(_check_interval)]
 
-# Units are passed through as SAP delivers them; which T006 column (internal MSEHI such as "KWH" or an
-# external form such as "kWh") the API carries is still open, so the rules are deliberately lenient.
-#: The longest requested unit, in characters (code points).
-MAX_REQUEST_UNIT_LENGTH = 6
-#: The longest unit of a series record, in characters (code points).
-MAX_RESPONSE_UNIT_LENGTH = 30
-#: The non-alphanumeric characters a requested unit may contain.
-UNIT_SYMBOLS = "%°/._-"
+#: The longest ``unit_raw`` (SAP unit key of a series record), in characters (code points).
+MAX_RAW_UNIT_LENGTH = 30
+
+_UNIT_CODE = re.compile(r"^[A-Z0-9]{2,3}$")
 
 
-def _check_request_unit(value: str) -> str:
-    """1 to 6 characters, each a Unicode letter (L*), number (N*) or one of ``%°/._-`` (as in Go)."""
-    if not 1 <= len(value) <= MAX_REQUEST_UNIT_LENGTH or not all(
-        unicodedata.category(c)[0] in "LN" or c in UNIT_SYMBOLS for c in value
-    ):
-        raise ValueError(f"{value!r} is not a unit (1 to {MAX_REQUEST_UNIT_LENGTH} letters, digits or {UNIT_SYMBOLS})")
+def _check_unit_code(value: str) -> str:
+    """A UN/ECE Rec. 20 code: 2 or 3 upper-case ASCII letters or digits (as in Go)."""
+    if not _UNIT_CODE.fullmatch(value):
+        raise ValueError(
+            f"{value!r} is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)"
+        )
     return value
 
 
-def _check_response_unit(value: str) -> str:
-    """Any non-empty unit of at most 30 characters without control characters (Unicode Cc), as in Go."""
-    if not 1 <= len(value) <= MAX_RESPONSE_UNIT_LENGTH or any(unicodedata.category(c) == "Cc" for c in value):
-        raise ValueError(f"{value!r} is not a unit (1 to {MAX_RESPONSE_UNIT_LENGTH} characters, no control characters)")
+def _check_raw_unit(value: str) -> str:
+    """Any non-empty SAP unit of at most 30 characters without control characters (Unicode Cc), as in Go."""
+    if not 1 <= len(value) <= MAX_RAW_UNIT_LENGTH or any(unicodedata.category(c) == "Cc" for c in value):
+        raise ValueError(f"{value!r} is not a SAP unit (1 to {MAX_RAW_UNIT_LENGTH} characters, no control characters)")
     return value
 
 
-#: A requested unit such as ``"KWH"``, ``"kvarh"``, ``"µM"`` or ``"°C"``: 1 to 6 Unicode letters, digits or
-#: ``%°/._-``; no whitespace, no control characters.
-RequestUnit = Annotated[StrictStr, AfterValidator(_check_request_unit), CHECK_TEXT]
+#: A canonical unit: a UN/ECE Recommendation 20 code such as ``"KWH"``, ``"MWH"`` or ``"KVR"`` (2 or 3
+#: upper-case ASCII letters or digits). Requests and series records use it; whether a well-formed code is
+#: supported is the server's decision (an unknown code is a 400).
+UnitCode = Annotated[StrictStr, AfterValidator(_check_unit_code), CHECK_TEXT]
 
-#: The unit of a series record, as SAP delivers it: any non-empty text of at most 30 characters without
-#: control characters (read leniently, like unknown keys and error codes).
-ResponseUnit = Annotated[StrictStr, AfterValidator(_check_response_unit), CHECK_TEXT]
+#: The SAP unit key (T006 MSEHI) of a series record as SAP delivers it, mapped or not: any non-empty text
+#: of at most 30 characters without control characters (read leniently, like unknown keys).
+RawUnit = Annotated[StrictStr, AfterValidator(_check_raw_unit), CHECK_TEXT]
 
 #: A non-empty opaque token (cursor).
 Token = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]

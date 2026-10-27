@@ -13,11 +13,12 @@ from zeitreiher_models.scalars import (
     Interval,
     NonNegativeInt,
     PositiveInt,
+    RawUnit,
     ResponseProfile,
-    ResponseUnit,
     Status,
     Text,
     Token,
+    UnitCode,
     to_decimal,
 )
 from zeitreiher_models.selectors import EchoedSelector
@@ -59,7 +60,11 @@ class SeriesRecord(ResponseModel):
     profile: ResponseProfile
     from_: ResponseInstant = Field(alias="from")
     to: ResponseInstant
-    unit: ResponseUnit
+    #: The canonical unit code (UN/ECE Rec. 20, e.g. ``"KWH"``) of the delivered values (after any conversion),
+    #: or ``None`` when the SAP unit has no mapping. The series is delivered either way.
+    unit: UnitCode | None
+    #: The SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not.
+    unit_raw: RawUnit
     interval: Interval
     attributes: Annotated[Mapping[Text, Text], AfterValidator(freeze_sorted)]
     versions: tuple[Version, ...]

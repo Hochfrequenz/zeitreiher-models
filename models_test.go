@@ -65,7 +65,7 @@ func TestInvalidValuesRefuseToMarshal(t *testing.T) {
 		"unsorted status":       &zrm.ValueRecord{Series: 1, From: from, To: from.Add(time.Hour), Value: "1", Status: []string{"B", "A"}},
 		"inconsistent version":  zrm.Version{Number: 1, From: from, CreatedAtUnknown: true, CreatedAt: &from},
 		"code not snake case":   &zrm.ErrorRecord{Select: zrm.MaLoSelector("87253749908"), Code: "Nope"},
-		"profile leading zeros": &zrm.SeriesRecord{Series: 1, Select: zrm.MaLoSelector("87253749908"), Profile: "056", From: from, To: from.Add(time.Hour), Unit: "KWH", Interval: "PT15M"},
+		"profile leading zeros": &zrm.SeriesRecord{Series: 1, Select: zrm.MaLoSelector("87253749908"), Profile: "056", From: from, To: from.Add(time.Hour), Unit: ptr("KWH"), UnitRaw: "KWH", Interval: "PT15M"},
 	}
 	for name, v := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -91,7 +91,7 @@ func TestSeriesRecordWritesEmptyCollections(t *testing.T) {
 	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
 	b, err := zrm.MarshalRecord(&zrm.SeriesRecord{
 		Series: 1, Select: zrm.ProfileSelector("56"), Profile: "56", From: from, To: from.Add(time.Hour),
-		Unit: "KWH", Interval: "PT15M",
+		Unit: ptr("KWH"), UnitRaw: "KWH", Interval: "PT15M",
 	})
 	require.NoError(t, err)
 	assert.Contains(t, string(b), `"attributes":{}`)
@@ -166,7 +166,7 @@ func TestReadRecordsHandlesLongLines(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, zrm.WriteRecord(&buf, &zrm.SeriesRecord{
 		Series: 1, Select: zrm.ProfileSelector("56"), Profile: "56", From: from, To: from.Add(time.Hour),
-		Unit: "KWH", Interval: "PT15M", Attributes: attributes,
+		Unit: ptr("KWH"), UnitRaw: "KWH", Interval: "PT15M", Attributes: attributes,
 	}))
 	require.NoError(t, zrm.WriteRecord(&buf, &zrm.EndRecord{Series: 1}))
 	records, err := zrm.ReadStream(&buf)
@@ -224,7 +224,7 @@ func TestInvalidUTF8RefusesToMarshal(t *testing.T) {
 	series := func(edit func(*zrm.SeriesRecord)) *zrm.SeriesRecord {
 		r := &zrm.SeriesRecord{
 			Series: 1, Select: zrm.ProfileSelector("56"), Profile: "56", From: from, To: to,
-			Unit: "KWH", Interval: "PT15M",
+			Unit: ptr("KWH"), UnitRaw: "KWH", Interval: "PT15M",
 		}
 		edit(r)
 		return r
@@ -252,7 +252,7 @@ func TestInvalidUTF8RefusesToMarshal(t *testing.T) {
 		"resolve param value": zrm.ResolveRequest{
 			Select: []zrm.Selector{zrm.CustomSelector("x", map[string]string{"k": bad})}, From: from, To: to,
 		},
-		"series unit":            series(func(r *zrm.SeriesRecord) { r.Unit = "K\xff" }),
+		"series unit_raw":        series(func(r *zrm.SeriesRecord) { r.UnitRaw = "K\xff" }),
 		"series attribute value": series(func(r *zrm.SeriesRecord) { r.Attributes = map[string]string{"k": bad} }),
 		"series attribute key":   series(func(r *zrm.SeriesRecord) { r.Attributes = map[string]string{bad: "v"} }),
 		"series echoed param": series(func(r *zrm.SeriesRecord) {
@@ -282,4 +282,35 @@ func TestInvalidUTF8RefusesToMarshal(t *testing.T) {
 			assert.ErrorContains(t, err, "not valid UTF-8")
 		})
 	}
+}
+
+func ptr[T any](v T) *T { return &v }
+
+// TestSeriesUnits: unit is the canonical UN/ECE Rec. 20 code or null when the SAP unit is not mapped;
+// unit_raw always carries the SAP unit key.
+func TestSeriesUnits(t *testing.T) {
+	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	series := func(unit *string, raw string) *zrm.SeriesRecord {
+		return &zrm.SeriesRecord{
+			Series: 1, Select: zrm.ProfileSelector("56"), Profile: "56", From: from, To: from.Add(time.Hour),
+			Unit: unit, UnitRaw: raw, Interval: "PT15M",
+		}
+	}
+	b, err := zrm.MarshalRecord(series(nil, "µM"))
+	require.NoError(t, err)
+	assert.Contains(t, string(b), `"unit":null,"unit_raw":"µM"`)
+	back, err := zrm.ParseRecord(b)
+	require.NoError(t, err)
+	assert.Nil(t, back.(*zrm.SeriesRecord).Unit)
+
+	b, err = zrm.MarshalRecord(series(ptr("KVR"), "kvarh"))
+	require.NoError(t, err)
+	assert.Contains(t, string(b), `"unit":"KVR","unit_raw":"kvarh"`)
+
+	for _, bad := range []string{"kWh", "", "KWHH", "K", "°C"} {
+		_, err = zrm.MarshalRecord(series(ptr(bad), "KWH"))
+		assert.ErrorContains(t, err, "is not a unit code", bad)
+	}
+	_, err = zrm.MarshalRecord(series(ptr("KWH"), ""))
+	assert.ErrorContains(t, err, "unit_raw")
 }

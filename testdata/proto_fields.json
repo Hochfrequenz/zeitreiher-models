@@ -74,7 +74,8 @@
     "selector": "int64 = 2",
     "series": "int64 = 1",
     "to": "google.protobuf.Timestamp = 6",
-    "unit": "string = 7",
+    "unit": "optional string = 7",
+    "unit_raw": "string = 11",
     "versions": "repeated Version = 10"
   },
   "SystemRequest": {},
