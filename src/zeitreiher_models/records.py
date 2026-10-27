@@ -109,7 +109,11 @@ class ErrorRecord(ResponseModel):
 
 
 class EndRecord(ResponseModel):
-    """Closes a successful response. A response without it is incomplete and must be treated as failed."""
+    """Closes a successful response. A response without it is incomplete and must be treated as failed.
+
+    ``series``, ``values`` and ``errors`` count the series, value and error records on this page only (not
+    the whole result); a series record re-sent at the start of a continuation page counts again.
+    """
 
     type: Literal["end"] = "end"
     series: NonNegativeInt

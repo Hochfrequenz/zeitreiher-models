@@ -135,7 +135,8 @@ message ErrorRecord {
 // EndRecord closes a successful response (page). A stream that ends without it (gRPC: with a
 // status error) is incomplete and must be treated as a failure.
 message EndRecord {
-  // Number of series, value and error records of this page (a re-sent series record counts again).
+  // Number of series, value and error records on this page only, not the whole result (a series
+  // record re-sent at the start of a continuation page counts again).
   int64 series = 1;
   int64 values = 2;
   int64 errors = 3;

@@ -289,6 +289,14 @@ func TestPagedStreamResendsSeries(t *testing.T) {
 	s1, _ := streamValues(t, "paged_page1.ndjson")
 	s2, _ := streamValues(t, "paged_page2.ndjson")
 	assert.Equal(t, s1, s2, "the series record of a continuing series is re-sent with the same number")
+
+	// The end record counts the records on its own page; the re-sent series record counts again.
+	for _, name := range []string{"paged_page1.ndjson", "paged_page2.ndjson"} {
+		records, err := zrm.ReadStream(bytes.NewReader(read(t, filepath.Join(testdata, "streams", "valid", name))))
+		require.NoError(t, err)
+		end := records[len(records)-1].(*zrm.EndRecord)
+		assert.Equal(t, zrm.EndRecord{Series: 1, Values: 2, Errors: 0, Next: end.Next}, *end, name)
+	}
 }
 
 func TestErrorCodesMatchFixture(t *testing.T) {

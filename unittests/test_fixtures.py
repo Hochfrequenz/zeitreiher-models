@@ -234,6 +234,11 @@ def test_paged_stream_resends_series() -> None:
     first, _ = _stream("paged_page1.ndjson")
     second, _ = _stream("paged_page2.ndjson")
     assert first == second
+    # The end record counts the records on its own page; the re-sent series record counts again.
+    for name in ("paged_page1.ndjson", "paged_page2.ndjson"):
+        end = read_stream((TESTDATA / "streams" / "valid" / name).read_bytes())[-1]
+        assert isinstance(end, EndRecord)
+        assert (end.series, end.values, end.errors) == (1, 2, 0), name
 
 
 def test_error_codes_match_fixture() -> None:

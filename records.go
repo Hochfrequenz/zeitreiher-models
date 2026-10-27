@@ -426,7 +426,8 @@ func (r *ErrorRecord) UnmarshalJSON(b []byte) error {
 // EndRecord closes a successful response. A response without an end record is incomplete and
 // must be treated as a failure.
 type EndRecord struct {
-	// Series, Values and Errors count the series, value and error records of this response (page).
+	// Series, Values and Errors count the series, value and error records on this page only (not
+	// the whole result). A series record re-sent at the start of a continuation page counts again.
 	Series, Values, Errors int
 	// Next is the cursor for the next page, or nil when the result is complete.
 	Next *string
