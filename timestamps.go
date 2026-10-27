@@ -13,6 +13,10 @@ import (
 // seconds and an explicit offset. The Python models use the same expression.
 var instantPattern = regexp.MustCompile(`^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$`)
 
+// fractionalPattern recognizes an otherwise well-formed instant with fractional seconds, so that it is
+// rejected with a message that names the rule. The Python models use the same expression.
+var fractionalPattern = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]+(Z|[+-][0-9]{2}:[0-9]{2})$`)
+
 // minYear is the earliest year an instant may be written with (as four digits); the Python models
 // use the same.
 const minYear = "1900"
@@ -46,6 +50,9 @@ func (s side) unknownKeyPolicy() unknownKeys {
 
 // parseInstantString checks s against the rules of kind and returns the instant.
 func parseInstantString(s string, kind side) (time.Time, error) {
+	if fractionalPattern.MatchString(s) {
+		return time.Time{}, fmt.Errorf("%q: fractional seconds are not allowed (whole seconds only)", s)
+	}
 	if !instantPattern.MatchString(s) {
 		return time.Time{}, fmt.Errorf("%q is not an RFC 3339 timestamp with whole seconds and an explicit offset", s)
 	}

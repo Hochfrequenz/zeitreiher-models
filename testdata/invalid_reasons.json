@@ -122,10 +122,10 @@
     }
   },
   "query_request/fractional_seconds.json": {
-    "go": "from: \"2026-01-14T00:00:00.000Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "go": "from: \"2026-01-14T00:00:00.000Z\": fractional seconds are not allowed (whole seconds only)",
     "python": {
       "loc": "from",
-      "msg": "'2026-01-14T00:00:00.000Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "msg": "'2026-01-14T00:00:00.000Z': fractional seconds are not allowed (whole seconds only)",
       "type": "instant"
     }
   },
@@ -189,28 +189,32 @@
     "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
     "python": {
       "loc": "interval",
-      "type": "string_pattern_mismatch"
+      "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
     }
   },
   "query_request/interval_empty.json": {
     "go": "interval: must not be empty",
     "python": {
       "loc": "interval",
-      "type": "string_pattern_mismatch"
+      "msg": "'' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
     }
   },
   "query_request/interval_hours.json": {
-    "go": "interval: \"PT1H\" is not a sub-daily interval of the form PT<minutes>M",
+    "go": "interval: \"PT1H\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "interval",
-      "type": "string_pattern_mismatch"
+      "msg": "'PT1H' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
     }
   },
   "query_request/interval_unicode_digits.json": {
     "go": "interval: \"PT1\u0665M\" is not a sub-daily interval of the form PT<minutes>M",
     "python": {
       "loc": "interval",
-      "type": "string_pattern_mismatch"
+      "msg": "'PT1\u0665M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
     }
   },
   "query_request/leap_second.json": {
@@ -718,14 +722,16 @@
     "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
     "python": {
       "loc": "series.interval",
-      "type": "string_pattern_mismatch"
+      "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
     }
   },
   "records/series_interval_unicode_digits.json": {
     "go": "interval: \"PT6\u0660M\" is not a sub-daily interval of the form PT<minutes>M",
     "python": {
       "loc": "series.interval",
-      "type": "string_pattern_mismatch"
+      "msg": "'PT6\u0660M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
     }
   },
   "records/series_missing_attributes.json": {
@@ -1234,7 +1240,8 @@
     "go": "intervals[1]: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
     "python": {
       "loc": "intervals.1",
-      "type": "string_pattern_mismatch"
+      "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
     }
   },
   "system_info/missing_sid.json": {

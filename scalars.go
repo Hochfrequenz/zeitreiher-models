@@ -96,10 +96,12 @@ func validateMaLo(m string) error {
 	return nil
 }
 
-// validateInterval accepts a sub-daily ISO 8601 duration in minutes, e.g. "PT15M".
+// validateInterval accepts a sub-daily ISO 8601 duration in minutes, e.g. "PT15M". Hours are written in
+// minutes ("PT60M"); "PT1H" is rejected so that every interval has exactly one spelling.
 func validateInterval(i string) error {
 	if !intervalPattern.MatchString(i) {
-		return fmt.Errorf("%q is not a sub-daily interval of the form PT<minutes>M", i)
+		return fmt.Errorf("%q is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M "+
+			"(hours are written in minutes: PT60M, not PT1H)", i)
 	}
 	return nil
 }

@@ -15,6 +15,12 @@ INSTANT_PATTERN = re.compile(
     r"(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
 )
 
+#: An otherwise well-formed instant with fractional seconds, rejected with a message that names the rule.
+#: The Go models use the same expression.
+FRACTIONAL_PATTERN = re.compile(
+    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]+(Z|[+-][0-9]{2}:[0-9]{2})$"
+)
+
 #: The earliest year an instant may be written with (as four digits); the Go models use the same.
 MIN_YEAR = "1900"
 
@@ -33,6 +39,8 @@ def _parse(value: Any, *, utc_only: bool) -> datetime:
         return value
     if not isinstance(value, str):
         raise _error("must be an RFC 3339 timestamp string", value)
+    if FRACTIONAL_PATTERN.fullmatch(value):
+        raise _error("fractional seconds are not allowed (whole seconds only)", value)
     if not INSTANT_PATTERN.fullmatch(value):
         raise _error("is not an RFC 3339 timestamp with whole seconds and an explicit offset", value)
     if value[:4] < MIN_YEAR:

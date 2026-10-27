@@ -77,8 +77,21 @@ ResponseProfile = Annotated[StrictStr, StringConstraints(pattern=r"^[1-9][0-9]{0
 #: A market location id: 11 digits.
 MaLo = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{11}$")]
 
-#: A sub-daily interval as an ISO 8601 duration in minutes, e.g. ``"PT15M"``.
-Interval = Annotated[StrictStr, StringConstraints(pattern=r"^PT[1-9][0-9]*M$")]
+_INTERVAL = re.compile(r"^PT[1-9][0-9]*M$")
+
+
+def _check_interval(value: str) -> str:
+    if not _INTERVAL.fullmatch(value):
+        raise ValueError(
+            f"{value!r} is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M "
+            "(hours are written in minutes: PT60M, not PT1H)"
+        )
+    return value
+
+
+#: A sub-daily interval as an ISO 8601 duration in minutes, e.g. ``"PT15M"``. Hours are written in minutes
+#: (``"PT60M"``); ``"PT1H"`` is rejected so that every interval has exactly one spelling.
+Interval = Annotated[StrictStr, AfterValidator(_check_interval)]
 
 # Units are passed through as SAP delivers them; which T006 column (internal MSEHI such as "KWH" or an
 # external form such as "kWh") the API carries is still open, so the rules are deliberately lenient.
