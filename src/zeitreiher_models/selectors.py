@@ -44,7 +44,8 @@ class CustomSelector(RequestModel):
 
 def _selector_tag(value: Any) -> str:
     by = value.get("by") if isinstance(value, dict) else getattr(value, "by", None)
-    return by if by in KNOWN_SELECTOR_KINDS else "custom"
+    # A non-string (possibly unhashable) "by" goes to the custom variant, whose CustomKind rejects it.
+    return by if isinstance(by, str) and by in KNOWN_SELECTOR_KINDS else "custom"
 
 
 #: A request selector: a union over ``by``.
