@@ -130,12 +130,35 @@ keys in model order, map keys (`params`, `attributes`) sorted, and Go's string e
 `&`, U+2028 and U+2029 are written as `<`, `>`, `&`, ` `, ` `; all other
 non-ASCII characters are written as UTF-8. Python's `model_dump_json()` and `dump_record()` apply
 that escaping; in Go, `json.Marshal`, `MarshalRecord` and a default `json.Encoder` produce it (an
-encoder with `SetEscapeHTML(false)` would not). After an intended change, regenerate the file with
-`go test -run Golden -update .` and check the diff.
+encoder with `SetEscapeHTML(false)` would not).
 
-Every invalid fixture has an entry in `testdata/invalid_reasons.json`: for each language a substring
-its error message must contain (the field path and the failed rule), so a fixture cannot pass by
-being rejected for the wrong reason.
+Every invalid fixture has an entry in `testdata/invalid_reasons.json`, so that a fixture cannot pass by
+being rejected for the wrong reason:
+
+- `go`: a substring of the Go error (the field path and the failed rule);
+- `python`: the pydantic error that must be among `ValidationError.errors()` — its `loc` (joined with
+  `.`), its `type` and, only for the error types whose messages the models write themselves
+  (`value_error`, `instant`, `unknown_key`, `version_selector`), `msg`, a substring of its message.
+  pydantic's own messages are not compared, so rewording them in a pydantic upgrade does not break
+  the fixtures.
+
+### Regenerating the pinned files
+
+- **`serialized.golden`** — after an intended change to the output (or a new valid fixture), run
+  `go test -run Golden -update .`, review the diff, then `uv run pytest unittests` to confirm that
+  Python writes the same bytes. The file is only ever written by Go; Python compares against it.
+- **`invalid_reasons.json`** — maintained by hand, not generated, because each entry states the
+  *intended* reason. For a new invalid fixture, the failing Go test prints the actual error
+  (`go test -run InvalidFixtures .`) and the failing Python test prints a ready-made `python` entry
+  (`uv run pytest unittests -k invalid_fixture`); check that both name the rule the fixture is about
+  before adding them. Keep the file sorted, two-space indented and ASCII-only
+  (`json.dumps(..., indent=2, sort_keys=True, ensure_ascii=True)`).
+- **After a pydantic upgrade** — run `uv run pytest unittests`. A failing `invalid_fixture` test means
+  that pydantic changed an error's `loc` or `type` (messages are not compared), or that a fixture is
+  now rejected for a different reason; compare the printed `errors()` with the entry and update the
+  entry only if the fixture is still rejected for the intended reason. `serialized.golden` failures
+  after an upgrade mean that the output bytes changed and need a fix in the models, not a new golden
+  file.
 
 ## gRPC
 

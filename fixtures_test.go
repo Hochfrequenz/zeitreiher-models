@@ -105,12 +105,19 @@ func TestValidFixturesRoundTrip(t *testing.T) {
 	}
 }
 
-// invalidReasons maps every invalid fixture to a substring of the error each language must report,
-// so that a fixture cannot pass by being rejected for the wrong reason. The Python tests use the
-// same file (unittests/test_fixtures.py).
-func invalidReasons(t *testing.T) map[string]struct{ Go, Python string } {
+// invalidReason says why an invalid fixture must be rejected. Go is a substring of the Go error; the
+// Python entry (pydantic loc, type and, for the models' own errors, a message substring) is checked
+// by unittests/test_fixtures.py.
+type invalidReason struct {
+	Go     string          `json:"go"`
+	Python json.RawMessage `json:"python"`
+}
+
+// invalidReasons maps every invalid fixture to why each language must reject it, so that a fixture
+// cannot pass by being rejected for the wrong reason.
+func invalidReasons(t *testing.T) map[string]invalidReason {
 	t.Helper()
-	var reasons map[string]struct{ Go, Python string }
+	var reasons map[string]invalidReason
 	require.NoError(t, json.Unmarshal(read(t, filepath.Join(testdata, "invalid_reasons.json")), &reasons))
 	return reasons
 }
@@ -126,8 +133,9 @@ func TestInvalidFixturesAreRejected(t *testing.T) {
 				_, err := c.parse(read(t, path))
 				require.Error(t, err)
 				reason, ok := reasons[name]
-				require.True(t, ok, "add %s to testdata/invalid_reasons.json", name)
+				require.True(t, ok, "add %s to testdata/invalid_reasons.json; the Go error is: %v", name, err)
 				require.NotEmpty(t, reason.Go)
+				require.NotEmpty(t, reason.Python)
 				assert.Contains(t, err.Error(), reason.Go)
 			})
 		}

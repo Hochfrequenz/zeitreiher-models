@@ -94,8 +94,24 @@ def test_serialized_bytes_match_golden() -> None:
     assert sorted(lines) == golden
 
 
-#: Invalid fixture → the substrings each language's error must contain (shared with fixtures_test.go).
-REASONS: dict[str, dict[str, str]] = json.loads((TESTDATA / "invalid_reasons.json").read_bytes())
+#: Invalid fixture → why each language must reject it (shared with fixtures_test.go): for Go a substring
+#: of the error, for Python the pydantic error's ``loc`` (dotted) and ``type``, plus ``msg``, a substring
+#: of the message, for the error types whose messages the models write themselves (:data:`OWN_ERROR_TYPES`).
+#: pydantic's own messages are not compared, so that a pydantic upgrade that rewords them does not break
+#: the fixtures.
+REASONS: dict[str, dict[str, Any]] = json.loads((TESTDATA / "invalid_reasons.json").read_bytes())
+
+#: Error types raised by the models' validators (``ValueError`` → ``value_error`` and custom error types).
+OWN_ERROR_TYPES = frozenset({"value_error", "instant", "unknown_key", "version_selector"})
+
+
+def _python_reason(exc: ValidationError) -> dict[str, str]:
+    """The reason entry for the first error of ``exc`` (to write a new entry of invalid_reasons.json)."""
+    error = exc.errors()[0]
+    reason = {"loc": ".".join(map(str, error["loc"])), "type": error["type"]}
+    if error["type"] in OWN_ERROR_TYPES:
+        reason["msg"] = error["msg"].removeprefix("Value error, ")
+    return reason
 
 
 @pytest.mark.parametrize(("kind", "path"), _cases("invalid"))
@@ -103,9 +119,19 @@ def test_invalid_fixture_is_rejected(kind: str, path: Path) -> None:
     parse, _ = KINDS[kind]
     with pytest.raises(ValidationError) as excinfo:
         parse(path.read_bytes())
-    reason = REASONS[f"{kind}/{path.name}"]["python"]
-    assert reason
-    assert reason in str(excinfo.value)
+    name = f"{kind}/{path.name}"
+    assert name in REASONS, f"add {name} to testdata/invalid_reasons.json, e.g. python: {_python_reason(excinfo.value)}"
+    reason = REASONS[name]["python"]
+    assert set(reason) <= {"loc", "type", "msg"}
+    assert ("msg" in reason) == (reason["type"] in OWN_ERROR_TYPES), "msg is given exactly for the models' own errors"
+    matching = [
+        error
+        for error in excinfo.value.errors()
+        if ".".join(map(str, error["loc"])) == reason["loc"]
+        and error["type"] == reason["type"]
+        and reason.get("msg", "") in error["msg"]
+    ]
+    assert matching, f"{name}: expected {reason}, got {excinfo.value.errors()}"
 
 
 def test_invalid_reasons_cover_exactly_the_invalid_fixtures() -> None:
