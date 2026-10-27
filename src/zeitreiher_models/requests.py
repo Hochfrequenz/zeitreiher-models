@@ -25,7 +25,11 @@ class CurrentVersion(RequestModel):
 
 
 class VersionNumber(RequestModel):
-    """``{"number": 3}`` — the values of version 3, only within its covered range."""
+    """``{"number": 3}`` — version 3 as SAP rebuilds it.
+
+    The current values overlaid with the stored values of versions >= 3 (the lowest version wins), only
+    inside version 3's covered range; outside it the series has gaps.
+    """
 
     number: PositiveInt
 

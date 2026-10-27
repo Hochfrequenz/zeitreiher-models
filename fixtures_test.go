@@ -244,12 +244,24 @@ func TestGapsStayGaps(t *testing.T) {
 	assert.True(t, values[len(values)-1].To.Before(series.To), "tail gap: no values up to the series end")
 }
 
-func TestVersionStreams(t *testing.T) {
-	_, values := streamValues(t, "version_number.ndjson")
+// TestVersionNumberStream: {"number":3} delivers the current values overlaid with the stored values
+// of versions >= 3 (the lowest wins), only inside version 3's covered range. Each value says its
+// source: the version row it came from, or null for a current value.
+func TestVersionNumberStream(t *testing.T) {
+	series, values := streamValues(t, "version_number.ndjson")
+	require.Equal(t, 3, series.Versions[0].Number)
+	var got []any
 	for _, v := range values {
-		require.NotNil(t, v.Version)
-		assert.Equal(t, 3, *v.Version)
+		assert.False(t, v.From.Before(series.Versions[0].From), "no value outside version 3's covered range")
+		if v.Version == nil {
+			got = append(got, nil)
+		} else {
+			assert.GreaterOrEqual(t, *v.Version, 3)
+			got = append(got, *v.Version)
+		}
 	}
+	assert.Equal(t, []any{3, 3, 4, nil}, got, "stored rows of 3, then of 4, then a current value")
+	assert.True(t, series.From.Before(values[0].From), "the part before the covered range is a gap")
 }
 
 func TestPagedStreamResendsSeries(t *testing.T) {

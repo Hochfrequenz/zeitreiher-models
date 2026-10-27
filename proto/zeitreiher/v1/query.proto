@@ -42,7 +42,8 @@ message VersionSelector {
   oneof kind {
     // {"current": {}}
     CurrentVersion current = 1;
-    // {"number": N}, N >= 1
+    // {"number": N}, N >= 1: the current values overlaid with the stored values of versions >= N
+    // (the lowest version wins), only inside N's covered range; gaps outside it.
     int64 number = 2;
   }
 }
@@ -110,7 +111,8 @@ message ValueRecord {
   string value = 4;
   // Active SAP status codes, sorted and unique; JSON always writes the array.
   repeated string status = 5;
-  // Source version number; unset = current values (JSON null).
+  // Source of the value: the number of the stored version row it came from; unset = a current value
+  // (JSON null). A {"number": N} query mixes both (see VersionSelector.number).
   optional int64 version = 6;
 }
 

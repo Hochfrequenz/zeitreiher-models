@@ -198,9 +198,14 @@ def test_gaps_stay_gaps() -> None:
     assert values[-1].to < series.to, "tail gap"
 
 
-def test_version_streams() -> None:
-    _, values = _stream("version_number.ndjson")
-    assert {v.version for v in values} == {3}
+def test_version_number_stream() -> None:
+    """``{"number":3}``: current values overlaid with stored values of versions >= 3 (lowest wins), only
+    inside version 3's covered range; each value says its source (version row or ``None`` = current)."""
+    series, values = _stream("version_number.ndjson")
+    assert series.versions[0].number == 3
+    assert all(v.from_ >= series.versions[0].from_ for v in values), "no value outside the covered range"
+    assert [v.version for v in values] == [3, 3, 4, None]
+    assert series.from_ < values[0].from_, "the part before the covered range is a gap"
 
 
 def test_paged_stream_resends_series() -> None:

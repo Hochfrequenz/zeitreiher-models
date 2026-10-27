@@ -11,7 +11,9 @@ import (
 // VersionSelector chooses which values a query returns (spec §5). Exactly one form is set:
 //
 //	{"current":{}}   – the current values (the default when omitted)
-//	{"number":3}     – the values of version 3, only within its covered range
+//	{"number":3}     – version 3 as SAP rebuilds it: the current values overlaid with the stored
+//	                   values of versions >= 3 (the lowest version wins), only inside version 3's
+//	                   covered range; outside it the series has gaps
 //
 // v1 has no as-of selector; {"as_of":…} is rejected as an unknown key.
 // Build it with CurrentVersion or VersionNumber.
@@ -23,7 +25,7 @@ type VersionSelector struct {
 // CurrentVersion selects the current values.
 func CurrentVersion() VersionSelector { return VersionSelector{Current: true} }
 
-// VersionNumber selects the values of version n.
+// VersionNumber selects version n (see VersionSelector).
 func VersionNumber(n int) VersionSelector { return VersionSelector{Number: &n} }
 
 // Validate checks that exactly one form is set and that it is valid.

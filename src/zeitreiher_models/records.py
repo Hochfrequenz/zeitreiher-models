@@ -78,7 +78,9 @@ class ValueRecord(ResponseModel):
     #: Already scaled; use :attr:`decimal` for arithmetic.
     value: DecimalString
     status: Status
-    #: The source version number, or ``None`` for current values.
+    #: The source of the value: the number of the stored version row it came from, or ``None`` when it is
+    #: a current value. With ``{"number": N}`` a series mixes both: current values overlaid with the stored
+    #: values of versions >= N (the lowest wins), only inside N's covered range.
     version: PositiveInt | None
 
     @model_validator(mode="after")

@@ -262,7 +262,9 @@ type ValueRecord struct {
 	// Status holds the active SAP status codes overlapping the interval, sorted; never nil after
 	// unmarshalling.
 	Status []string
-	// Version is the source version number, or nil for current values.
+	// Version is the source of the value: the number of the stored version row it came from, or nil
+	// when it is a current value. With {"number":N} a series mixes both: current values overlaid with
+	// the stored values of versions >= N (the lowest wins), only inside N's covered range.
 	Version *int
 }
 
