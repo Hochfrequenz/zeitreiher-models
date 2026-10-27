@@ -4,6 +4,9 @@
 // JSON form of the types in this package, pinned by the shared fixtures in testdata/, which the Go
 // and the Python models both parse and round-trip. The gRPC contract lives in proto/zeitreiher/v1.
 //
+// The package lives at the repository root; its major version follows Go module versioning, so a
+// breaking v2 is the module github.com/hochfrequenz/zeitreiher-models/v2 (spec §3.4).
+//
 // Nothing in this package is generated. Every type validates itself when it is unmarshalled and
 // refuses to marshal when it is invalid, so a value that leaves or enters a program through these
 // types always satisfies the contract:

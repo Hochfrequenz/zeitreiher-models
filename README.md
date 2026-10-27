@@ -172,8 +172,13 @@ code in the consuming project, e.g. with buf managed mode.
 ## Versioning
 
 `v1` is in the URL path (`/api/v1/…`), the proto package (`zeitreiher.v1`) and the models' major
-version. Additive changes (new optional fields, new error codes) stay in v1; breaking changes need v2
-(Go: module path `…/v2`).
+version. Additive changes (new optional fields, new error codes) stay in v1; breaking changes need v2.
+
+The Go package `zeitreihermodels` lives at the **repository root** (import path
+`github.com/hochfrequenz/zeitreiher-models`); there is no `v1` sub-package. Its major version follows
+Go module versioning: v1 is released as tags `v1.x.y` of this module path, and a breaking v2 becomes
+the module `github.com/hochfrequenz/zeitreiher-models/v2` (tags `v2.x.y`). The Python package takes its
+version from the same tags.
 
 ## Development
 
