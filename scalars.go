@@ -15,6 +15,8 @@ var (
 	maloPattern            = regexp.MustCompile(`^[0-9]{11}$`)
 	customByPattern        = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
 	intervalPattern        = regexp.MustCompile(`^PT[1-9][0-9]*M$`)
+	// unitPattern: an SAP internal unit (T006-MSEHI, CHAR 3), e.g. "KWH", "%" or "°C".
+	unitPattern = regexp.MustCompile(`^[0-9A-Za-z%°/._-]{1,3}$`)
 )
 
 // Decimal is an already-scaled decimal number in its string form, e.g. "160" or "0.022".
@@ -93,10 +95,10 @@ func validateInterval(i string) error {
 	return nil
 }
 
-// validateUnit accepts a non-empty SAP unit without surrounding whitespace.
+// validateUnit accepts an SAP unit: 1 to 3 characters out of A-Z, a-z, 0-9 and % ° / . _ -.
 func validateUnit(u string) error {
-	if u == "" || strings.TrimSpace(u) != u {
-		return fmt.Errorf("%q is not a unit (non-empty, no surrounding whitespace)", u)
+	if !unitPattern.MatchString(u) {
+		return fmt.Errorf("%q is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %%°/._-)", u)
 	}
 	return nil
 }

@@ -34,12 +34,6 @@ def _check_status(value: tuple[str, ...]) -> tuple[str, ...]:
     return value
 
 
-def _check_unit(value: str) -> str:
-    if not value or value.strip() != value:
-        raise ValueError(f"{value!r} is not a unit (non-empty, no surrounding whitespace)")
-    return value
-
-
 #: An already-scaled decimal number as a string, e.g. ``"160"`` or ``"0.022"``. JSON numbers,
 #: exponents, a plus sign, leading zeros and negative zero are rejected.
 DecimalString = Annotated[StrictStr, AfterValidator(_check_decimal)]
@@ -58,8 +52,8 @@ MaLo = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{11}$")]
 #: A sub-daily interval as an ISO 8601 duration in minutes, e.g. ``"PT15M"``.
 Interval = Annotated[StrictStr, StringConstraints(pattern=r"^PT[1-9][0-9]*M$")]
 
-#: An SAP unit such as ``"KWH"``.
-Unit = Annotated[StrictStr, AfterValidator(_check_unit)]
+#: An SAP internal unit (T006-MSEHI, CHAR 3) such as ``"KWH"``, ``"%"`` or ``"°C"``.
+Unit = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9A-Za-z%°/._-]{1,3}$")]
 
 #: A non-empty opaque token (cursor).
 Token = Annotated[StrictStr, StringConstraints(min_length=1)]
