@@ -62,14 +62,17 @@ def _known(enum: type[StrEnum]) -> Any:
 
 
 def _public_only(enum: type[StrEnum]) -> Any:
-    """Serializer that writes only the public codes (as Go's ``MarshalJSON``)."""
+    """JSON serializer that writes only the public codes (as Go's ``MarshalJSON``).
+
+    Python-mode ``model_dump()`` keeps unknown codes, so a parsed response can still be turned into a dict.
+    """
 
     def serialize(value: StrEnum | str) -> str:
         if not isinstance(value, enum):
             raise ValueError(f"{value!r} is not a public error code; only the known codes can be written")
         return value.value
 
-    return PlainSerializer(serialize, return_type=str)
+    return PlainSerializer(serialize, return_type=str, when_used="json")
 
 
 #: A request-level code: strict on write, lenient on read. Known codes become :class:`RequestErrorCode`

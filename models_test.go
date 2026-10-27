@@ -253,6 +253,7 @@ func TestInvalidUTF8RefusesToMarshal(t *testing.T) {
 			Select: []zrm.Selector{zrm.CustomSelector("x", map[string]string{"k": bad})}, From: from, To: to,
 		},
 		"series unit_raw":        series(func(r *zrm.SeriesRecord) { r.UnitRaw = "K\xff" }),
+		"series role":            series(func(r *zrm.SeriesRecord) { r.Role = ptr(bad) }),
 		"series attribute value": series(func(r *zrm.SeriesRecord) { r.Attributes = map[string]string{"k": bad} }),
 		"series attribute key":   series(func(r *zrm.SeriesRecord) { r.Attributes = map[string]string{bad: "v"} }),
 		"series echoed param": series(func(r *zrm.SeriesRecord) {

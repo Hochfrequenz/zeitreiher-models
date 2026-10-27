@@ -186,7 +186,7 @@
     }
   },
   "query_request/interval_daily.json": {
-    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
+    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "interval",
       "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
@@ -210,7 +210,7 @@
     }
   },
   "query_request/interval_unicode_digits.json": {
-    "go": "interval: \"PT1\u0665M\" is not a sub-daily interval of the form PT<minutes>M",
+    "go": "interval: \"PT1\u0665M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "interval",
       "msg": "'PT1\u0665M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
@@ -799,7 +799,7 @@
     }
   },
   "records/series_interval_p1d.json": {
-    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
+    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "series.interval",
       "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
@@ -807,7 +807,7 @@
     }
   },
   "records/series_interval_unicode_digits.json": {
-    "go": "interval: \"PT6\u0660M\" is not a sub-daily interval of the form PT<minutes>M",
+    "go": "interval: \"PT6\u0660M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "series.interval",
       "msg": "'PT6\u0660M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
@@ -1375,7 +1375,7 @@
     }
   },
   "system_info/interval_p1d.json": {
-    "go": "intervals[1]: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
+    "go": "intervals[1]: \"P1D\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "intervals.1",
       "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",

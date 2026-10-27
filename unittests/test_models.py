@@ -367,6 +367,7 @@ _SYSTEM: dict[str, Any] = {
             id="resolve param value",
         ),
         pytest.param(lambda: SeriesRecord(**{**_SERIES, "unit_raw": "K\ud800"}), id="series unit_raw"),
+        pytest.param(lambda: SeriesRecord(**{**_SERIES, "role": _BAD}), id="series role"),
         pytest.param(lambda: SeriesRecord(**{**_SERIES, "attributes": {"k": _BAD}}), id="series attribute value"),
         pytest.param(lambda: SeriesRecord(**{**_SERIES, "attributes": {_BAD: "v"}}), id="series attribute key"),
         pytest.param(
@@ -448,3 +449,11 @@ def test_series_role_is_written_after_the_profile_and_may_be_null() -> None:
     assert '"role":null' in dump_record(SeriesRecord(**{**_SERIES, "role": None}))
     with pytest.raises(ValidationError):
         SeriesRecord(**{**_SERIES, "role": ""})
+
+
+def test_unknown_code_survives_python_mode_dump() -> None:
+    """Lenient on read: only JSON output is refused, so model_dump() of a parsed response still works."""
+    record = parse_record(
+        '{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"code":"brand_new"}'
+    )
+    assert record.model_dump()["code"] == "brand_new"

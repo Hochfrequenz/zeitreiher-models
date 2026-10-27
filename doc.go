@@ -15,7 +15,10 @@
 //     Timestamps without an offset and the "unknown offset" -00:00 are rejected.
 //   - Response timestamps are RFC 3339 with whole seconds in UTC (Z).
 //   - Intervals are half-open: [from, to), and from must be before to.
-//   - Values are decimal strings, already scaled (e.g. "0.022"), never JSON numbers.
+//   - Values are decimal strings, already scaled, in shortest canonical form ("160", "0.022"; never
+//     "160.0"), never JSON numbers.
+//   - Error codes are strict on write, lenient on read: unknown snake_case codes parse, only the
+//     public codes are written.
 //   - Requests reject unknown keys; responses ignore them, so additive server changes do not break
 //     older clients.
 package zeitreihermodels
