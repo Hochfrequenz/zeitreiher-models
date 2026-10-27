@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package zeitreiher.v1;
+
+// SystemRequest is the (empty) request of SeriesService.System (JSON: GET /api/v1/system).
+message SystemRequest {}
+
+// SystemResponse describes the service and the SAP system behind it.
+message SystemResponse {
+  string service_version = 1;
+  string abap_package_version = 2;
+  string sid = 3;
+  string client = 4;
+  string release = 5;
+  // SAP time zone code, e.g. "CET".
+  string business_time_zone = 6;
+  // Supported request intervals, e.g. ["PT15M", "PT60M"].
+  repeated string intervals = 7;
+}

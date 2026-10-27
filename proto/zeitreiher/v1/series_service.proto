@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package zeitreiher.v1;
+
+import "zeitreiher/v1/query.proto";
+import "zeitreiher/v1/results.proto";
+import "zeitreiher/v1/system.proto";
+
+// SeriesService is the gRPC face of the Zeitreiher API (served via connect-go: gRPC, gRPC-Web and
+// Connect). Authentication: bearer token in the `authorization` metadata.
+service SeriesService {
+  // Query streams the records of one page; each Record equals one NDJSON line of the HTTP API.
+  rpc Query(QueryRequest) returns (stream Record);
+  // Resolve lists the profile assignments of each selector in the window.
+  rpc Resolve(ResolveRequest) returns (ResolveResponse);
+  // ListVersions lists the assignments of each selector with their overlapping versions.
+  rpc ListVersions(ListVersionsRequest) returns (ListVersionsResponse);
+  // System describes the service and the SAP system behind it.
+  rpc System(SystemRequest) returns (SystemResponse);
+}

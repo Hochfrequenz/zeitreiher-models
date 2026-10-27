@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package zeitreiher.v1;
+
+import "google/protobuf/timestamp.proto";
+import "zeitreiher/v1/query.proto";
+import "zeitreiher/v1/selector.proto";
+
+// ResolveRequest is the request of SeriesService.Resolve (JSON: POST /api/v1/series/resolve).
+// Timestamps follow the request rules of QueryRequest.
+message ResolveRequest {
+  repeated Selector select = 1;
+  string from = 2;
+  string to = 3;
+}
+
+// ResolveResponse holds one result per request selector.
+message ResolveResponse {
+  repeated SelectorResult results = 1;
+}
+
+// ListVersionsRequest is the request of SeriesService.ListVersions
+// (JSON: POST /api/v1/series/versions).
+message ListVersionsRequest {
+  repeated Selector select = 1;
+  string from = 2;
+  string to = 3;
+}
+
+// ListVersionsResponse holds one result per request selector; assignments carry versions.
+message ListVersionsResponse {
+  repeated SelectorResult results = 1;
+}
+
+// SelectorResult is the outcome for one request selector. If `error` is set, the selector failed
+// and `assignments` is empty (JSON: omitted); otherwise `assignments` holds, possibly empty
+// (JSON: always written).
+message SelectorResult {
+  int64 selector = 1;
+  Selector select = 2;
+  repeated Assignment assignments = 3;
+  ResultError error = 4;
+}
+
+// Assignment is one profile assignment cut to the request window, or an assignment-level error.
+// from/to are set together; they are required unless `error` is set. `versions` is used by
+// ListVersions only (JSON: written, possibly [], when `error` is unset).
+message Assignment {
+  string profile = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  repeated Version versions = 4;
+  ResultError error = 5;
+}
+
+// ResultError carries a record-level code (see ErrorRecord.code).
+message ResultError {
+  string code = 1;
+}

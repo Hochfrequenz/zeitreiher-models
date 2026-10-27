@@ -1,0 +1,13 @@
+version: v2
+modules:
+  - path: proto
+lint:
+  use:
+    - STANDARD
+  ignore_only:
+    # The spec names the streamed message `Record`: one message per NDJSON line.
+    RPC_RESPONSE_STANDARD_NAME:
+      - proto/zeitreiher/v1/series_service.proto
+breaking:
+  use:
+    - FILE
