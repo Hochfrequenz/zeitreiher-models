@@ -4,6 +4,7 @@ The proto is the published gRPC contract; ``zeitreiher-go`` maps proto messages 
 hand. This test makes sure that a field added to a model is also added to the proto (and vice versa).
 """
 
+import json
 import re
 from pathlib import Path
 
@@ -41,6 +42,44 @@ _FIELD = re.compile(
     r"^\s*(?:optional\s+|repeated\s+)?(?:map<[^>]+>|[\w.]+)\s+(\w+)\s*=\s*\d+\s*;",
     re.MULTILINE,
 )
+
+
+_FIELD_DECL = re.compile(
+    r"^\s*((?:optional\s+|repeated\s+)?(?:map<[^>]+>|[\w.]+))\s+(\w+)\s*=\s*(\d+)\s*;",
+    re.MULTILINE,
+)
+
+#: Message → field → "<label and type> = <number>". Field numbers are the wire contract of gRPC: they
+#: must never change; new fields are added here together with the proto.
+PINNED_FIELDS = Path(__file__).resolve().parent.parent / "testdata" / "proto_fields.json"
+
+
+def _proto_field_declarations() -> dict[str, dict[str, str]]:
+    declarations: dict[str, dict[str, str]] = {}
+    for path in sorted(PROTO_DIR.glob("*.proto")):
+        text = re.sub(r"//[^\n]*", "", path.read_text(encoding="utf-8"))
+        for name, body in _MESSAGE.findall(text):
+            declarations[name] = {
+                field: f"{' '.join(kind.split())} = {number}" for kind, field, number in _FIELD_DECL.findall(body)
+            }
+    return declarations
+
+
+def test_proto_field_numbers_and_types_are_pinned() -> None:
+    pinned: dict[str, dict[str, str]] = json.loads(PINNED_FIELDS.read_bytes())
+    current = _proto_field_declarations()
+    for message, fields in pinned.items():
+        for field, declaration in fields.items():
+            assert current.get(message, {}).get(field) == declaration, (
+                f"{message}.{field} changed from {declaration!r}: field numbers and types must never change"
+            )
+    for message, fields in current.items():
+        numbers = [declaration.rsplit(" = ", 1)[1] for declaration in fields.values()]
+        assert len(numbers) == len(set(numbers)), f"{message} reuses a field number"
+        for field, declaration in fields.items():
+            assert field in pinned.get(message, {}), (
+                f"pin the new field {message}.{field} ({declaration}) in {PINNED_FIELDS.name}"
+            )
 
 
 def _proto_messages() -> dict[str, set[str]]:
