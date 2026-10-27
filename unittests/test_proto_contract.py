@@ -28,7 +28,6 @@ from zeitreiher_models import (
     SystemInfo,
     ValueRecord,
     Version,
-    VersionAsOf,
     VersionedAssignment,
     VersionNumber,
     VersionsRequest,
@@ -102,7 +101,7 @@ def _json_keys(*models: type[BaseModel]) -> set[str]:
 TABLE: dict[str, tuple[type[BaseModel], ...]] = {
     "Selector": (ProfileSelector, MaLoSelector, CustomSelector),
     "QueryRequest": (QueryRequest,),
-    "VersionSelector": (CurrentVersion, VersionNumber, VersionAsOf),
+    "VersionSelector": (CurrentVersion, VersionNumber),
     "SeriesRecord": (SeriesRecord,),
     "Version": (Version,),
     "ValueRecord": (ValueRecord,),

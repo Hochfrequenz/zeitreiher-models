@@ -10,7 +10,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 import pytest
-from pydantic import ValidationError
+from pydantic import TypeAdapter, ValidationError
 
 from zeitreiher_models import (
     Assignment,
@@ -30,12 +30,15 @@ from zeitreiher_models import (
     SystemInfo,
     ValueRecord,
     Version,
-    VersionAsOf,
     VersionNumber,
     dump_record,
     iter_records,
     parse_record,
 )
+from zeitreiher_models.timestamps import RequestInstant
+
+#: Validates and writes a single request instant (as in ``from``/``to`` of a request).
+_REQUEST_INSTANT: TypeAdapter[datetime] = TypeAdapter(RequestInstant)
 
 CET = timezone(timedelta(hours=1))
 
@@ -64,9 +67,9 @@ def test_query_request_accepts_dicts_for_nested_models() -> None:
 
 @pytest.mark.parametrize(
     "version",
-    [CurrentVersion(), VersionNumber(number=1), VersionAsOf(as_of=datetime(2026, 2, 1, tzinfo=CET))],
+    [CurrentVersion(), VersionNumber(number=1)],
 )
-def test_version_selector_forms_round_trip(version: CurrentVersion | VersionNumber | VersionAsOf) -> None:
+def test_version_selector_forms_round_trip(version: CurrentVersion | VersionNumber) -> None:
     request = QueryRequest(
         select=[ProfileSelector(profile="56")],
         from_=datetime(2026, 1, 1, tzinfo=UTC),
@@ -250,10 +253,9 @@ def test_json_output_escapes_like_go() -> None:
 def test_local_mean_time_offsets_are_rejected_in_requests_and_converted_in_responses() -> None:
     monrovia = ZoneInfo("Africa/Monrovia")  # -00:44:30 until 1972, as in timestamps_test.go
     with pytest.raises(ValidationError, match="the offset cannot be written without changing the instant"):
-        VersionAsOf(as_of=datetime(1960, 1, 1, tzinfo=monrovia))
-    assert (
-        VersionAsOf(as_of=datetime(2026, 1, 1, tzinfo=monrovia)).model_dump_json() == '{"as_of":"2026-01-01T00:00:00Z"}'
-    )
+        _REQUEST_INSTANT.validate_python(datetime(1960, 1, 1, tzinfo=monrovia))
+    instant = _REQUEST_INSTANT.validate_python(datetime(2026, 1, 1, tzinfo=monrovia))
+    assert _REQUEST_INSTANT.dump_json(instant) == b'"2026-01-01T00:00:00Z"'
     value = ValueRecord(
         series=1,
         from_=datetime(1960, 1, 1, tzinfo=monrovia),
@@ -274,12 +276,12 @@ def test_local_mean_time_offsets_are_rejected_in_requests_and_converted_in_respo
 )
 def test_request_year_bounds_apply_to_the_utc_instant(instant: datetime) -> None:
     with pytest.raises(ValidationError, match="outside the years 1900 to 9999 in UTC"):
-        VersionAsOf(as_of=instant)
+        _REQUEST_INSTANT.validate_python(instant)
 
 
 def test_request_year_bounds_accept_the_utc_limits() -> None:
-    VersionAsOf(as_of=datetime(1900, 1, 1, tzinfo=timezone(timedelta(hours=-1))))
-    VersionAsOf(as_of=datetime(9999, 12, 31, 18, 59, 59, tzinfo=timezone(timedelta(hours=-5))))
+    _REQUEST_INSTANT.validate_python(datetime(1900, 1, 1, tzinfo=timezone(timedelta(hours=-1))))
+    _REQUEST_INSTANT.validate_python(datetime(9999, 12, 31, 18, 59, 59, tzinfo=timezone(timedelta(hours=-5))))
 
 
 @pytest.mark.parametrize(
@@ -374,3 +376,11 @@ def test_lone_surrogates_are_rejected_with_validation_error(build: Callable[[], 
     """
     with pytest.raises(ValidationError, match="not valid UTF-8"):
         build()
+
+
+def test_as_of_is_not_a_version_selector() -> None:
+    with pytest.raises(ValidationError, match="exactly one of current or number must be set"):
+        QueryRequest.model_validate_json(
+            '{"select":[{"by":"profile","profile":"56"}],"from":"2026-01-01T00:00:00Z","to":"2026-01-02T00:00:00Z",'
+            '"version":{"as_of":"2026-02-03T08:00:00Z"}}'
+        )

@@ -33,15 +33,17 @@ message QueryRequest {
   optional string cursor = 7;
 }
 
-// VersionSelector chooses which values a query returns (exactly one form).
+// VersionSelector chooses which values a query returns (exactly one form). v1 has no as-of
+// selector; field 3 (as_of) is reserved for a later version.
 message VersionSelector {
+  reserved 3;
+  reserved "as_of";
+
   oneof kind {
     // {"current": {}}
     CurrentVersion current = 1;
     // {"number": N}, N >= 1
     int64 number = 2;
-    // {"as_of": "<RFC 3339 with explicit offset>"}
-    string as_of = 3;
   }
 }
 

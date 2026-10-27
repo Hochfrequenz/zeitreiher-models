@@ -31,8 +31,6 @@ query_request/unit_micromolar.json	{"select":[{"by":"profile","profile":"5000000
 query_request/unit_percent.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"%"}
 query_request/unit_six_chars.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"Mio.m3"}
 query_request/unit_superscript_digit.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"m³"}
-query_request/version_as_of_offset.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","version":{"as_of":"2026-02-03T09:00:00+01:00"}}
-query_request/version_as_of_z.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","version":{"as_of":"2026-02-03T08:00:00Z"}}
 query_request/version_current.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","version":{"current":{}}}
 query_request/version_number.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","version":{"number":3}}
 query_request/with_cursor.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","cursor":"v1.eyJrIjoiY3VycmVudCJ9.c2lnbmF0dXJl"}
@@ -399,12 +397,6 @@ streams/two_series_profile_change.ndjson:5	{"type":"value","series":2,"from":"20
 streams/two_series_profile_change.ndjson:6	{"type":"value","series":2,"from":"2026-01-15T02:00:00Z","to":"2026-01-15T03:00:00Z","value":"22","status":["IU015"],"version":null}
 streams/two_series_profile_change.ndjson:7	{"type":"error","selector":1,"select":{"by":"profile","profile":"50000000000099"},"profile":"50000000000099","code":"profile_not_found"}
 streams/two_series_profile_change.ndjson:8	{"type":"end","series":2,"values":4,"errors":1,"next":null}
-streams/version_as_of_mixed.ndjson:1	{"type":"series","series":1,"selector":0,"select":{"by":"profile","profile":"50000000000056"},"profile":"50000000000056","from":"2026-01-01T22:00:00Z","to":"2026-01-02T03:00:00Z","unit":"KWH","interval":"PT60M","attributes":{},"versions":[{"number":3,"from":"2026-01-01T23:00:00Z","to":null,"created_at":"2026-02-03T08:12:00Z","created_at_unknown":false,"reason":"BILL","description":"Abrechnung Januar","deleted":false},{"number":4,"from":"2026-01-02T00:00:00Z","to":null,"created_at":"2026-03-01T10:00:00Z","created_at_unknown":false,"reason":"KORR","description":"Korrektur","deleted":false}]}
-streams/version_as_of_mixed.ndjson:2	{"type":"value","series":1,"from":"2026-01-01T22:00:00Z","to":"2026-01-01T23:00:00Z","value":"20","status":["IU015"],"version":null}
-streams/version_as_of_mixed.ndjson:3	{"type":"value","series":1,"from":"2026-01-01T23:00:00Z","to":"2026-01-02T00:00:00Z","value":"22","status":["IU015"],"version":3}
-streams/version_as_of_mixed.ndjson:4	{"type":"value","series":1,"from":"2026-01-02T00:00:00Z","to":"2026-01-02T01:00:00Z","value":"24","status":["IU015"],"version":4}
-streams/version_as_of_mixed.ndjson:5	{"type":"value","series":1,"from":"2026-01-02T02:00:00Z","to":"2026-01-02T03:00:00Z","value":"23","status":["IU015"],"version":null}
-streams/version_as_of_mixed.ndjson:6	{"type":"end","series":1,"values":4,"errors":0,"next":null}
 streams/version_number.ndjson:1	{"type":"series","series":1,"selector":0,"select":{"by":"profile","profile":"50000000000056"},"profile":"50000000000056","from":"2026-01-01T22:00:00Z","to":"2026-01-02T02:00:00Z","unit":"KWH","interval":"PT60M","attributes":{},"versions":[{"number":3,"from":"2026-01-01T23:00:00Z","to":null,"created_at":"2026-02-03T08:12:00Z","created_at_unknown":false,"reason":"BILL","description":"Abrechnung Januar","deleted":false}]}
 streams/version_number.ndjson:2	{"type":"value","series":1,"from":"2026-01-01T23:00:00Z","to":"2026-01-02T00:00:00Z","value":"22","status":["IU015"],"version":3}
 streams/version_number.ndjson:3	{"type":"value","series":1,"from":"2026-01-02T00:00:00Z","to":"2026-01-02T01:00:00Z","value":"24","status":["IU015"],"version":3}

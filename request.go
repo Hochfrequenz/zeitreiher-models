@@ -10,15 +10,14 @@ import (
 
 // VersionSelector chooses which values a query returns (spec §5). Exactly one form is set:
 //
-//	{"current":{}}                          – the current values (the default when omitted)
-//	{"number":3}                            – the values of version 3, only within its covered range
-//	{"as_of":"2026-02-01T00:00:00+01:00"}   – the values as they were known at that instant
+//	{"current":{}}   – the current values (the default when omitted)
+//	{"number":3}     – the values of version 3, only within its covered range
 //
-// Build it with CurrentVersion, VersionNumber or VersionAsOf.
+// v1 has no as-of selector; {"as_of":…} is rejected as an unknown key.
+// Build it with CurrentVersion or VersionNumber.
 type VersionSelector struct {
 	Current bool
 	Number  *int
-	AsOf    *time.Time
 }
 
 // CurrentVersion selects the current values.
@@ -26,9 +25,6 @@ func CurrentVersion() VersionSelector { return VersionSelector{Current: true} }
 
 // VersionNumber selects the values of version n.
 func VersionNumber(n int) VersionSelector { return VersionSelector{Number: &n} }
-
-// VersionAsOf selects the values as they were known at t.
-func VersionAsOf(t time.Time) VersionSelector { return VersionSelector{AsOf: &t} }
 
 // Validate checks that exactly one form is set and that it is valid.
 func (v VersionSelector) Validate() error {
@@ -42,14 +38,8 @@ func (v VersionSelector) Validate() error {
 			return err
 		}
 	}
-	if v.AsOf != nil {
-		set++
-		if err := validateInstant(*v.AsOf, requestSide); err != nil {
-			return fieldError("as_of", err)
-		}
-	}
 	if set != 1 {
-		return errors.New("exactly one of current, number or as_of must be set")
+		return errors.New("exactly one of current or number must be set")
 	}
 	return nil
 }
@@ -59,23 +49,17 @@ func (v VersionSelector) MarshalJSON() ([]byte, error) {
 	if err := v.Validate(); err != nil {
 		return nil, fmt.Errorf("version: %w", err)
 	}
-	switch {
-	case v.Current:
+	if v.Current {
 		return []byte(`{"current":{}}`), nil
-	case v.Number != nil:
-		return json.Marshal(struct {
-			Number int `json:"number"`
-		}{*v.Number})
-	default:
-		return json.Marshal(struct {
-			AsOf string `json:"as_of"`
-		}{formatInstant(*v.AsOf, requestSide)})
 	}
+	return json.Marshal(struct {
+		Number int `json:"number"`
+	}{*v.Number})
 }
 
-// UnmarshalJSON accepts exactly one of the three forms.
+// UnmarshalJSON accepts exactly one of the two forms.
 func (v *VersionSelector) UnmarshalJSON(b []byte) error {
-	m, err := checkObject(b, rules{"current": optional, "number": optional, "as_of": optional}, rejectUnknown)
+	m, err := checkObject(b, rules{"current": optional, "number": optional}, rejectUnknown)
 	if err != nil {
 		return fmt.Errorf("version: %w", err)
 	}
@@ -85,13 +69,13 @@ func (v *VersionSelector) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &members); err != nil {
 		return fmt.Errorf("version: %w", err)
 	}
-	for _, key := range []string{"current", "number", "as_of"} {
+	for _, key := range []string{"current", "number"} {
 		if raw, ok := members[key]; ok && isNull(raw) {
 			return fmt.Errorf("version: %s must not be null", key)
 		}
 	}
 	if len(m) != 1 {
-		return errors.New("version: exactly one of current, number or as_of must be set")
+		return errors.New("version: exactly one of current or number must be set")
 	}
 	var out VersionSelector
 	if raw, ok := m["current"]; ok {
@@ -105,9 +89,6 @@ func (v *VersionSelector) UnmarshalJSON(b []byte) error {
 		if err := decodeField(m, "number", out.Number); err != nil {
 			return fmt.Errorf("version: %w", err)
 		}
-	}
-	if out.AsOf, err = decodeInstant(m, "as_of", requestSide); err != nil {
-		return fmt.Errorf("version: %w", err)
 	}
 	if err := out.Validate(); err != nil {
 		return fmt.Errorf("version: %w", err)

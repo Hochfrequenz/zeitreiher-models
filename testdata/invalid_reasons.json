@@ -281,14 +281,6 @@
       "type": "instant"
     }
   },
-  "query_request/naive_as_of.json": {
-    "go": "version: version: as_of: \"2026-02-03T09:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
-    "python": {
-      "loc": "version.as_of.as_of",
-      "msg": "'2026-02-03T09:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
-      "type": "instant"
-    }
-  },
   "query_request/naive_from.json": {
     "go": "from: \"2026-01-14T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
     "python": {
@@ -500,11 +492,11 @@
       "type": "missing"
     }
   },
-  "query_request/version_as_of_null_sibling.json": {
-    "go": "version: version: as_of must not be null",
+  "query_request/version_as_of_not_supported.json": {
+    "go": "version: version: unknown key(s) [\"as_of\"]",
     "python": {
       "loc": "version",
-      "msg": "exactly one of current, number or as_of must be set",
+      "msg": "exactly one of current or number must be set",
       "type": "version_selector"
     }
   },
@@ -524,10 +516,10 @@
     }
   },
   "query_request/version_empty.json": {
-    "go": "version: version: exactly one of current, number or as_of must be set",
+    "go": "version: version: exactly one of current or number must be set",
     "python": {
       "loc": "version",
-      "msg": "exactly one of current, number or as_of must be set",
+      "msg": "exactly one of current or number must be set",
       "type": "version_selector"
     }
   },
@@ -535,7 +527,7 @@
     "go": "version: version: number must not be null",
     "python": {
       "loc": "version",
-      "msg": "exactly one of current, number or as_of must be set",
+      "msg": "exactly one of current or number must be set",
       "type": "version_selector"
     }
   },
@@ -568,10 +560,10 @@
     }
   },
   "query_request/version_two_keys.json": {
-    "go": "version: version: exactly one of current, number or as_of must be set",
+    "go": "version: version: exactly one of current or number must be set",
     "python": {
       "loc": "version",
-      "msg": "exactly one of current, number or as_of must be set",
+      "msg": "exactly one of current or number must be set",
       "type": "version_selector"
     }
   },
@@ -579,7 +571,7 @@
     "go": "version: version: unknown key(s) [\"latest\"]",
     "python": {
       "loc": "version",
-      "msg": "exactly one of current, number or as_of must be set",
+      "msg": "exactly one of current or number must be set",
       "type": "version_selector"
     }
   },

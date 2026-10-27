@@ -106,7 +106,6 @@
     "to": "google.protobuf.Timestamp = 3"
   },
   "VersionSelector": {
-    "as_of": "string = 3",
     "current": "CurrentVersion = 1",
     "number": "int64 = 2"
   }

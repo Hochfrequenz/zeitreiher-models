@@ -250,16 +250,6 @@ func TestVersionStreams(t *testing.T) {
 		require.NotNil(t, v.Version)
 		assert.Equal(t, 3, *v.Version)
 	}
-	_, values = streamValues(t, "version_as_of_mixed.ndjson")
-	var got []any
-	for _, v := range values {
-		if v.Version == nil {
-			got = append(got, nil)
-		} else {
-			got = append(got, *v.Version)
-		}
-	}
-	assert.Equal(t, []any{nil, 3, 4, nil}, got)
 }
 
 func TestPagedStreamResendsSeries(t *testing.T) {

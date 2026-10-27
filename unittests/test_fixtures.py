@@ -201,8 +201,6 @@ def test_gaps_stay_gaps() -> None:
 def test_version_streams() -> None:
     _, values = _stream("version_number.ndjson")
     assert {v.version for v in values} == {3}
-    _, values = _stream("version_as_of_mixed.ndjson")
-    assert [v.version for v in values] == [None, 3, 4, None]
 
 
 def test_paged_stream_resends_series() -> None:

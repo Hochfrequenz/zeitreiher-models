@@ -30,32 +30,24 @@ class VersionNumber(RequestModel):
     number: PositiveInt
 
 
-class VersionAsOf(RequestModel):
-    """``{"as_of": "…"}`` — the values as they were known at that instant."""
-
-    as_of: RequestInstant
-
-
 def _version_tag(value: Any) -> str | None:
     if isinstance(value, dict):
         if len(value) != 1:
             return None
-        return next(iter(value)) if next(iter(value)) in ("current", "number", "as_of") else None
-    for tag, cls in (("current", CurrentVersion), ("number", VersionNumber), ("as_of", VersionAsOf)):
+        return next(iter(value)) if next(iter(value)) in ("current", "number") else None
+    for tag, cls in (("current", CurrentVersion), ("number", VersionNumber)):
         if isinstance(value, cls):
             return tag
     return None
 
 
-#: Exactly one of ``current``, ``number`` or ``as_of``.
+#: Exactly one of ``current`` or ``number``. v1 has no as-of selector; ``{"as_of": …}`` is rejected.
 VersionSelector = Annotated[
-    Annotated[CurrentVersion, Tag("current")]
-    | Annotated[VersionNumber, Tag("number")]
-    | Annotated[VersionAsOf, Tag("as_of")],
+    Annotated[CurrentVersion, Tag("current")] | Annotated[VersionNumber, Tag("number")],
     Discriminator(
         _version_tag,
         custom_error_type="version_selector",
-        custom_error_message="exactly one of current, number or as_of must be set",
+        custom_error_message="exactly one of current or number must be set",
     ),
 ]
 

@@ -35,7 +35,7 @@ func TestQueryRequestFromGoValuesKeepsOffsetsAndOmitsUnsetFields(t *testing.T) {
 
 func TestVersionSelectorForms(t *testing.T) {
 	for _, v := range []zrm.VersionSelector{
-		zrm.CurrentVersion(), zrm.VersionNumber(1), zrm.VersionAsOf(time.Date(2026, 2, 1, 0, 0, 0, 0, cet)),
+		zrm.CurrentVersion(), zrm.VersionNumber(1),
 	} {
 		b, err := json.Marshal(v)
 		require.NoError(t, err)
@@ -47,6 +47,10 @@ func TestVersionSelectorForms(t *testing.T) {
 	}
 	_, err := json.Marshal(zrm.VersionSelector{})
 	assert.Error(t, err, "the zero VersionSelector is invalid")
+
+	var v zrm.VersionSelector
+	assert.ErrorContains(t, json.Unmarshal([]byte(`{"as_of":"2026-02-03T08:00:00Z"}`), &v), `unknown key(s) ["as_of"]`,
+		"as-of is not part of v1")
 }
 
 func TestInvalidValuesRefuseToMarshal(t *testing.T) {
