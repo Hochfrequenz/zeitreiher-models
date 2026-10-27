@@ -1,6 +1,8 @@
 """Unit tests of the Python models beyond the shared fixtures — mirrors models_test.go."""
 
+import copy
 import json
+import pickle
 from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
 
@@ -217,3 +219,23 @@ def test_models_are_frozen() -> None:
     selector = ProfileSelector(profile="56")
     with pytest.raises(ValidationError):
         selector.profile = "57"  # type: ignore[misc]
+
+
+def test_mappings_are_read_only_sorted_hashable_and_picklable() -> None:
+    selector = CustomSelector(by="contract_account", params={"role": "supplier", "account": "1"})
+    assert list(selector.params) == ["account", "role"], "keys are sorted, as Go writes map keys"
+    with pytest.raises(TypeError):
+        selector.params["role"] = "x"  # type: ignore[index]
+    with pytest.raises(TypeError):
+        selector.params.clear()  # type: ignore[attr-defined]
+    assert selector.params == {"account": "1", "role": "supplier"}
+    assert hash(selector) == hash(CustomSelector(by="contract_account", params={"account": "1", "role": "supplier"}))
+    assert pickle.loads(pickle.dumps(selector)) == selector
+    assert copy.deepcopy(selector) == selector
+    with pytest.raises(TypeError):
+        CurrentVersion().current["x"] = 1  # type: ignore[index]
+
+
+def test_json_output_escapes_like_go() -> None:
+    selector = CustomSelector(by="x", params={"k": "<&>\u2028\u2029"})
+    assert selector.model_dump_json() == '{"by":"x","params":{"k":"\\u003c\\u0026\\u003e\\u2028\\u2029"}}'

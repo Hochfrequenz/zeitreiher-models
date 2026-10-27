@@ -1,10 +1,11 @@
 """Request bodies."""
 
+from collections.abc import Mapping
 from typing import Annotated, Any, ClassVar, Self
 
-from pydantic import Discriminator, Field, Tag, field_validator, model_validator
+from pydantic import AfterValidator, Discriminator, Field, Tag, field_validator, model_validator
 
-from zeitreiher_models._base import RequestModel
+from zeitreiher_models._base import FrozenDict, RequestModel, freeze_sorted
 from zeitreiher_models.scalars import Interval, PositiveInt, Token, Unit
 from zeitreiher_models.selectors import Selector
 from zeitreiher_models.timestamps import RequestInstant, check_window
@@ -13,11 +14,11 @@ from zeitreiher_models.timestamps import RequestInstant, check_window
 class CurrentVersion(RequestModel):
     """``{"current": {}}`` — the current values (the default)."""
 
-    current: dict[str, Any] = Field(default_factory=dict)
+    current: Annotated[Mapping[str, Any], AfterValidator(freeze_sorted)] = Field(default_factory=FrozenDict)
 
     @field_validator("current")
     @classmethod
-    def _empty(cls, value: dict[str, Any]) -> dict[str, Any]:
+    def _empty(cls, value: Mapping[str, Any]) -> Mapping[str, Any]:
         if value:
             raise ValueError("current must be an empty object {}")
         return value

@@ -81,6 +81,19 @@ def test_valid_fixture_round_trips(kind: str, path: Path) -> None:
     assert dump(parse(out.encode())) == out, "serialization must be idempotent"
 
 
+def test_serialized_bytes_match_golden() -> None:
+    """Python writes exactly the bytes pinned by Go in testdata/serialized.golden (see golden_test.go)."""
+    lines = []
+    for kind, (parse, dump) in KINDS.items():
+        for path in _files(kind, "valid", ".json"):
+            lines.append(f"{kind}/{path.name}\t{dump(parse(path.read_bytes()))}")
+    for path in _files("streams", "valid", ".ndjson"):
+        for number, record in enumerate(read_stream(path.read_bytes()), start=1):
+            lines.append(f"streams/{path.name}:{number}\t{dump_record(record)}")
+    golden = (TESTDATA / "serialized.golden").read_text(encoding="utf-8").removesuffix("\n").split("\n")
+    assert sorted(lines) == golden
+
+
 @pytest.mark.parametrize(("kind", "path"), _cases("invalid"))
 def test_invalid_fixture_is_rejected(kind: str, path: Path) -> None:
     parse, _ = KINDS[kind]

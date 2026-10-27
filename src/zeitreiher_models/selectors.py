@@ -1,10 +1,11 @@
 """Selectors: which business object's profile assignments a request is about."""
 
+from collections.abc import Mapping
 from typing import Annotated, Any, Literal
 
-from pydantic import Discriminator, StrictStr, StringConstraints, Tag, field_validator
+from pydantic import AfterValidator, Discriminator, StrictStr, StringConstraints, Tag, field_validator
 
-from zeitreiher_models._base import RequestModel, ResponseModel
+from zeitreiher_models._base import RequestModel, ResponseModel, freeze_sorted
 from zeitreiher_models.scalars import MaLo, RequestProfile, ResponseProfile
 
 #: Selector kinds every installation knows; any other ``by`` is a custom (customer) resolver.
@@ -32,7 +33,7 @@ class CustomSelector(RequestModel):
     """``{"by":"<name>","params":{"<key>":"<string>"}}`` — a customer resolver."""
 
     by: CustomKind
-    params: dict[ParamKey, StrictStr]
+    params: Annotated[Mapping[ParamKey, StrictStr], AfterValidator(freeze_sorted)]
 
     @field_validator("by")
     @classmethod
@@ -75,7 +76,7 @@ class EchoedCustomSelector(ResponseModel):
     """A custom selector as echoed in a response."""
 
     by: CustomKind
-    params: dict[ParamKey, StrictStr]
+    params: Annotated[Mapping[ParamKey, StrictStr], AfterValidator(freeze_sorted)]
 
     @field_validator("by")
     @classmethod

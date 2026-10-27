@@ -4,6 +4,7 @@ from collections.abc import Iterable, Iterator
 
 from pydantic import TypeAdapter
 
+from zeitreiher_models._base import go_compatible_json
 from zeitreiher_models.records import EndRecord, Record
 
 RECORD_ADAPTER: TypeAdapter[Record] = TypeAdapter(Record)
@@ -20,7 +21,7 @@ def parse_record(line: str | bytes) -> Record:
 
 def dump_record(record: Record) -> str:
     """Serialize a record to one JSON line without the trailing newline."""
-    return RECORD_ADAPTER.dump_json(record).decode("utf-8")
+    return go_compatible_json(RECORD_ADAPTER.dump_json(record).decode("utf-8"))
 
 
 def iter_records(lines: Iterable[str | bytes]) -> Iterator[Record]:

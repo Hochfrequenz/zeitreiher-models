@@ -1,11 +1,12 @@
 """NDJSON records of a query response (spec §4.2)."""
 
+from collections.abc import Mapping
 from decimal import Decimal
 from typing import Annotated, ClassVar, Literal, Self
 
-from pydantic import Field, StrictBool, StrictStr, model_validator
+from pydantic import AfterValidator, Field, StrictBool, StrictStr, model_validator
 
-from zeitreiher_models._base import ResponseModel
+from zeitreiher_models._base import ResponseModel, freeze_sorted
 from zeitreiher_models.errors import RecordCode
 from zeitreiher_models.scalars import (
     DecimalString,
@@ -57,7 +58,7 @@ class SeriesRecord(ResponseModel):
     to: ResponseInstant
     unit: Unit
     interval: Interval
-    attributes: dict[StrictStr, StrictStr]
+    attributes: Annotated[Mapping[StrictStr, StrictStr], AfterValidator(freeze_sorted)]
     versions: tuple[Version, ...]
 
     @model_validator(mode="after")

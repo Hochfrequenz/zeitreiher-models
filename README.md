@@ -29,12 +29,13 @@ so Go and Python agree on the contract by construction.
 | Topic | Rule |
 |---|---|
 | Intervals | Half-open everywhere: `[from, to)`; `from` must be before `to`. |
-| Request timestamps | RFC 3339, whole seconds, **explicit offset** (`Z` or `±hh:mm`). Kept as sent (`+02:00` stays `+02:00`). A missing offset (`2026-01-01T00:00:00`) and the "unknown offset" `-00:00` are rejected. |
-| Response timestamps | RFC 3339, whole seconds, always UTC (`Z`). |
+| Request timestamps | RFC 3339, whole seconds, **explicit offset** (`Z` or `±hh:mm`), ASCII digits only, hours 00–23, years from 1900. Kept as sent (`+02:00` stays `+02:00`). A missing offset (`2026-01-01T00:00:00`) and the "unknown offset" `-00:00` are rejected. |
+| Response timestamps | RFC 3339, whole seconds, always UTC (`Z`). Instants built in code must survive the round trip (no offsets with seconds, years 1900–9999). |
 | Values | Already-scaled decimal **strings** (`"160"`, `"0.022"`, `"-12.5"`), never JSON numbers. No exponent, no plus sign, no leading zeros, no negative zero. |
-| Profile numbers | In requests 1–18 digits, leading zeros allowed; in responses without leading zeros. |
+| Profile numbers | In requests 1–18 digits, leading zeros allowed, not all zeros; in responses without leading zeros. |
+| Units | SAP internal units (T006-MSEHI): 1–3 characters out of `A–Z a–z 0–9 % ° / . _ -`, e.g. `KWH`. |
 | Selectors | `{"by":"profile","profile":"…"}`, `{"by":"malo","malo":"<11 digits>"}`, or a customer resolver `{"by":"<snake_case name>","params":{"<key>":"<string>"}}`. |
-| Version selector | Exactly one of `{"current":{}}` (default), `{"number":N}`, `{"as_of":"<timestamp>"}`. |
+| Version selector | Exactly one of `{"current":{}}` (default), `{"number":N}`, `{"as_of":"<timestamp>"}`; no `null` members. |
 | Intervals (`interval`) | Sub-daily ISO 8601 durations in minutes: `PT15M`, `PT60M`, … |
 | Unknown keys | Requests **reject** them (a typo fails loudly). Responses **ignore** them (additive server changes do not break older clients). |
 | `null` | Request fields that are optional may be omitted or `null`. In responses, `value.version`, `end.next`, `version.to` and `version.created_at` are always present and may be `null`; other optional response fields are omitted when unset. |
@@ -120,6 +121,18 @@ testdata/
 `X.canonical.json` next to `X.json` is the expected re-serialization when it differs from the input
 (e.g. `+00:00` becomes `Z`, `"cursor": null` is omitted, unknown response keys are dropped).
 Consumers in other languages (the Go service, future Rust/C#/TS models) should run the same fixtures.
+
+`testdata/serialized.golden` pins the exact bytes both languages write for every valid fixture
+(`<fixture>\t<JSON>` per line), so Go and Python output is byte-for-byte identical: compact JSON,
+keys in model order, map keys (`params`, `attributes`) sorted, and Go's string escaping — `<`, `>`,
+`&`, U+2028 and U+2029 are written as `<`, `>`, `&`, ` `, ` `; all other
+non-ASCII characters are written as UTF-8. Python's `model_dump_json()` and `dump_record()` apply
+that escaping; in Go, `json.Marshal`, `MarshalRecord` and a default `json.Encoder` produce it (an
+encoder with `SetEscapeHTML(false)` would not). After an intended change, regenerate the file with
+`go test -run Golden -update .` and check the diff.
+
+Every invalid fixture has an entry in `testdata/invalid_reasons.json`: a substring that both
+languages' error messages must contain, so a fixture cannot pass by being rejected for the wrong reason.
 
 ## gRPC
 
