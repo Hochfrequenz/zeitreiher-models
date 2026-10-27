@@ -8,6 +8,30 @@ import "zeitreiher/v1/system.proto";
 
 // SeriesService is the gRPC face of the Zeitreiher API (served via connect-go: gRPC, gRPC-Web and
 // Connect). Authentication: bearer token in the `authorization` metadata.
+//
+// Errors. A call that fails as a whole (the JSON API's error envelope), and a Query stream that is
+// cut off mid-way (no EndRecord), ends with a gRPC status whose details carry exactly one
+// google.rpc.ErrorInfo:
+//
+//   reason = <public request-level code>, the `code` of the JSON error envelope
+//   domain = "zeitreiher.hochfrequenz.de"
+//
+// Clients switch on ErrorInfo.reason, never on the status code or the message. The status code is
+// the matching gRPC code (spec §4.3):
+//
+//   invalid_request, cursor_invalid, cursor_mismatch, cursor_expired   INVALID_ARGUMENT
+//   unauthorized                                                       UNAUTHENTICATED
+//   forbidden                                                          PERMISSION_DENIED
+//   not_found                                                          NOT_FOUND
+//   method_not_allowed                                                 UNIMPLEMENTED
+//   request_too_large                                                  RESOURCE_EXHAUSTED
+//   cursor_stale                                                       ABORTED
+//   upstream_unreachable                                               UNAVAILABLE
+//   upstream_timeout                                                   DEADLINE_EXCEEDED
+//   internal                                                           INTERNAL
+//
+// Per-selector and per-assignment problems are not gRPC errors: they are ErrorRecord messages in the
+// Query stream and ResultError objects in Resolve/ListVersions results, and the call continues.
 service SeriesService {
   // Query streams the records of one page; each Record equals one NDJSON line of the HTTP API.
   rpc Query(QueryRequest) returns (stream Record);

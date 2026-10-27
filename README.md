@@ -171,6 +171,11 @@ timestamps are `google.protobuf.Timestamp`. Conformance with the JSON contract i
 the hand-written models (fixture → model → proto → model → JSON), not through protojson. Generate
 code in the consuming project, e.g. with buf managed mode.
 
+A failed call (and a `Query` stream cut off before its `EndRecord`) ends with a gRPC status that
+carries a `google.rpc.ErrorInfo` detail with `reason` = the public request-level code and
+`domain` = `"zeitreiher.hochfrequenz.de"`; `series_service.proto` lists the status code for each
+code. Clients switch on `reason`.
+
 ## Versioning
 
 `v1` is in the URL path (`/api/v1/…`), the proto package (`zeitreiher.v1`) and the models' major

@@ -20,6 +20,8 @@ from zeitreiher_models import (
     MaLoSelector,
     ProfileSelector,
     QueryRequest,
+    RecordErrorCode,
+    RequestErrorCode,
     ResolveRequest,
     ResolveResponse,
     ResolveResult,
@@ -129,3 +131,23 @@ def test_record_oneof_matches_record_types() -> None:
 
 def test_every_proto_message_is_checked() -> None:
     assert set(_proto_messages()) == {*TABLE, "Record", "CurrentVersion", "SystemRequest"}
+
+
+def _proto_text(name: str) -> str:
+    return (PROTO_DIR / name).read_text(encoding="utf-8")
+
+
+def test_proto_documents_grpc_error_details() -> None:
+    """Request-level failures are a gRPC status with a google.rpc.ErrorInfo detail (decision 10)."""
+    service = _proto_text("series_service.proto")
+    assert "google.rpc.ErrorInfo" in service
+    assert 'domain = "zeitreiher.hochfrequenz.de"' in service
+    assert "reason = <public request-level code>" in service
+    for code in RequestErrorCode:
+        assert re.search(rf"\b{code.value}\b", service), f"series_service.proto does not mention {code.value}"
+
+
+def test_proto_lists_every_record_level_code() -> None:
+    query = _proto_text("query.proto")
+    for code in RecordErrorCode:
+        assert re.search(rf"\b{code.value}\b", query), f"query.proto (ErrorRecord.code) does not list {code.value}"
