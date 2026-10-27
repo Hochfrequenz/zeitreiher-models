@@ -79,6 +79,17 @@ func (v *VersionSelector) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return fmt.Errorf("version: %w", err)
 	}
+	// checkObject drops null optional keys; here a null member is an error, as in Python, so
+	// {"current":{},"number":null} is not read as {"current":{}}.
+	var members map[string]json.RawMessage
+	if err := json.Unmarshal(b, &members); err != nil {
+		return fmt.Errorf("version: %w", err)
+	}
+	for _, key := range []string{"current", "number", "as_of"} {
+		if raw, ok := members[key]; ok && isNull(raw) {
+			return fmt.Errorf("version: %s must not be null", key)
+		}
+	}
 	if len(m) != 1 {
 		return errors.New("version: exactly one of current, number or as_of must be set")
 	}
