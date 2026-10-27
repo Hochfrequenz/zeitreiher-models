@@ -10,7 +10,9 @@ from pydantic_core import PydanticCustomError
 #: The only accepted spelling of an instant: upper-case ``T``, whole seconds, explicit offset.
 #: The Go models use the same expression.
 INSTANT_PATTERN = re.compile(
-    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
+    r"^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])"
+    r"T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
+    r"(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
 )
 
 
