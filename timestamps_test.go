@@ -75,3 +75,19 @@ func TestValidateWindowComparesInstantsAcrossOffsets(t *testing.T) {
 	assert.NoError(t, validateWindow(from, to.Add(time.Hour), requestSide))
 	assert.Error(t, validateWindow(to.Add(time.Hour), from, requestSide))
 }
+
+func TestValidateInstantRequiresARoundTrippableWireForm(t *testing.T) {
+	subMinute := time.FixedZone("", 30)
+	// RFC 3339 drops offset seconds, so the written instant would move by 30 s.
+	assert.Error(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, subMinute), requestSide))
+	// In UTC the same instant is representable.
+	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, subMinute), responseSide))
+	// A five-digit year does not match the wire grammar.
+	for _, kind := range []side{requestSide, responseSide} {
+		assert.Error(t, validateInstant(time.Date(10000, 1, 1, 0, 0, 0, 0, time.UTC), kind))
+		assert.NoError(t, validateInstant(time.Date(9999, 12, 31, 23, 59, 59, 0, time.UTC), kind))
+	}
+	// A request window built from such values refuses to marshal instead of writing a different instant.
+	from := time.Date(2026, 1, 1, 0, 0, 0, 0, subMinute)
+	assert.Error(t, validateWindow(from, from.Add(time.Hour), requestSide))
+}

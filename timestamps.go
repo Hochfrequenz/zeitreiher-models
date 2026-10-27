@@ -74,6 +74,16 @@ func validateInstant(t time.Time, kind side) error {
 	if t.Year() < 1 {
 		return fmt.Errorf("%s: year must be at least 1", t.Format(time.RFC3339))
 	}
+	// The wire form must parse back to the same instant: RFC 3339 drops offset seconds (an LMT-style
+	// zone would move the instant) and a five-digit year does not match the grammar.
+	wire := formatInstant(t, kind)
+	back, err := parseInstantString(wire, kind)
+	if err != nil {
+		return err
+	}
+	if !back.Equal(t) {
+		return fmt.Errorf("%s: the offset cannot be written without changing the instant", wire)
+	}
 	return nil
 }
 
