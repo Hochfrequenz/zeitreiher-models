@@ -137,7 +137,8 @@ type SeriesRecord struct {
 	Profile string
 	// From and To bound the assignment, cut to the request window.
 	From, To time.Time
-	// Unit and Interval are those of the delivered values (after any conversion).
+	// Unit and Interval are those of the delivered values (after any conversion). Unit is passed
+	// through as SAP delivers it: any non-empty text of at most 30 characters without control characters.
 	Unit     string
 	Interval string
 	// Attributes come from the customer's Metadata BAdI; never nil after unmarshalling.
@@ -167,7 +168,7 @@ func (r *SeriesRecord) Validate() error {
 	if err := validateWindow(r.From, r.To, responseSide); err != nil {
 		return err
 	}
-	if err := validateUnit(r.Unit); err != nil {
+	if err := validateResponseUnit(r.Unit); err != nil {
 		return fieldError("unit", err)
 	}
 	if err := validateInterval(r.Interval); err != nil {

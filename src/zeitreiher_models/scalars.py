@@ -2,6 +2,7 @@
 
 import itertools
 import re
+import unicodedata
 from decimal import Decimal
 from typing import Annotated, Any
 
@@ -72,8 +73,39 @@ MaLo = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{11}$")]
 #: A sub-daily interval as an ISO 8601 duration in minutes, e.g. ``"PT15M"``.
 Interval = Annotated[StrictStr, StringConstraints(pattern=r"^PT[1-9][0-9]*M$")]
 
-#: An SAP internal unit (T006-MSEHI, CHAR 3) such as ``"KWH"``, ``"%"`` or ``"°C"``.
-Unit = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9A-Za-z%°/._-]{1,3}$"), CHECK_TEXT]
+# Units are passed through as SAP delivers them; which T006 column (internal MSEHI such as "KWH" or an
+# external form such as "kWh") the API carries is still open, so the rules are deliberately lenient.
+#: The longest requested unit, in characters (code points).
+MAX_REQUEST_UNIT_LENGTH = 6
+#: The longest unit of a series record, in characters (code points).
+MAX_RESPONSE_UNIT_LENGTH = 30
+#: The non-alphanumeric characters a requested unit may contain.
+UNIT_SYMBOLS = "%°/._-"
+
+
+def _check_request_unit(value: str) -> str:
+    """1 to 6 characters, each a Unicode letter (L*), number (N*) or one of ``%°/._-`` (as in Go)."""
+    if not 1 <= len(value) <= MAX_REQUEST_UNIT_LENGTH or not all(
+        unicodedata.category(c)[0] in "LN" or c in UNIT_SYMBOLS for c in value
+    ):
+        raise ValueError(f"{value!r} is not a unit (1 to {MAX_REQUEST_UNIT_LENGTH} letters, digits or {UNIT_SYMBOLS})")
+    return value
+
+
+def _check_response_unit(value: str) -> str:
+    """Any non-empty unit of at most 30 characters without control characters (Unicode Cc), as in Go."""
+    if not 1 <= len(value) <= MAX_RESPONSE_UNIT_LENGTH or any(unicodedata.category(c) == "Cc" for c in value):
+        raise ValueError(f"{value!r} is not a unit (1 to {MAX_RESPONSE_UNIT_LENGTH} characters, no control characters)")
+    return value
+
+
+#: A requested unit such as ``"KWH"``, ``"kvarh"``, ``"µM"`` or ``"°C"``: 1 to 6 Unicode letters, digits or
+#: ``%°/._-``; no whitespace, no control characters.
+RequestUnit = Annotated[StrictStr, AfterValidator(_check_request_unit), CHECK_TEXT]
+
+#: The unit of a series record, as SAP delivers it: any non-empty text of at most 30 characters without
+#: control characters (read leniently, like unknown keys and error codes).
+ResponseUnit = Annotated[StrictStr, AfterValidator(_check_response_unit), CHECK_TEXT]
 
 #: A non-empty opaque token (cursor).
 Token = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]

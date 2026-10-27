@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -18,8 +19,6 @@ var (
 	maloPattern            = regexp.MustCompile(`^[0-9]{11}$`)
 	customByPattern        = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
 	intervalPattern        = regexp.MustCompile(`^PT[1-9][0-9]*M$`)
-	// unitPattern: an SAP internal unit (T006-MSEHI, CHAR 3), e.g. "KWH", "%" or "°C".
-	unitPattern = regexp.MustCompile(`^[0-9A-Za-z%°/._-]{1,3}$`)
 )
 
 // Decimal is an already-scaled decimal number in its string form, e.g. "160" or "0.022".
@@ -98,13 +97,44 @@ func validateInterval(i string) error {
 	return nil
 }
 
-// validateUnit accepts an SAP unit: 1 to 3 characters out of A-Z, a-z, 0-9 and % ° / . _ -.
-func validateUnit(u string) error {
+// Units are passed through as SAP delivers them; which T006 column (internal MSEHI such as "KWH" or an
+// external form such as "kWh") the API carries is still open, so the rules are deliberately lenient.
+const (
+	// maxRequestUnitLength bounds a requested unit, in characters (code points).
+	maxRequestUnitLength = 6
+	// maxResponseUnitLength bounds the unit of a series record, in characters (code points).
+	maxResponseUnitLength = 30
+	// unitSymbols are the non-alphanumeric characters a requested unit may contain.
+	unitSymbols = "%°/._-"
+)
+
+// validateRequestUnit accepts 1 to 6 characters, each a Unicode letter (L*), a Unicode number (N*)
+// or one of % ° / . _ - — so no whitespace and no control characters. The Python models use the same
+// Unicode categories.
+func validateRequestUnit(u string) error {
 	if err := validateText(u); err != nil {
 		return err
 	}
-	if !unitPattern.MatchString(u) {
-		return fmt.Errorf("%q is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %%°/._-)", u)
+	n := utf8.RuneCountInString(u)
+	ok := n >= 1 && n <= maxRequestUnitLength
+	for _, r := range u {
+		ok = ok && (unicode.IsLetter(r) || unicode.IsNumber(r) || strings.ContainsRune(unitSymbols, r))
+	}
+	if !ok {
+		return fmt.Errorf("%q is not a unit (1 to %d letters, digits or %s)", u, maxRequestUnitLength, unitSymbols)
+	}
+	return nil
+}
+
+// validateResponseUnit accepts any non-empty unit of at most 30 characters without control characters
+// (Unicode Cc); responses are read leniently so that a unit SAP delivers does not break clients.
+func validateResponseUnit(u string) error {
+	if err := validateText(u); err != nil {
+		return err
+	}
+	n := utf8.RuneCountInString(u)
+	if n < 1 || n > maxResponseUnitLength || strings.ContainsFunc(u, unicode.IsControl) {
+		return fmt.Errorf("%q is not a unit (1 to %d characters, no control characters)", u, maxResponseUnitLength)
 	}
 	return nil
 }

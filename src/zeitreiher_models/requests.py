@@ -6,7 +6,7 @@ from typing import Annotated, Any, ClassVar, Self
 from pydantic import AfterValidator, Discriminator, Field, Tag, field_validator, model_validator
 
 from zeitreiher_models._base import FrozenDict, RequestModel, freeze_sorted
-from zeitreiher_models.scalars import Interval, PositiveInt, Token, Unit
+from zeitreiher_models.scalars import Interval, PositiveInt, RequestUnit, Token
 from zeitreiher_models.selectors import Selector
 from zeitreiher_models.timestamps import RequestInstant, check_window
 
@@ -80,7 +80,7 @@ class QueryRequest(_WindowRequest):
 
     version: VersionSelector | None = None
     interval: Interval | None = None
-    unit: Unit | None = None
+    unit: RequestUnit | None = None
     cursor: Token | None = None
 
 

@@ -33,7 +33,7 @@ so Go and Python agree on the contract by construction.
 | Response timestamps | RFC 3339, whole seconds, always UTC (`Z`). Instants built in code must survive the round trip (no offsets with seconds, years 1900–9999). |
 | Values | Already-scaled decimal **strings** (`"160"`, `"0.022"`, `"-12.5"`), never JSON numbers. No exponent, no plus sign, no leading zeros, no negative zero. |
 | Profile numbers | In requests 1–18 digits, leading zeros allowed, not all zeros; in responses without leading zeros. |
-| Units | SAP internal units (T006-MSEHI): 1–3 characters out of `A–Z a–z 0–9 % ° / . _ -`, e.g. `KWH`. |
+| Units | The unit as delivered by SAP (which T006 column — internal `MSEHI` such as `KWH` or an external form such as `kWh` — the API carries is an **open decision**, so the rules are lenient for now). Request `unit`: 1–6 characters, each a Unicode letter, a Unicode number or one of `% ° / . _ -` — no whitespace, no control characters (`KWH`, `kWh`, `kvarh`, `µM`, `°C`, `m³`). Response `unit` (series records): any non-empty text of at most 30 characters without control characters (Unicode `Cc`). Lengths count characters (code points); letters and numbers are the Unicode categories `L*` and `N*`. |
 | Selectors | `{"by":"profile","profile":"…"}`, `{"by":"malo","malo":"<11 digits>"}`, or a customer resolver `{"by":"<snake_case name>","params":{"<key>":"<string>"}}`. |
 | Version selector | Exactly one of `{"current":{}}` (default), `{"number":N}`, `{"as_of":"<timestamp>"}`; no `null` members. |
 | Intervals (`interval`) | Sub-daily ISO 8601 durations in minutes: `PT15M`, `PT60M`, … |

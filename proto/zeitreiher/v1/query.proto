@@ -27,7 +27,7 @@ message QueryRequest {
   VersionSelector version = 4;
   // Optional sub-daily ISO 8601 duration in minutes, e.g. "PT15M".
   optional string interval = 5;
-  // Optional SAP unit, e.g. "KWH".
+  // Optional SAP unit, e.g. "KWH" or "kvarh": 1 to 6 letters, digits or %°/._- (see README).
   optional string unit = 6;
   // Optional cursor from the previous response's end record.
   optional string cursor = 7;
@@ -71,7 +71,8 @@ message SeriesRecord {
   string profile = 4;
   google.protobuf.Timestamp from = 5;
   google.protobuf.Timestamp to = 6;
-  // Unit and interval of the delivered values (after any conversion).
+  // Unit and interval of the delivered values (after any conversion). The unit is passed through as
+  // SAP delivers it: non-empty, at most 30 characters, no control characters.
   string unit = 7;
   string interval = 8;
   // Metadata BAdI attributes; JSON always writes the object, possibly {}.

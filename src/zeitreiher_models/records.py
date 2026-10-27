@@ -14,10 +14,10 @@ from zeitreiher_models.scalars import (
     NonNegativeInt,
     PositiveInt,
     ResponseProfile,
+    ResponseUnit,
     Status,
     Text,
     Token,
-    Unit,
     to_decimal,
 )
 from zeitreiher_models.selectors import EchoedSelector
@@ -57,7 +57,7 @@ class SeriesRecord(ResponseModel):
     profile: ResponseProfile
     from_: ResponseInstant = Field(alias="from")
     to: ResponseInstant
-    unit: Unit
+    unit: ResponseUnit
     interval: Interval
     attributes: Annotated[Mapping[Text, Text], AfterValidator(freeze_sorted)]
     versions: tuple[Version, ...]

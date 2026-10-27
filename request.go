@@ -126,7 +126,8 @@ type QueryRequest struct {
 	Version *VersionSelector
 	// Interval is optional, e.g. "PT15M"; empty means the profile's own interval.
 	Interval string
-	// Unit is optional, an SAP unit such as "KWH"; empty means the profile's own unit.
+	// Unit is optional, an SAP unit such as "KWH" or "kvarh" (1 to 6 letters, digits or %°/._-); empty
+	// means the profile's own unit.
 	Unit string
 	// Cursor continues a previous response (its end record's next); empty starts at the beginning.
 	Cursor string
@@ -151,7 +152,7 @@ func (q QueryRequest) Validate() error {
 		}
 	}
 	if q.Unit != "" {
-		if err := validateUnit(q.Unit); err != nil {
+		if err := validateRequestUnit(q.Unit); err != nil {
 			return fieldError("unit", err)
 		}
 	}
