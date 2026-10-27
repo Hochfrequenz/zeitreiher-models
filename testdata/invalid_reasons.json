@@ -1307,6 +1307,14 @@
       "type": "extra_forbidden"
     }
   },
+  "resolve_response/assignment_error_unit_raw_empty.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "results.0.assignments.0.unit_raw",
+      "type": "value_error",
+      "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)"
+    }
+  },
   "resolve_response/assignment_from_without_to_with_error.json": {
     "go": "results: result: assignments: assignment: from and to must be set together",
     "python": {
@@ -1581,6 +1589,14 @@
     "python": {
       "loc": "version",
       "type": "extra_forbidden"
+    }
+  },
+  "versions_response/assignment_error_unit_raw_empty.json": {
+    "go": "versions response: results: result: assignments: assignment: unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "results.0.assignments.0.unit_raw",
+      "type": "value_error",
+      "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)"
     }
   },
   "versions_response/assignment_unit_missing.json": {

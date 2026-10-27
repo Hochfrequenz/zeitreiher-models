@@ -179,6 +179,12 @@ func decodeAssignment(m map[string]json.RawMessage) (Assignment, error) {
 			return a, err
 		}
 	}
+	if _, ok := m["unit_raw"]; ok {
+		// an explicit empty unit_raw is invalid even next to an error (validate only sees the Go zero value)
+		if err = validateRawUnit(a.UnitRaw); err != nil {
+			return a, fieldError("unit_raw", err)
+		}
+	}
 	if a.From, err = decodeInstant(m, "from", responseSide); err != nil {
 		return a, err
 	}
