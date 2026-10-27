@@ -75,7 +75,7 @@ func (s Selector) validate(sd side) error {
 				return wrapField("params", errors.New("keys must not be empty"))
 			}
 		}
-		return nil
+		return wrapField("params", validateTextMap(s.Params))
 	}
 }
 

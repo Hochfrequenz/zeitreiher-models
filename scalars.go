@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"regexp"
+	"slices"
 	"strings"
+	"unicode/utf8"
 )
 
 var (
@@ -97,18 +100,44 @@ func validateInterval(i string) error {
 
 // validateUnit accepts an SAP unit: 1 to 3 characters out of A-Z, a-z, 0-9 and % ° / . _ -.
 func validateUnit(u string) error {
+	if err := validateText(u); err != nil {
+		return err
+	}
 	if !unitPattern.MatchString(u) {
 		return fmt.Errorf("%q is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %%°/._-)", u)
 	}
 	return nil
 }
 
-// validateToken accepts a non-empty string (cursors).
+// validateText rejects strings that are not valid UTF-8. encoding/json would write them with U+FFFD
+// replacement characters, silently changing the text; the Python models reject lone surrogates.
+func validateText(s string) error {
+	if !utf8.ValidString(s) {
+		return fmt.Errorf("%q is not valid UTF-8", s)
+	}
+	return nil
+}
+
+// validateTextMap checks the keys and values of a string map (selector params, series attributes)
+// with validateText, in key order so that the reported error does not depend on map iteration.
+func validateTextMap(m map[string]string) error {
+	for _, k := range slices.Sorted(maps.Keys(m)) {
+		if err := validateText(k); err != nil {
+			return fmt.Errorf("key: %w", err)
+		}
+		if err := validateText(m[k]); err != nil {
+			return fieldError(k, err)
+		}
+	}
+	return nil
+}
+
+// validateToken accepts a non-empty string of valid UTF-8 (cursors).
 func validateToken(s string) error {
 	if s == "" {
 		return errors.New("must not be empty")
 	}
-	return nil
+	return validateText(s)
 }
 
 // validateStatus accepts non-empty status codes in strictly ascending order (sorted, no duplicates).
@@ -116,6 +145,9 @@ func validateStatus(status []string) error {
 	for i, s := range status {
 		if s == "" {
 			return errors.New("status codes must not be empty")
+		}
+		if err := validateText(s); err != nil {
+			return err
 		}
 		if i > 0 && status[i-1] >= s {
 			return fmt.Errorf("status codes must be sorted and unique, got %q before %q", status[i-1], s)

@@ -155,6 +155,9 @@ func (q QueryRequest) Validate() error {
 			return fieldError("unit", err)
 		}
 	}
+	if q.Cursor != "" {
+		return wrapField("cursor", validateToken(q.Cursor))
+	}
 	return nil
 }
 

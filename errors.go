@@ -144,7 +144,10 @@ func (e ErrorEnvelope) Validate() error {
 	if err := e.Error.Code.Validate(); err != nil {
 		return fieldError("error.code", err)
 	}
-	return nil
+	if err := validateText(e.Error.Message); err != nil {
+		return fieldError("error.message", err)
+	}
+	return wrapField("error.request_id", validateText(e.Error.RequestID))
 }
 
 // MarshalJSON validates before writing.

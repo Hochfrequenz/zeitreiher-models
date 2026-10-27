@@ -181,3 +181,75 @@ func TestNilRecordsRefuseToMarshal(t *testing.T) {
 		assert.Empty(t, buf.String(), "nothing may be written for %T", rec)
 	}
 }
+
+// TestInvalidUTF8RefusesToMarshal: encoding/json would replace invalid UTF-8 with U+FFFD, so writers
+// must refuse such text instead of silently changing it. Python refuses lone surrogates likewise.
+func TestInvalidUTF8RefusesToMarshal(t *testing.T) {
+	const bad = "a\xffb"
+	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	to := from.Add(time.Hour)
+	window := func(sel zrm.Selector) zrm.QueryRequest {
+		return zrm.QueryRequest{Select: []zrm.Selector{sel}, From: from, To: to}
+	}
+	series := func(edit func(*zrm.SeriesRecord)) *zrm.SeriesRecord {
+		r := &zrm.SeriesRecord{
+			Series: 1, Select: zrm.ProfileSelector("56"), Profile: "56", From: from, To: to,
+			Unit: "KWH", Interval: "PT15M",
+		}
+		edit(r)
+		return r
+	}
+	version := func(edit func(*zrm.Version)) *zrm.SeriesRecord {
+		v := zrm.Version{Number: 1, From: from, CreatedAtUnknown: true}
+		edit(&v)
+		return series(func(r *zrm.SeriesRecord) { r.Versions = []zrm.Version{v} })
+	}
+	system := func(edit func(*zrm.SystemInfo)) zrm.SystemInfo {
+		s := zrm.SystemInfo{
+			ServiceVersion: "1", AbapPackageVersion: "1", SID: "HF1", Client: "100", Release: "758",
+			BusinessTimeZone: "CET",
+		}
+		edit(&s)
+		return s
+	}
+	badString := bad
+	cases := map[string]any{
+		"selector param value": zrm.CustomSelector("x", map[string]string{"k": bad}),
+		"selector param key":   zrm.CustomSelector("x", map[string]string{bad: "v"}),
+		"request param value":  window(zrm.CustomSelector("x", map[string]string{"k": bad})),
+		"request unit":         func() zrm.QueryRequest { q := window(zrm.ProfileSelector("56")); q.Unit = "K\xff"; return q }(),
+		"request cursor":       func() zrm.QueryRequest { q := window(zrm.ProfileSelector("56")); q.Cursor = bad; return q }(),
+		"resolve param value": zrm.ResolveRequest{
+			Select: []zrm.Selector{zrm.CustomSelector("x", map[string]string{"k": bad})}, From: from, To: to,
+		},
+		"series unit":            series(func(r *zrm.SeriesRecord) { r.Unit = "K\xff" }),
+		"series attribute value": series(func(r *zrm.SeriesRecord) { r.Attributes = map[string]string{"k": bad} }),
+		"series attribute key":   series(func(r *zrm.SeriesRecord) { r.Attributes = map[string]string{bad: "v"} }),
+		"series echoed param": series(func(r *zrm.SeriesRecord) {
+			r.Select = zrm.CustomSelector("x", map[string]string{"k": bad})
+		}),
+		"version reason":      version(func(v *zrm.Version) { v.Reason = bad }),
+		"version description": version(func(v *zrm.Version) { v.Description = bad }),
+		"value status": &zrm.ValueRecord{
+			Series: 1, From: from, To: to, Value: "1", Status: []string{bad},
+		},
+		"end next": &zrm.EndRecord{Next: &badString},
+		"error message": zrm.ErrorEnvelope{Error: zrm.ErrorDetail{
+			Code: zrm.RequestErrorBadRequest, Message: bad,
+		}},
+		"error request id": zrm.ErrorEnvelope{Error: zrm.ErrorDetail{
+			Code: zrm.RequestErrorBadRequest, Message: "m", RequestID: bad,
+		}},
+		"system sid":     system(func(s *zrm.SystemInfo) { s.SID = bad }),
+		"system release": system(func(s *zrm.SystemInfo) { s.Release = bad }),
+	}
+	for name, v := range cases {
+		t.Run(name, func(t *testing.T) {
+			if val, ok := v.(interface{ Validate() error }); ok {
+				assert.ErrorContains(t, val.Validate(), "not valid UTF-8")
+			}
+			_, err := json.Marshal(v)
+			assert.ErrorContains(t, err, "not valid UTF-8")
+		})
+	}
+}

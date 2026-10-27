@@ -32,6 +32,9 @@ func (s SystemInfo) Validate() error {
 		if v == "" {
 			return fieldError(name, errors.New("must not be empty"))
 		}
+		if err := validateText(v); err != nil {
+			return fieldError(name, err)
+		}
 	}
 	for i, iv := range s.Intervals {
 		if err := validateInterval(iv); err != nil {

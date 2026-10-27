@@ -6,13 +6,13 @@ from typing import Annotated, Any, Literal
 from pydantic import AfterValidator, Discriminator, StrictStr, StringConstraints, Tag, field_validator
 
 from zeitreiher_models._base import RequestModel, ResponseModel, freeze_sorted
-from zeitreiher_models.scalars import MaLo, RequestProfile, ResponseProfile
+from zeitreiher_models.scalars import CHECK_TEXT, MaLo, RequestProfile, ResponseProfile, Text
 
 #: Selector kinds every installation knows; any other ``by`` is a custom (customer) resolver.
 KNOWN_SELECTOR_KINDS = frozenset({"profile", "malo"})
 
 CustomKind = Annotated[StrictStr, StringConstraints(pattern=r"^[a-z][a-z0-9_]*$")]
-ParamKey = Annotated[StrictStr, StringConstraints(min_length=1)]
+ParamKey = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]
 
 
 class ProfileSelector(RequestModel):
@@ -33,7 +33,7 @@ class CustomSelector(RequestModel):
     """``{"by":"<name>","params":{"<key>":"<string>"}}`` — a customer resolver."""
 
     by: CustomKind
-    params: Annotated[Mapping[ParamKey, StrictStr], AfterValidator(freeze_sorted)]
+    params: Annotated[Mapping[ParamKey, Text], AfterValidator(freeze_sorted)]
 
     @field_validator("by")
     @classmethod
@@ -76,7 +76,7 @@ class EchoedCustomSelector(ResponseModel):
     """A custom selector as echoed in a response."""
 
     by: CustomKind
-    params: Annotated[Mapping[ParamKey, StrictStr], AfterValidator(freeze_sorted)]
+    params: Annotated[Mapping[ParamKey, Text], AfterValidator(freeze_sorted)]
 
     @field_validator("by")
     @classmethod

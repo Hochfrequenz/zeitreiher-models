@@ -62,7 +62,10 @@ func (v Version) Validate() error {
 	if v.CreatedAtUnknown != (v.CreatedAt == nil) {
 		return errors.New("created_at_unknown must be true exactly when created_at is null")
 	}
-	return nil
+	if err := validateText(v.Reason); err != nil {
+		return fieldError("reason", err)
+	}
+	return wrapField("description", validateText(v.Description))
 }
 
 type versionWire struct {
@@ -169,6 +172,9 @@ func (r *SeriesRecord) Validate() error {
 	}
 	if err := validateInterval(r.Interval); err != nil {
 		return fieldError("interval", err)
+	}
+	if err := validateTextMap(r.Attributes); err != nil {
+		return fieldError("attributes", err)
 	}
 	for i, v := range r.Versions {
 		if err := v.Validate(); err != nil {

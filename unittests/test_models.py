@@ -3,8 +3,10 @@
 import copy
 import json
 import pickle
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
+from typing import Any
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -15,6 +17,7 @@ from zeitreiher_models import (
     CurrentVersion,
     CustomSelector,
     EndRecord,
+    ErrorDetail,
     ErrorEnvelope,
     ErrorRecord,
     MaLoSelector,
@@ -22,7 +25,9 @@ from zeitreiher_models import (
     QueryRequest,
     RecordErrorCode,
     RequestErrorCode,
+    ResolveRequest,
     SeriesRecord,
+    SystemInfo,
     ValueRecord,
     Version,
     VersionAsOf,
@@ -288,3 +293,84 @@ def test_response_datetime_outside_the_utc_range_raises_validation_error(instant
     # Converting to UTC overflows; like Go's error, that must be a ValidationError, not an OverflowError.
     with pytest.raises(ValidationError, match="outside the years 1900 to 9999 in UTC"):
         ValueRecord(series=1, from_=instant, to=datetime(9999, 12, 31, tzinfo=UTC), value="1", status=[], version=None)
+
+
+_BAD = "a\ud800b"  # a lone surrogate cannot be written as UTF-8
+_FROM = datetime(2026, 1, 1, tzinfo=UTC)
+_TO = datetime(2026, 1, 2, tzinfo=UTC)
+_SERIES: dict[str, Any] = {
+    "series": 1,
+    "selector": 0,
+    "select": {"by": "profile", "profile": "56"},
+    "profile": "56",
+    "from_": _FROM,
+    "to": _TO,
+    "unit": "KWH",
+    "interval": "PT15M",
+    "attributes": {},
+    "versions": [],
+}
+_VERSION: dict[str, Any] = {
+    "number": 1,
+    "from_": _FROM,
+    "to": None,
+    "created_at": None,
+    "created_at_unknown": True,
+    "reason": "",
+    "description": "",
+    "deleted": False,
+}
+_SYSTEM: dict[str, Any] = {
+    "service_version": "1",
+    "abap_package_version": "1",
+    "sid": "HF1",
+    "client": "100",
+    "release": "758",
+    "business_time_zone": "CET",
+    "intervals": [],
+}
+
+
+@pytest.mark.parametrize(
+    "build",
+    [
+        pytest.param(lambda: CustomSelector(by="x", params={"k": _BAD}), id="selector param value"),
+        pytest.param(lambda: CustomSelector(by="x", params={_BAD: "v"}), id="selector param key"),
+        pytest.param(
+            lambda: QueryRequest(select=[ProfileSelector(profile="56")], from_=_FROM, to=_TO, unit="K\ud800"),
+            id="request unit",
+        ),
+        pytest.param(
+            lambda: QueryRequest(select=[ProfileSelector(profile="56")], from_=_FROM, to=_TO, cursor=_BAD),
+            id="request cursor",
+        ),
+        pytest.param(
+            lambda: ResolveRequest(select=[{"by": "x", "params": {"k": _BAD}}], from_=_FROM, to=_TO),
+            id="resolve param value",
+        ),
+        pytest.param(lambda: SeriesRecord(**{**_SERIES, "unit": "K\ud800"}), id="series unit"),
+        pytest.param(lambda: SeriesRecord(**{**_SERIES, "attributes": {"k": _BAD}}), id="series attribute value"),
+        pytest.param(lambda: SeriesRecord(**{**_SERIES, "attributes": {_BAD: "v"}}), id="series attribute key"),
+        pytest.param(
+            lambda: SeriesRecord(**{**_SERIES, "select": {"by": "x", "params": {"k": _BAD}}}), id="series echoed param"
+        ),
+        pytest.param(lambda: Version(**{**_VERSION, "reason": _BAD}), id="version reason"),
+        pytest.param(lambda: Version(**{**_VERSION, "description": _BAD}), id="version description"),
+        pytest.param(
+            lambda: ValueRecord(series=1, from_=_FROM, to=_TO, value="1", status=[_BAD], version=None),
+            id="value status",
+        ),
+        pytest.param(lambda: EndRecord(series=0, values=0, errors=0, next=_BAD), id="end next"),
+        pytest.param(lambda: ErrorDetail(code="bad_request", message=_BAD), id="error message"),
+        pytest.param(lambda: ErrorDetail(code="bad_request", message="m", request_id=_BAD), id="error request id"),
+        pytest.param(lambda: SystemInfo(**{**_SYSTEM, "sid": _BAD}), id="system sid"),
+        pytest.param(lambda: SystemInfo(**{**_SYSTEM, "release": _BAD}), id="system release"),
+    ],
+)
+def test_lone_surrogates_are_rejected_with_validation_error(build: Callable[[], object]) -> None:
+    """Python's counterpart of Go's invalid-UTF-8 check (TestInvalidUTF8RefusesToMarshal).
+
+    Text that cannot be written unchanged is rejected when the model is built, with the usual ValidationError.
+    """
+    with pytest.raises(ValidationError, match="not valid UTF-8"):
+        build()

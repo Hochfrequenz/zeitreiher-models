@@ -3,10 +3,10 @@
 from enum import StrEnum
 from typing import Annotated, Any, ClassVar
 
-from pydantic import BeforeValidator, Field, StrictStr
+from pydantic import BeforeValidator, Field
 
 from zeitreiher_models._base import ResponseModel
-from zeitreiher_models.scalars import CodeStr
+from zeitreiher_models.scalars import CodeStr, Text
 
 
 class RequestErrorCode(StrEnum):
@@ -65,8 +65,8 @@ class ErrorDetail(ResponseModel):
     _omit_if_none: ClassVar[frozenset[str]] = frozenset({"request_id"})
 
     code: RequestCode
-    message: StrictStr
-    request_id: StrictStr | None = Field(default=None, min_length=1)
+    message: Text
+    request_id: Text | None = Field(default=None, min_length=1)
 
 
 class ErrorEnvelope(ResponseModel):

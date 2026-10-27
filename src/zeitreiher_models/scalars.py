@@ -3,14 +3,34 @@
 import itertools
 import re
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Any
 
-from pydantic import AfterValidator, Field, StrictInt, StrictStr, StringConstraints
+from pydantic import AfterValidator, BeforeValidator, Field, StrictInt, StrictStr, StringConstraints
 
 #: Upper bound of every integer, so that Go (int64) and Python agree.
 INT64_MAX = 2**63 - 1
 
 _DECIMAL = re.compile(r"^-?(0|[1-9][0-9]*)(\.[0-9]+)?$")
+
+
+def _check_text(value: Any) -> Any:
+    """Reject lone surrogates: they cannot be written as UTF-8 (Go rejects invalid UTF-8 likewise).
+
+    It runs before the string checks, which would otherwise report a less specific error.
+    """
+    if isinstance(value, str) and not value.isascii():
+        try:
+            value.encode("utf-8")
+        except UnicodeEncodeError:
+            raise ValueError(f"{value!r} is not valid UTF-8 (it contains a lone surrogate)") from None
+    return value
+
+
+#: A string that can be written as UTF-8 unchanged (no lone surrogates). Every free-text field uses it.
+Text = Annotated[StrictStr, BeforeValidator(_check_text)]
+
+#: The validator of :data:`Text`, for types that add constraints (``Annotated[StrictStr, …, CHECK_TEXT]``).
+CHECK_TEXT = BeforeValidator(_check_text)
 
 
 def _check_decimal(value: str) -> str:
@@ -53,13 +73,13 @@ MaLo = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{11}$")]
 Interval = Annotated[StrictStr, StringConstraints(pattern=r"^PT[1-9][0-9]*M$")]
 
 #: An SAP internal unit (T006-MSEHI, CHAR 3) such as ``"KWH"``, ``"%"`` or ``"°C"``.
-Unit = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9A-Za-z%°/._-]{1,3}$")]
+Unit = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9A-Za-z%°/._-]{1,3}$"), CHECK_TEXT]
 
 #: A non-empty opaque token (cursor).
-Token = Annotated[StrictStr, StringConstraints(min_length=1)]
+Token = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]
 
 #: A non-empty string.
-NonEmptyStr = Annotated[StrictStr, StringConstraints(min_length=1)]
+NonEmptyStr = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]
 
 #: Status codes, sorted and unique.
 Status = Annotated[tuple[NonEmptyStr, ...], AfterValidator(_check_status)]
