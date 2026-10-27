@@ -39,6 +39,11 @@ def _check_decimal(value: str) -> str:
         raise ValueError(f"{value!r} is not a decimal string")
     if value.startswith("-") and not value.strip("-0."):
         raise ValueError(f"{value!r}: negative zero is not allowed")
+    if "." in value and value.endswith("0"):
+        shortest = value.rstrip("0").removesuffix(".")
+        raise ValueError(
+            f"{value!r} is not in shortest form (no trailing zeros after the decimal point): write {shortest!r}"
+        )
     return value
 
 
@@ -55,8 +60,10 @@ def _check_status(value: tuple[str, ...]) -> tuple[str, ...]:
     return value
 
 
-#: An already-scaled decimal number as a string, e.g. ``"160"`` or ``"0.022"``. JSON numbers,
-#: exponents, a plus sign, leading zeros and negative zero are rejected.
+#: An already-scaled decimal number in its shortest canonical string form, e.g. ``"160"``, ``"0.022"``,
+#: ``"25.25"`` or ``"-3.5"``. JSON numbers, exponents, a plus sign, leading zeros, negative zero and
+#: trailing zeros after the decimal point (``"160.0"``) are rejected: after parsing, 160.0 and 160 are the
+#: same number, so the wire carries one spelling.
 DecimalString = Annotated[StrictStr, AfterValidator(_check_decimal)]
 
 #: A profile number in a request: 1 to 18 digits, leading zeros allowed, not all zeros.

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -170,10 +171,19 @@ func TestReadRecordsStopsEarly(t *testing.T) {
 
 func TestDecimal(t *testing.T) {
 	var d zrm.Decimal
-	require.NoError(t, json.Unmarshal([]byte(`"-12.50"`), &d))
-	assert.Equal(t, zrm.Decimal("-12.50"), d)
+	require.NoError(t, json.Unmarshal([]byte(`"-12.5"`), &d))
+	assert.Equal(t, zrm.Decimal("-12.5"), d)
 	assert.Error(t, json.Unmarshal([]byte(`12.5`), &d))
 	assert.Error(t, zrm.Decimal("-0.0").Validate())
+	for _, ok := range []zrm.Decimal{"160", "0.022", "25.25", "-3.5", "0", "100", "-10"} {
+		assert.NoError(t, ok.Validate(), ok)
+	}
+	// Responses carry the shortest canonical form: after parsing, 160.0 and 160 are the same number.
+	for bad, want := range map[zrm.Decimal]string{"160.0": "160", "0.0220": "0.022", "0.0": "0", "-3.50": "-3.5"} {
+		assert.ErrorContains(t, bad.Validate(), fmt.Sprintf("write %q", want), bad)
+		_, err := json.Marshal(bad)
+		assert.Error(t, err, "%s must not be written", bad)
+	}
 }
 
 func TestNilRecordsRefuseToMarshal(t *testing.T) {

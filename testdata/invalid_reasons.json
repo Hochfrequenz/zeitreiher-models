@@ -853,6 +853,14 @@
       "type": "value_error"
     }
   },
+  "records/value_fraction_trailing_zero.json": {
+    "go": "value: \"0.0220\" is not in shortest form (no trailing zeros after the decimal point): write \"0.022\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'0.0220' is not in shortest form (no trailing zeros after the decimal point): write '0.022'",
+      "type": "value_error"
+    }
+  },
   "records/value_from_after_to.json": {
     "go": "from (2026-01-01T00:00:00Z) must be before to (2025-12-31T23:00:00Z)",
     "python": {
@@ -882,6 +890,14 @@
     "python": {
       "loc": "value.status",
       "type": "missing"
+    }
+  },
+  "records/value_negative_trailing_zero.json": {
+    "go": "value: \"-3.50\" is not in shortest form (no trailing zeros after the decimal point): write \"-3.5\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'-3.50' is not in shortest form (no trailing zeros after the decimal point): write '-3.5'",
+      "type": "value_error"
     }
   },
   "records/value_negative_zero.json": {
@@ -977,6 +993,14 @@
       "type": "value_error"
     }
   },
+  "records/value_trailing_zero.json": {
+    "go": "value: \"160.0\" is not in shortest form (no trailing zeros after the decimal point): write \"160\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'160.0' is not in shortest form (no trailing zeros after the decimal point): write '160'",
+      "type": "value_error"
+    }
+  },
   "records/value_unicode_digits.json": {
     "go": "value: \"1\u0666\u0660\" is not a decimal string",
     "python": {
@@ -1005,6 +1029,14 @@
       "loc": "value.from",
       "msg": "'1899-12-31T23:00:00Z': years before 1900 are not allowed",
       "type": "instant"
+    }
+  },
+  "records/value_zero_fraction.json": {
+    "go": "value: \"0.0\" is not in shortest form (no trailing zeros after the decimal point): write \"0\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'0.0' is not in shortest form (no trailing zeros after the decimal point): write '0'",
+      "type": "value_error"
     }
   },
   "records/version_created_at_inconsistent.json": {

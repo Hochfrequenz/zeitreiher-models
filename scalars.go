@@ -21,21 +21,28 @@ var (
 	intervalPattern        = regexp.MustCompile(`^PT[1-9][0-9]*M$`)
 )
 
-// Decimal is an already-scaled decimal number in its string form, e.g. "160" or "0.022".
+// Decimal is an already-scaled decimal number in its shortest canonical string form, e.g. "160",
+// "0.022", "25.25" or "-3.5".
 //
 // Values are strings on the wire so that no client loses precision by parsing them as floats.
 // The accepted syntax is an optional minus, an integer part without leading zeros and an optional
-// fractional part: ^-?(0|[1-9][0-9]*)(\.[0-9]+)?$. Exponents, a plus sign, negative zero and JSON numbers
-// are rejected.
+// fractional part without trailing zeros: ^-?(0|[1-9][0-9]*)(\.[0-9]+)?$, and the fraction must not end
+// in 0. Exponents, a plus sign, negative zero, trailing zeros ("160.0", "0.0220") and JSON numbers are
+// rejected: after parsing, 160.0 and 160 are the same number, so the wire carries one spelling.
 type Decimal string
 
 // Validate checks the syntax of d.
 func (d Decimal) Validate() error {
-	if !decimalPattern.MatchString(string(d)) {
-		return fmt.Errorf("%q is not a decimal string", string(d))
+	s := string(d)
+	if !decimalPattern.MatchString(s) {
+		return fmt.Errorf("%q is not a decimal string", s)
 	}
-	if strings.HasPrefix(string(d), "-") && strings.Trim(string(d), "-0.") == "" {
-		return fmt.Errorf("%q: negative zero is not allowed", string(d))
+	if strings.HasPrefix(s, "-") && strings.Trim(s, "-0.") == "" {
+		return fmt.Errorf("%q: negative zero is not allowed", s)
+	}
+	if strings.Contains(s, ".") && strings.HasSuffix(s, "0") {
+		shortest := strings.TrimSuffix(strings.TrimRight(s, "0"), ".")
+		return fmt.Errorf("%q is not in shortest form (no trailing zeros after the decimal point): write %q", s, shortest)
 	}
 	return nil
 }

@@ -108,8 +108,9 @@ message ValueRecord {
   int64 series = 1;
   google.protobuf.Timestamp from = 2;
   google.protobuf.Timestamp to = 3;
-  // Already-scaled decimal string, e.g. "0.022": optional minus, no leading zeros, no exponent,
-  // no negative zero.
+  // Already-scaled decimal string in its shortest canonical form, e.g. "160", "0.022", "-3.5":
+  // optional minus, no leading zeros, no trailing zeros after the decimal point ("160.0" is
+  // invalid), no exponent, no plus sign, no negative zero.
   string value = 4;
   // Active SAP status codes, sorted and unique; JSON always writes the array.
   repeated string status = 5;

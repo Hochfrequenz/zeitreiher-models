@@ -384,3 +384,17 @@ def test_as_of_is_not_a_version_selector() -> None:
             '{"select":[{"by":"profile","profile":"56"}],"from":"2026-01-01T00:00:00Z","to":"2026-01-02T00:00:00Z",'
             '"version":{"as_of":"2026-02-03T08:00:00Z"}}'
         )
+
+
+@pytest.mark.parametrize("value", ["160", "0.022", "25.25", "-3.5", "0", "100", "-10"])
+def test_decimal_in_shortest_form_is_accepted(value: str) -> None:
+    assert ValueRecord(series=1, from_=_FROM, to=_TO, value=value, status=[], version=None).value == value
+
+
+@pytest.mark.parametrize(
+    ("value", "shortest"), [("160.0", "160"), ("0.0220", "0.022"), ("0.0", "0"), ("-3.50", "-3.5")]
+)
+def test_decimal_with_trailing_zeros_is_rejected(value: str, shortest: str) -> None:
+    """Responses carry the shortest canonical form: after parsing, 160.0 and 160 are the same number."""
+    with pytest.raises(ValidationError, match=f"write '{shortest}'"):
+        ValueRecord(series=1, from_=_FROM, to=_TO, value=value, status=[], version=None)
