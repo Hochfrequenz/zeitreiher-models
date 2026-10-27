@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "upstream_timeout",
+    "message": "example message for upstream_timeout"
+  }
+}

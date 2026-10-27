@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "selector": 0,
+      "select": {
+        "by": "contract_account",
+        "params": {
+          "account": "000012345678",
+          "role": "supplier"
+        }
+      },
+      "assignments": []
+    }
+  ]
+}

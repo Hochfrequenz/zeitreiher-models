@@ -1,0 +1,9 @@
+{
+  "type": "error",
+  "selector": 0,
+  "select": {
+    "by": "malo",
+    "malo": "87253749908"
+  },
+  "code": "no_assignment"
+}

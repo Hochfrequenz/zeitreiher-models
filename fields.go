@@ -81,6 +81,14 @@ func checkObject(b []byte, r rules, unknown unknownKeys) (map[string]json.RawMes
 	return out, nil
 }
 
+// wrapField is fieldError that passes nil through.
+func wrapField(key string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fieldError(key, err)
+}
+
 // fieldError prefixes err with the JSON key it belongs to.
 func fieldError(key string, err error) error {
 	return fmt.Errorf("%s: %w", key, err)
@@ -99,7 +107,7 @@ func decodeField(m map[string]json.RawMessage, key string, v any) error {
 }
 
 // decodeInstant parses the value of key as an instant. A missing or null key gives nil.
-func decodeInstant(m map[string]json.RawMessage, key string, kind instantKind) (*time.Time, error) {
+func decodeInstant(m map[string]json.RawMessage, key string, kind side) (*time.Time, error) {
 	raw, ok := m[key]
 	if !ok || isNull(raw) {
 		return nil, nil //nolint:nilnil // absence is not an error; presence rules are checked by checkObject
@@ -112,7 +120,7 @@ func decodeInstant(m map[string]json.RawMessage, key string, kind instantKind) (
 }
 
 // decodeRequiredInstant parses the value of key, which checkObject has already proven present.
-func decodeRequiredInstant(m map[string]json.RawMessage, key string, kind instantKind) (time.Time, error) {
+func decodeRequiredInstant(m map[string]json.RawMessage, key string, kind side) (time.Time, error) {
 	t, err := parseInstant(m[key], kind)
 	if err != nil {
 		return time.Time{}, fieldError(key, err)
@@ -121,10 +129,10 @@ func decodeRequiredInstant(m map[string]json.RawMessage, key string, kind instan
 }
 
 // instantPtr renders an optional instant for the wire; nil stays nil (null or omitted).
-func instantPtr(t *time.Time) *string {
+func instantPtr(t *time.Time, kind side) *string {
 	if t == nil {
 		return nil
 	}
-	s := formatInstant(*t)
+	s := formatInstant(*t, kind)
 	return &s
 }

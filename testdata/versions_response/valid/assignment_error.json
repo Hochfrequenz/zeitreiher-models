@@ -1,0 +1,19 @@
+{
+  "results": [
+    {
+      "selector": 0,
+      "select": {
+        "by": "malo",
+        "malo": "87253749908"
+      },
+      "assignments": [
+        {
+          "profile": "50000000000057",
+          "error": {
+            "code": "access_denied"
+          }
+        }
+      ]
+    }
+  ]
+}

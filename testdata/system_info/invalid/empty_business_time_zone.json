@@ -1,0 +1,13 @@
+{
+  "service_version": "1.0.0",
+  "abap_package_version": "1.0.0",
+  "sid": "S4H",
+  "client": "210",
+  "release": "S4CORE 108",
+  "business_time_zone": "",
+  "intervals": [
+    "PT15M",
+    "PT30M",
+    "PT60M"
+  ]
+}

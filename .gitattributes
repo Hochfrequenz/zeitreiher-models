@@ -6,3 +6,4 @@
 *.proto	text eol=lf
 *.md	text eol=lf
 *.yml	text eol=lf
+testdata/streams/invalid/crlf.ndjson -text

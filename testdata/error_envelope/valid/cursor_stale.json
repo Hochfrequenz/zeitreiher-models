@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "cursor_stale",
+    "message": "example message for cursor_stale"
+  }
+}

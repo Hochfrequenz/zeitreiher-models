@@ -1,0 +1,27 @@
+{
+  "type": "series",
+  "series": 1,
+  "selector": 0,
+  "select": {
+    "by": "malo",
+    "malo": "87253749908"
+  },
+  "profile": "50000000000056",
+  "from": "2025-12-31T23:00:00Z",
+  "to": "2026-01-31T23:00:00Z",
+  "unit": "KWH",
+  "interval": "PT60M",
+  "attributes": {},
+  "versions": [
+    {
+      "number": 3,
+      "from": "2026-01-01T23:00:00Z",
+      "to": null,
+      "created_at": null,
+      "created_at_unknown": false,
+      "reason": "BILL",
+      "description": "Abrechnung Januar",
+      "deleted": false
+    }
+  ]
+}

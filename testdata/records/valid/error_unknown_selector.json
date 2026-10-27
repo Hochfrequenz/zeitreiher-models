@@ -1,0 +1,11 @@
+{
+  "type": "error",
+  "selector": 0,
+  "select": {
+    "by": "street_address",
+    "params": {
+      "city": "Grünwald"
+    }
+  },
+  "code": "unknown_selector"
+}

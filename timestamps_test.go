@@ -33,17 +33,21 @@ func TestParseInstant(t *testing.T) {
 		{"hour 24", `"2026-01-01T24:00:00Z"`, false, false, ""},
 		{"json number", `1767225600`, false, false, ""},
 		{"json null", `null`, false, false, ""},
+		{"offset hour 24", `"2026-01-01T00:00:00+24:00"`, false, false, ""},
+		{"offset minute 60", `"2026-01-01T00:00:00+01:60"`, false, false, ""},
+		{"year 0000", `"0000-01-01T00:00:00Z"`, false, false, ""},
+		{"leap second", `"2026-12-31T23:59:60Z"`, false, false, ""},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got, err := parseInstant(json.RawMessage(tc.raw), requestInstant)
+			got, err := parseInstant(json.RawMessage(tc.raw), requestSide)
 			if tc.request {
 				require.NoError(t, err)
-				assert.Equal(t, tc.want, formatInstant(got))
+				assert.Equal(t, tc.want, formatInstant(got, requestSide))
 			} else {
 				require.Error(t, err)
 			}
-			_, err = parseInstant(json.RawMessage(tc.raw), responseInstant)
+			_, err = parseInstant(json.RawMessage(tc.raw), responseSide)
 			if tc.response {
 				require.NoError(t, err)
 			} else {
@@ -55,17 +59,19 @@ func TestParseInstant(t *testing.T) {
 
 func TestValidateInstant(t *testing.T) {
 	cet := time.FixedZone("", 3600)
-	assert.Error(t, validateInstant(time.Time{}, requestInstant), "zero time means missing")
-	assert.Error(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 1, time.UTC), requestInstant))
-	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, cet), requestInstant))
-	assert.Error(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, cet), responseInstant))
-	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), responseInstant))
+	assert.Error(t, validateInstant(time.Time{}, requestSide), "zero time means missing")
+	assert.Error(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 1, time.UTC), requestSide))
+	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, cet), requestSide))
+	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, cet), responseSide))
+	assert.Equal(t, "2025-12-31T23:00:00Z", formatInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, cet), responseSide),
+		"producers normalize response instants to UTC")
+	assert.Equal(t, "2026-01-01T00:00:00+01:00", formatInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, cet), requestSide))
 }
 
 func TestValidateWindowComparesInstantsAcrossOffsets(t *testing.T) {
 	from := time.Date(2026, 1, 1, 1, 0, 0, 0, time.FixedZone("", 3600)) // = 00:00Z
 	to := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-	assert.Error(t, validateWindow(from, to, requestInstant), "equal instants are an empty window")
-	assert.NoError(t, validateWindow(from, to.Add(time.Hour), requestInstant))
-	assert.Error(t, validateWindow(to.Add(time.Hour), from, requestInstant))
+	assert.Error(t, validateWindow(from, to, requestSide), "equal instants are an empty window")
+	assert.NoError(t, validateWindow(from, to.Add(time.Hour), requestSide))
+	assert.Error(t, validateWindow(to.Add(time.Hour), from, requestSide))
 }
