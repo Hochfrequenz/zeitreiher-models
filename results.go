@@ -177,8 +177,12 @@ func (v *VersionedAssignment) UnmarshalJSON(b []byte) error {
 	if out.Assignment, err = decodeAssignment(m); err != nil {
 		return fmt.Errorf("assignment: %w", err)
 	}
-	if _, ok := m["versions"]; !ok && out.Error == nil {
+	_, hasVersions := m["versions"]
+	if !hasVersions && out.Error == nil {
 		return errors.New("assignment: versions: is required")
+	}
+	if hasVersions && out.Error != nil {
+		return errors.New("assignment: an assignment with error has no versions")
 	}
 	if err := decodeField(m, "versions", &out.Versions); err != nil {
 		return fmt.Errorf("assignment: %w", err)

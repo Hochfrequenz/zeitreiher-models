@@ -182,6 +182,9 @@ func (d *ErrorDetail) UnmarshalJSON(b []byte) error {
 			return err
 		}
 	}
+	if _, ok := m["request_id"]; ok && out.RequestID == "" {
+		return errors.New("request_id: must not be empty")
+	}
 	*d = out
 	return nil
 }
