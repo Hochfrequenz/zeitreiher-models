@@ -3,8 +3,16 @@
     "error": "ResultError = 5",
     "from": "google.protobuf.Timestamp = 2",
     "profile": "string = 1",
+    "role": "optional string = 6",
     "to": "google.protobuf.Timestamp = 3",
+    "unit": "optional string = 7",
+    "unit_raw": "string = 8",
     "versions": "repeated Version = 4"
+  },
+  "Caps": {
+    "max_resolve_window_seconds": "int64 = 3",
+    "max_values": "int64 = 2",
+    "max_window_seconds": "int64 = 1"
   },
   "CurrentVersion": {},
   "EndRecord": {
@@ -83,11 +91,13 @@
   "SystemResponse": {
     "abap_package_version": "string = 2",
     "business_time_zone": "string = 6",
+    "caps": "Caps = 9",
     "client": "string = 4",
     "intervals": "repeated string = 7",
     "release": "string = 5",
     "service_version": "string = 1",
-    "sid": "string = 3"
+    "sid": "string = 3",
+    "units": "repeated string = 8"
   },
   "ValueRecord": {
     "from": "google.protobuf.Timestamp = 2",

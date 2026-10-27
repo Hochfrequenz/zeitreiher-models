@@ -10,44 +10,72 @@ import (
 // Assignment is one profile assignment of a resolve result (spec §4.4). Either From and To are set
 // (the assignment, cut to the request window) or Error is set (e.g. access_denied); an assignment
 // with an error may still carry its window.
+//
+// Role, Unit and UnitRaw describe the profile of the assignment exactly like the fields of the same name
+// in a series record. Without an Error, Role and Unit are always written (null when nil) and UnitRaw
+// is required. With an Error they may be left out: nil Role, nil Unit and an empty UnitRaw are then omitted.
 type Assignment struct {
+	// Profile is the profile number without leading zeros.
 	Profile string
-	From    *time.Time
-	To      *time.Time
-	Error   *ResultError
+	// Role is the profile role of the assignment (SAP EPROFASS role, e.g. "0001"; any non-empty text),
+	// or nil when the assignment was not resolved through a role (e.g. by: profile).
+	Role *string
+	// From is the start of the assignment (inclusive), cut to the request window; set together with To.
+	From *time.Time
+	// To is the end of the assignment (exclusive), cut to the request window.
+	To *time.Time
+	// Unit is the canonical unit code (UN/ECE Rec. 20, e.g. "KWH") of the profile's values, or nil when the
+	// SAP unit has no mapping.
+	Unit *string
+	// UnitRaw is the SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not: any non-empty text of at
+	// most 30 characters without control characters.
+	UnitRaw string
+	// Error is the assignment-level error; nil for a usable assignment.
+	Error *ResultError
 }
 
 // VersionedAssignment is one profile assignment of a versions result: an Assignment plus the
 // overlapping versions. Versions is written as [] when there are none and omitted with an error.
 type VersionedAssignment struct {
 	Assignment
+	// Versions lists the versions overlapping the assignment; written as [] when empty, omitted with an Error.
 	Versions []Version
 }
 
 // ResolveResult is the outcome for one request selector of the resolve endpoint: either
 // Assignments (possibly empty) or Error.
 type ResolveResult struct {
-	Selector    int
-	Select      Selector
+	// Selector is the index of the request selector (0-based).
+	Selector int
+	// Select is the request selector, echoed.
+	Select Selector
+	// Assignments are the profile assignments of the selector; possibly empty, unset with an Error.
 	Assignments []Assignment
-	Error       *ResultError
+	// Error is a selector-level error; exactly one of Assignments or Error is set.
+	Error *ResultError
 }
 
 // VersionsResult is the outcome for one request selector of the versions endpoint.
 type VersionsResult struct {
-	Selector    int
-	Select      Selector
+	// Selector is the index of the request selector (0-based).
+	Selector int
+	// Select is the request selector, echoed.
+	Select Selector
+	// Assignments are the profile assignments with their versions; possibly empty, unset with an Error.
 	Assignments []VersionedAssignment
-	Error       *ResultError
+	// Error is a selector-level error; exactly one of Assignments or Error is set.
+	Error *ResultError
 }
 
 // ResolveResponse is the body of a successful resolve response: {"results":[…]}.
 type ResolveResponse struct {
+	// Results holds one result per request selector, in request order.
 	Results []ResolveResult `json:"results"`
 }
 
 // VersionsResponse is the body of a successful versions response: {"results":[…]}.
 type VersionsResponse struct {
+	// Results holds one result per request selector, in request order.
 	Results []VersionsResult `json:"results"`
 }
 
@@ -67,6 +95,21 @@ func (a Assignment) validate() error {
 			return err
 		}
 	}
+	if a.Role != nil {
+		if err := validateToken(*a.Role); err != nil {
+			return fieldError("role", err)
+		}
+	}
+	if a.Unit != nil {
+		if err := validateUnitCode(*a.Unit); err != nil {
+			return fieldError("unit", err)
+		}
+	}
+	if a.Error == nil || a.UnitRaw != "" {
+		if err := validateRawUnit(a.UnitRaw); err != nil {
+			return fieldError("unit_raw", err)
+		}
+	}
 	if a.Error != nil {
 		return wrapField("error.code", a.Error.Code.Validate())
 	}
@@ -74,26 +117,67 @@ func (a Assignment) validate() error {
 }
 
 type assignmentWire struct {
-	Profile  string       `json:"profile"`
-	From     *string      `json:"from,omitempty"`
-	To       *string      `json:"to,omitempty"`
-	Versions *[]Version   `json:"versions,omitempty"`
-	Error    *ResultError `json:"error,omitempty"`
+	Profile  string          `json:"profile"`
+	Role     json.RawMessage `json:"role,omitempty"`
+	From     *string         `json:"from,omitempty"`
+	To       *string         `json:"to,omitempty"`
+	Unit     json.RawMessage `json:"unit,omitempty"`
+	UnitRaw  string          `json:"unit_raw,omitempty"`
+	Versions *[]Version      `json:"versions,omitempty"`
+	Error    *ResultError    `json:"error,omitempty"`
+}
+
+// nullableText renders an optional string for a key that is written as null when unset, except in an
+// assignment with an error, where an unset value is omitted.
+func nullableText(s *string, omitNil bool) json.RawMessage {
+	if s == nil {
+		if omitNil {
+			return nil
+		}
+		return json.RawMessage("null")
+	}
+	b, _ := json.Marshal(*s) // a validated string always marshals
+	return b
 }
 
 func (a Assignment) wire() assignmentWire {
+	omit := a.Error != nil
 	return assignmentWire{
-		Profile: a.Profile, From: instantPtr(a.From, responseSide), To: instantPtr(a.To, responseSide), Error: a.Error,
+		Profile: a.Profile, Role: nullableText(a.Role, omit), From: instantPtr(a.From, responseSide),
+		To: instantPtr(a.To, responseSide), Unit: nullableText(a.Unit, omit), UnitRaw: a.UnitRaw, Error: a.Error,
 	}
 }
 
-var assignmentRules = rules{"profile": required, "from": optional, "to": optional, "error": optional}
+// assignmentRulesFor returns the key rules for the object b: role and unit (nullable) and unit_raw are
+// required unless the assignment carries an error.
+func assignmentRulesFor(b []byte) rules {
+	r := rules{"profile": required, "from": optional, "to": optional, "error": optional}
+	var probe map[string]json.RawMessage
+	_ = json.Unmarshal(b, &probe) // a non-object is rejected by checkObject
+	if raw, hasError := probe["error"]; hasError && !isNull(raw) {
+		r["role"], r["unit"], r["unit_raw"] = optional, optional, optional
+	} else {
+		r["role"], r["unit"], r["unit_raw"] = requiredNullable, requiredNullable, required
+	}
+	return r
+}
 
 func decodeAssignment(m map[string]json.RawMessage) (Assignment, error) {
 	var a Assignment
 	var err error
 	if err = decodeField(m, "profile", &a.Profile); err != nil {
 		return a, err
+	}
+	if raw, ok := m["role"]; ok && !isNull(raw) {
+		a.Role = new(string)
+	}
+	if raw, ok := m["unit"]; ok && !isNull(raw) {
+		a.Unit = new(string)
+	}
+	for key, dst := range map[string]any{"role": a.Role, "unit": a.Unit, "unit_raw": &a.UnitRaw} {
+		if err = decodeField(m, key, dst); err != nil {
+			return a, err
+		}
 	}
 	if a.From, err = decodeInstant(m, "from", responseSide); err != nil {
 		return a, err
@@ -120,7 +204,7 @@ func (a Assignment) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON parses and validates the assignment; unknown keys (such as versions) are ignored.
 func (a *Assignment) UnmarshalJSON(b []byte) error {
-	m, err := checkObject(b, assignmentRules, ignoreUnknown)
+	m, err := checkObject(b, assignmentRulesFor(b), ignoreUnknown)
 	if err != nil {
 		return fmt.Errorf("assignment: %w", err)
 	}
@@ -166,7 +250,7 @@ func (v VersionedAssignment) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON parses and validates the assignment; versions is required unless error is set.
 func (v *VersionedAssignment) UnmarshalJSON(b []byte) error {
 	r := rules{"versions": optional}
-	for k, p := range assignmentRules {
+	for k, p := range assignmentRulesFor(b) {
 		r[k] = p
 	}
 	m, err := checkObject(b, r, ignoreUnknown)

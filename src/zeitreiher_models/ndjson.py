@@ -28,9 +28,9 @@ def dump_record(record: Record) -> str:
 
 
 def iter_records(lines: Iterable[str | bytes]) -> Iterator[Record]:
-    """Yield the records of NDJSON lines, e.g. ``open(path, newline="")`` or ``response.iter_lines()``.
+    r"""Yield the records of NDJSON lines, e.g. ``open(path, newline="")`` or ``response.iter_lines()``.
 
-    Each line may end with ``\\n``; a carriage return or a blank line is an error.
+    Each line may end with ``\n``; a carriage return or a blank line is an error.
     """
     for number, line in enumerate(lines, start=1):
         text = line.decode("utf-8") if isinstance(line, bytes) else line

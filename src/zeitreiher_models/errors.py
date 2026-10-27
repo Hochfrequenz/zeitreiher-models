@@ -89,18 +89,20 @@ class ErrorDetail(ResponseModel):
 
     _omit_if_none: ClassVar[frozenset[str]] = frozenset({"request_id"})
 
-    code: RequestCode
-    message: Text
-    request_id: Text | None = Field(default=None, min_length=1)
+    code: RequestCode = Field(description="The request-level error code (snake_case); see RequestErrorCode.")
+    message: Text = Field(description="Human-readable message; not meant for programmatic use.")
+    request_id: Text | None = Field(
+        default=None, min_length=1, description="Correlation id of the failed request, when the service has one."
+    )
 
 
 class ErrorEnvelope(ResponseModel):
     """Body of every failed HTTP response: ``{"error":{"code","message","request_id"?}}``."""
 
-    error: ErrorDetail
+    error: ErrorDetail = Field(description="The error code, message and optional request id.")
 
 
 class ResultError(ResponseModel):
     """The error object of a resolve/versions result or assignment: ``{"code": "…"}``."""
 
-    code: RecordCode
+    code: RecordCode = Field(description="The record-level error code (snake_case); see RecordErrorCode.")

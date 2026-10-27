@@ -29,14 +29,17 @@ type Record interface {
 type Version struct {
 	// Number is the SAP version number (CVERSNO), at least 1.
 	Number int
-	// From and To bound the covered range [From, To); To is nil for an open end.
+	// From is the start of the covered range [From, To) (inclusive).
 	From time.Time
-	To   *time.Time
-	// CreatedAt is the creation instant; nil when it cannot be determined, then CreatedAtUnknown is true.
-	CreatedAt        *time.Time
+	// To is the end of the covered range (exclusive); nil for an open end.
+	To *time.Time
+	// CreatedAt is the creation instant (UTC); nil when it cannot be determined.
+	CreatedAt *time.Time
+	// CreatedAtUnknown is true exactly when CreatedAt is nil.
 	CreatedAtUnknown bool
-	// Reason and Description are SAP's VERSREASON and VERSDESCR; either may be empty.
-	Reason      string
+	// Reason is SAP's VERSREASON; it may be empty.
+	Reason string
+	// Description is SAP's VERSDESCR; it may be empty.
 	Description string
 	// Deleted is true for versions flagged as deleted in SAP. They are still listed; querying their
 	// values gives an error record with code version_deleted.

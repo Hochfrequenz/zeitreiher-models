@@ -13,6 +13,7 @@ from pydantic import BaseModel
 
 from zeitreiher_models import (
     Assignment,
+    Caps,
     CurrentVersion,
     CustomSelector,
     EndRecord,
@@ -117,6 +118,7 @@ TABLE: dict[str, tuple[type[BaseModel], ...]] = {
     "Assignment": (Assignment, VersionedAssignment),
     "ResultError": (ResultError,),
     "SystemResponse": (SystemInfo,),
+    "Caps": (Caps,),
 }
 
 

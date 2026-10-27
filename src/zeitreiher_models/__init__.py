@@ -50,11 +50,12 @@ from zeitreiher_models.selectors import (
     ProfileSelector,
     Selector,
 )
-from zeitreiher_models.system import SystemInfo
+from zeitreiher_models.system import Caps, SystemInfo
 
 __all__ = [
     "RECORD_ADAPTER",
     "Assignment",
+    "Caps",
     "CurrentVersion",
     "CustomSelector",
     "DecimalString",

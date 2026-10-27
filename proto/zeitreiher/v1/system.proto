@@ -16,4 +16,18 @@ message SystemResponse {
   string business_time_zone = 6;
   // Supported request intervals, e.g. ["PT15M", "PT60M"].
   repeated string intervals = 7;
+  // Canonical unit codes (UN/ECE Rec. 20, e.g. "KWH") the system can map to SAP units.
+  repeated string units = 8;
+  // Per-call self-protection caps.
+  Caps caps = 9;
+}
+
+// Caps are the per-call self-protection caps (exceeding one is answered with window_too_large).
+message Caps {
+  // Longest window in seconds of one values or versions call.
+  int64 max_window_seconds = 1;
+  // Highest number of values of one values or versions call.
+  int64 max_values = 2;
+  // Longest window in seconds of one resolve call.
+  int64 max_resolve_window_seconds = 3;
 }

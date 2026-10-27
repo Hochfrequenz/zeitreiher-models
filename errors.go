@@ -130,6 +130,7 @@ func (c *RecordErrorCode) UnmarshalJSON(b []byte) error {
 // ErrorEnvelope is the body of every failed (non-2xx) HTTP response:
 // {"error":{"code":"…","message":"…","request_id":"…"}}. It has the shape of btpingo.ErrorEnvelope.
 type ErrorEnvelope struct {
+	// Error is the error code, message and optional request id.
 	Error ErrorDetail `json:"error"`
 }
 
@@ -220,6 +221,8 @@ func validateCode(c string) error {
 
 // ResultError is the error object of a resolve/versions result or assignment: {"code":"…"}.
 type ResultError struct {
+	// Code is the record-level error code (snake_case); unknown codes are kept on read (see IsKnown)
+	// but refused on write.
 	Code RecordErrorCode `json:"code"`
 }
 

@@ -9,7 +9,10 @@
       "assignments": [
         {
           "profile": "50000000000056",
-          "from": "2025-12-31T23:00:00Z"
+          "role": "0001",
+          "from": "2025-12-31T23:00:00Z",
+          "unit": "KWH",
+          "unit_raw": "KWH"
         }
       ]
     }
