@@ -79,16 +79,19 @@ const (
 	RecordErrorWindowUnaligned         RecordErrorCode = "window_unaligned"
 	RecordErrorAssignmentUnaligned     RecordErrorCode = "assignment_unaligned"
 	RecordErrorVersionNotFound         RecordErrorCode = "version_not_found"
-	RecordErrorConversionNotAllowed    RecordErrorCode = "conversion_not_allowed"
-	RecordErrorAmbiguousLocalTime      RecordErrorCode = "ambiguous_local_time"
-	RecordErrorBadiFailed              RecordErrorCode = "badi_failed"
+	// RecordErrorVersionDeleted: the requested {"number":N} names a version that is flagged as deleted
+	// (it is still listed by the versions endpoint, with deleted: true).
+	RecordErrorVersionDeleted       RecordErrorCode = "version_deleted"
+	RecordErrorConversionNotAllowed RecordErrorCode = "conversion_not_allowed"
+	RecordErrorAmbiguousLocalTime   RecordErrorCode = "ambiguous_local_time"
+	RecordErrorBadiFailed           RecordErrorCode = "badi_failed"
 )
 
 var recordErrorCodes = []RecordErrorCode{
 	RecordErrorSelectorNotFound, RecordErrorNoAssignment, RecordErrorUnknownSelector, RecordErrorBadSelector,
 	RecordErrorAccessDenied, RecordErrorProfileNotFound, RecordErrorProfileTimeZoneMissing,
 	RecordErrorIntervalSizeUnsupported, RecordErrorWindowUnaligned, RecordErrorAssignmentUnaligned,
-	RecordErrorVersionNotFound, RecordErrorConversionNotAllowed, RecordErrorAmbiguousLocalTime,
+	RecordErrorVersionNotFound, RecordErrorVersionDeleted, RecordErrorConversionNotAllowed, RecordErrorAmbiguousLocalTime,
 	RecordErrorBadiFailed,
 }
 

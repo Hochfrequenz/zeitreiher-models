@@ -38,7 +38,8 @@ type Version struct {
 	// Reason and Description are SAP's VERSREASON and VERSDESCR; either may be empty.
 	Reason      string
 	Description string
-	// Deleted is true for versions flagged as deleted in SAP.
+	// Deleted is true for versions flagged as deleted in SAP. They are still listed; querying their
+	// values gives an error record with code version_deleted.
 	Deleted bool
 }
 

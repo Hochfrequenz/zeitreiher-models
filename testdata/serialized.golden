@@ -53,6 +53,7 @@ records/error_profile_time_zone_missing.json	{"type":"error","selector":0,"selec
 records/error_selector_not_found.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"code":"selector_not_found"}
 records/error_unknown_code_preserved.json	{"type":"error","selector":1,"select":{"by":"profile","profile":"50000000000099"},"profile":"50000000000099","code":"some_future_code"}
 records/error_unknown_selector.json	{"type":"error","selector":0,"select":{"by":"street_address","params":{"city":"Grünwald"}},"code":"unknown_selector"}
+records/error_version_deleted.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"version_deleted"}
 records/error_version_not_found.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"version_not_found"}
 records/error_window_unaligned.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"window_unaligned"}
 records/from_underscore_ignored.json	{"type":"value","series":1,"from":"2025-12-31T23:00:00Z","to":"2026-01-01T00:00:00Z","value":"160","status":["IU015"],"version":null}

@@ -98,6 +98,8 @@ message Version {
   string reason = 6;
   // May be empty.
   string description = 7;
+  // Flagged as deleted in SAP; still listed. Querying its values gives an error record with code
+  // version_deleted.
   bool deleted = 8;
 }
 
@@ -124,7 +126,7 @@ message ErrorRecord {
   optional string profile = 3;
   // snake_case; known values: selector_not_found, no_assignment, unknown_selector, bad_selector,
   // access_denied, profile_not_found, profile_time_zone_missing, interval_size_unsupported,
-  // window_unaligned, assignment_unaligned, version_not_found, conversion_not_allowed,
+  // window_unaligned, assignment_unaligned, version_not_found, version_deleted, conversion_not_allowed,
   // ambiguous_local_time, badi_failed. Clients must tolerate unknown codes.
   string code = 4;
 }

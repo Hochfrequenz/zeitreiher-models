@@ -36,6 +36,8 @@ class Version(ResponseModel):
     created_at_unknown: StrictBool
     reason: Text
     description: Text
+    #: True for versions flagged as deleted in SAP. They are still listed; querying their values gives an
+    #: error record with code ``version_deleted``.
     deleted: StrictBool
 
     @model_validator(mode="after")

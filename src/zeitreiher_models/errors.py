@@ -37,6 +37,8 @@ class RecordErrorCode(StrEnum):
     WINDOW_UNALIGNED = "window_unaligned"
     ASSIGNMENT_UNALIGNED = "assignment_unaligned"
     VERSION_NOT_FOUND = "version_not_found"
+    #: The requested ``{"number": N}`` names a version flagged as deleted (listed with ``deleted: true``).
+    VERSION_DELETED = "version_deleted"
     CONVERSION_NOT_ALLOWED = "conversion_not_allowed"
     AMBIGUOUS_LOCAL_TIME = "ambiguous_local_time"
     BADI_FAILED = "badi_failed"
