@@ -171,3 +171,13 @@ func TestDecimal(t *testing.T) {
 	assert.Error(t, json.Unmarshal([]byte(`12.5`), &d))
 	assert.Error(t, zrm.Decimal("-0.0").Validate())
 }
+
+func TestNilRecordsRefuseToMarshal(t *testing.T) {
+	for _, rec := range []zrm.Record{nil, (*zrm.SeriesRecord)(nil), (*zrm.ValueRecord)(nil), (*zrm.ErrorRecord)(nil), (*zrm.EndRecord)(nil)} {
+		_, err := zrm.MarshalRecord(rec)
+		require.Error(t, err, "%T", rec)
+		var buf bytes.Buffer
+		require.Error(t, zrm.WriteRecord(&buf, rec), "%T", rec)
+		assert.Empty(t, buf.String(), "nothing may be written for %T", rec)
+	}
+}

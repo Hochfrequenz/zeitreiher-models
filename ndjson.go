@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"reflect"
 )
 
 // ErrMissingEnd is returned by ReadStream when a response does not end with exactly one end record.
@@ -47,6 +48,10 @@ func ParseRecord(line []byte) (Record, error) {
 func MarshalRecord(rec Record) ([]byte, error) {
 	if rec == nil {
 		return nil, errors.New("record is nil")
+	}
+	// A typed nil pointer passes the check above, and encoding/json would write it as null.
+	if v := reflect.ValueOf(rec); v.Kind() == reflect.Pointer && v.IsNil() {
+		return nil, fmt.Errorf("record is a nil %T", rec)
 	}
 	return json.Marshal(rec)
 }
