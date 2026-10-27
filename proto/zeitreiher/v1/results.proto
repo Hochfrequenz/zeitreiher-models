@@ -45,12 +45,23 @@ message SelectorResult {
 // Assignment is one profile assignment cut to the request window, or an assignment-level error.
 // from/to are set together; they are required unless `error` is set. `versions` is used by
 // ListVersions only (JSON: written, possibly [], when `error` is unset).
+// role, unit and unit_raw describe the profile like the series record; without `error` JSON always
+// writes role and unit (null when unset) and unit_raw is required.
 message Assignment {
   string profile = 1;
   google.protobuf.Timestamp from = 2;
   google.protobuf.Timestamp to = 3;
   repeated Version versions = 4;
   ResultError error = 5;
+  // Role of the profile assignment (SAP EPROFASS role, e.g. "0001"); unset (JSON null) when the
+  // assignment was not resolved through a role (e.g. by: profile).
+  optional string role = 6;
+  // Canonical unit code (UN/ECE Rec. 20, e.g. "KWH") of the profile's values; unset (JSON null)
+  // when the SAP unit has no mapping.
+  optional string unit = 7;
+  // The SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not: non-empty, at most 30
+  // characters, no control characters. Empty only in an assignment with `error`.
+  string unit_raw = 8;
 }
 
 // ResultError carries a record-level code (see ErrorRecord.code).

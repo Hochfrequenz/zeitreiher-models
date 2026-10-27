@@ -16,19 +16,45 @@ type RequestErrorCode string
 // vocabulary (btpingo.ErrorCode in httperr.go), shared by the Hochfrequenz BTP services; the cursor
 // codes and upstream_timeout are Zeitreiher's own.
 const (
-	RequestErrorInvalidRequest      RequestErrorCode = "invalid_request"
-	RequestErrorUnauthorized        RequestErrorCode = "unauthorized"
-	RequestErrorForbidden           RequestErrorCode = "forbidden"
-	RequestErrorNotFound            RequestErrorCode = "not_found"
-	RequestErrorMethodNotAllowed    RequestErrorCode = "method_not_allowed"
-	RequestErrorRequestTooLarge     RequestErrorCode = "request_too_large"
+	// RequestErrorInvalidRequest is used when the request is invalid: missing offset, fractional seconds,
+	// from not before to, bad selector shape, too many selectors, unsupported interval, unknown unit,
+	// number with interval or unit, or a window longer than the resolve limit. HTTP 400; gRPC
+	// INVALID_ARGUMENT.
+	RequestErrorInvalidRequest RequestErrorCode = "invalid_request"
+	// RequestErrorUnauthorized is used when authentication is missing or invalid. HTTP 401; gRPC
+	// UNAUTHENTICATED.
+	RequestErrorUnauthorized RequestErrorCode = "unauthorized"
+	// RequestErrorForbidden is used when the caller is authenticated but not allowed to use the API. HTTP
+	// 403; gRPC PERMISSION_DENIED.
+	RequestErrorForbidden RequestErrorCode = "forbidden"
+	// RequestErrorNotFound is used when the route is unknown. HTTP 404; gRPC NOT_FOUND.
+	RequestErrorNotFound RequestErrorCode = "not_found"
+	// RequestErrorMethodNotAllowed is used when the HTTP method is not allowed for the route. HTTP 405;
+	// gRPC UNIMPLEMENTED.
+	RequestErrorMethodNotAllowed RequestErrorCode = "method_not_allowed"
+	// RequestErrorRequestTooLarge is used when the request body exceeds the size limit. HTTP 413; gRPC
+	// RESOURCE_EXHAUSTED.
+	RequestErrorRequestTooLarge RequestErrorCode = "request_too_large"
+	// RequestErrorUpstreamUnreachable is used when the SAP system cannot be reached, or fails in a way the
+	// service cannot pass on, before the first record. HTTP 502; gRPC UNAVAILABLE.
 	RequestErrorUpstreamUnreachable RequestErrorCode = "upstream_unreachable"
-	RequestErrorInternal            RequestErrorCode = "internal"
-	RequestErrorCursorInvalid       RequestErrorCode = "cursor_invalid"
-	RequestErrorCursorMismatch      RequestErrorCode = "cursor_mismatch"
-	RequestErrorCursorExpired       RequestErrorCode = "cursor_expired"
-	RequestErrorCursorStale         RequestErrorCode = "cursor_stale"
-	RequestErrorUpstreamTimeout     RequestErrorCode = "upstream_timeout"
+	// RequestErrorInternal is used when the service fails unexpectedly before the first record. HTTP 500;
+	// gRPC INTERNAL.
+	RequestErrorInternal RequestErrorCode = "internal"
+	// RequestErrorCursorInvalid is used when the cursor is malformed or its signature is bad. HTTP 400;
+	// gRPC INVALID_ARGUMENT.
+	RequestErrorCursorInvalid RequestErrorCode = "cursor_invalid"
+	// RequestErrorCursorMismatch is used when the cursor does not match the request. HTTP 400; gRPC
+	// INVALID_ARGUMENT.
+	RequestErrorCursorMismatch RequestErrorCode = "cursor_mismatch"
+	// RequestErrorCursorExpired is used when the cursor has expired. HTTP 400; gRPC INVALID_ARGUMENT.
+	RequestErrorCursorExpired RequestErrorCode = "cursor_expired"
+	// RequestErrorCursorStale is used when the profile assignments changed since the cursor was issued;
+	// restart the query. HTTP 409; gRPC ABORTED.
+	RequestErrorCursorStale RequestErrorCode = "cursor_stale"
+	// RequestErrorUpstreamTimeout is used when the SAP system does not answer in time before the first
+	// record. HTTP 504; gRPC DEADLINE_EXCEEDED.
+	RequestErrorUpstreamTimeout RequestErrorCode = "upstream_timeout"
 )
 
 var requestErrorCodes = []RequestErrorCode{
@@ -72,23 +98,45 @@ type RecordErrorCode string
 
 // Record-level error codes (spec §4.3, consolidated list).
 const (
-	RecordErrorSelectorNotFound        RecordErrorCode = "selector_not_found"
-	RecordErrorNoAssignment            RecordErrorCode = "no_assignment"
-	RecordErrorUnknownSelector         RecordErrorCode = "unknown_selector"
-	RecordErrorBadSelector             RecordErrorCode = "bad_selector"
-	RecordErrorAccessDenied            RecordErrorCode = "access_denied"
-	RecordErrorProfileNotFound         RecordErrorCode = "profile_not_found"
-	RecordErrorProfileTimeZoneMissing  RecordErrorCode = "profile_time_zone_missing"
+	// RecordErrorSelectorNotFound is used when the selector matches no business object (e.g. an unknown
+	// market location).
+	RecordErrorSelectorNotFound RecordErrorCode = "selector_not_found"
+	// RecordErrorNoAssignment is used when the selector exists but has no profile assignment in the
+	// request window.
+	RecordErrorNoAssignment RecordErrorCode = "no_assignment"
+	// RecordErrorUnknownSelector is used when the selector kind (by) is not known to this installation.
+	RecordErrorUnknownSelector RecordErrorCode = "unknown_selector"
+	// RecordErrorBadSelector is used when the selector's parameters are not acceptable to its resolver.
+	RecordErrorBadSelector RecordErrorCode = "bad_selector"
+	// RecordErrorAccessDenied is used when the caller is not allowed to read this profile.
+	RecordErrorAccessDenied RecordErrorCode = "access_denied"
+	// RecordErrorProfileNotFound is used when the profile does not exist.
+	RecordErrorProfileNotFound RecordErrorCode = "profile_not_found"
+	// RecordErrorProfileTimeZoneMissing is used when the profile has no time zone, so its values cannot be
+	// read.
+	RecordErrorProfileTimeZoneMissing RecordErrorCode = "profile_time_zone_missing"
+	// RecordErrorIntervalSizeUnsupported is used when the profile's interval size is not supported.
 	RecordErrorIntervalSizeUnsupported RecordErrorCode = "interval_size_unsupported"
-	RecordErrorWindowUnaligned         RecordErrorCode = "window_unaligned"
-	RecordErrorAssignmentUnaligned     RecordErrorCode = "assignment_unaligned"
-	RecordErrorVersionNotFound         RecordErrorCode = "version_not_found"
-	// RecordErrorVersionDeleted: the requested {"number":N} names a version that is flagged as deleted
-	// (it is still listed by the versions endpoint, with deleted: true).
-	RecordErrorVersionDeleted       RecordErrorCode = "version_deleted"
+	// RecordErrorWindowUnaligned is used when the request window does not lie on the grid of the profile
+	// and the requested interval (the least common multiple of both interval lengths); the end of the
+	// window must lie on that grid too.
+	RecordErrorWindowUnaligned RecordErrorCode = "window_unaligned"
+	// RecordErrorAssignmentUnaligned is used when the bounds of the profile assignment are not aligned to
+	// the profile's intervals.
+	RecordErrorAssignmentUnaligned RecordErrorCode = "assignment_unaligned"
+	// RecordErrorVersionNotFound is used when the requested version number does not exist for the profile.
+	RecordErrorVersionNotFound RecordErrorCode = "version_not_found"
+	// RecordErrorVersionDeleted is used when the requested {"number": N} names a version that is flagged
+	// as deleted (it is still listed by the versions endpoint, with deleted: true).
+	RecordErrorVersionDeleted RecordErrorCode = "version_deleted"
+	// RecordErrorConversionNotAllowed is used when the requested unit or interval conversion is not
+	// allowed for the profile.
 	RecordErrorConversionNotAllowed RecordErrorCode = "conversion_not_allowed"
-	RecordErrorAmbiguousLocalTime   RecordErrorCode = "ambiguous_local_time"
-	RecordErrorBadiFailed           RecordErrorCode = "badi_failed"
+	// RecordErrorAmbiguousLocalTime is used when a local time in the window occurs twice (daylight saving
+	// change) and cannot be mapped to one instant.
+	RecordErrorAmbiguousLocalTime RecordErrorCode = "ambiguous_local_time"
+	// RecordErrorBadiFailed is used when any customer BAdI (spec section 3.2) raised an exception.
+	RecordErrorBadiFailed RecordErrorCode = "badi_failed"
 )
 
 var recordErrorCodes = []RecordErrorCode{
@@ -130,6 +178,7 @@ func (c *RecordErrorCode) UnmarshalJSON(b []byte) error {
 // ErrorEnvelope is the body of every failed (non-2xx) HTTP response:
 // {"error":{"code":"…","message":"…","request_id":"…"}}. It has the shape of btpingo.ErrorEnvelope.
 type ErrorEnvelope struct {
+	// Error is the error code, message and optional request id.
 	Error ErrorDetail `json:"error"`
 }
 
@@ -220,6 +269,8 @@ func validateCode(c string) error {
 
 // ResultError is the error object of a resolve/versions result or assignment: {"code":"…"}.
 type ResultError struct {
+	// Code is the record-level error code (snake_case); unknown codes are kept on read (see IsKnown)
+	// but refused on write.
 	Code RecordErrorCode `json:"code"`
 }
 

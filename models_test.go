@@ -238,6 +238,7 @@ func TestInvalidUTF8RefusesToMarshal(t *testing.T) {
 		s := zrm.SystemInfo{
 			ServiceVersion: "1", AbapPackageVersion: "1", SID: "HF1", Client: "100", Release: "758",
 			BusinessTimeZone: "CET",
+			Caps:             zrm.Caps{MaxWindowSeconds: 1, MaxValues: 1, MaxResolveWindowSeconds: 1},
 		}
 		edit(&s)
 		return s

@@ -9,8 +9,10 @@ import (
 // Selector kinds known to every Zeitreiher installation. Any other kind is a custom selector that a
 // customer resolver implements.
 const (
+	// SelectorByProfile selects a profile by its number.
 	SelectorByProfile = "profile"
-	SelectorByMaLo    = "malo"
+	// SelectorByMaLo selects the profiles assigned to a market location (11 digits).
+	SelectorByMaLo = "malo"
 )
 
 // Selector names the business object whose profile assignments are queried. It is a union over By:
@@ -22,10 +24,14 @@ const (
 // Build selectors with ProfileSelector, MaLoSelector or CustomSelector. Only the fields of the
 // variant named by By are used; the others must be empty.
 type Selector struct {
-	By      string
+	// By names the variant: "profile", "malo" or a snake_case customer resolver name.
+	By string
+	// Profile is the profile number (By "profile"): 1 to 18 digits; leading zeros are allowed in requests.
 	Profile string
-	MaLo    string
-	Params  map[string]string
+	// MaLo is the market location id (By "malo"): exactly 11 digits.
+	MaLo string
+	// Params are the string parameters of a customer resolver (any other By); keys are non-empty.
+	Params map[string]string
 }
 
 // ProfileSelector selects a profile by number (leading zeros allowed).
@@ -164,6 +170,7 @@ func decodeSelector(b []byte, sd side) (Selector, error) {
 // response rules.
 type echoedSelector Selector
 
+// MarshalJSON validates and writes the selector with the response rules.
 func (e echoedSelector) MarshalJSON() ([]byte, error) {
 	if err := Selector(e).validate(responseSide); err != nil {
 		return nil, fmt.Errorf("select: %w", err)
@@ -171,6 +178,7 @@ func (e echoedSelector) MarshalJSON() ([]byte, error) {
 	return Selector(e).marshal()
 }
 
+// UnmarshalJSON parses and validates the selector with the response rules.
 func (e *echoedSelector) UnmarshalJSON(b []byte) error {
 	s, err := decodeSelector(b, responseSide)
 	if err != nil {

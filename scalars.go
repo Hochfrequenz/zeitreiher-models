@@ -25,6 +25,7 @@ var (
 // Decimal is an already-scaled decimal number in its shortest canonical string form, e.g. "160",
 // "0.022", "25.25" or "-3.5".
 //
+// Decimal is an already-scaled decimal value, a string on the wire.
 // Values are strings on the wire so that no client loses precision by parsing them as floats.
 // The accepted syntax is an optional minus, an integer part without leading zeros and an optional
 // fractional part without trailing zeros: ^-?(0|[1-9][0-9]*)(\.[0-9]+)?$, and the fraction must not end

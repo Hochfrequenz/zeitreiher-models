@@ -18,8 +18,10 @@ import (
 // v1 has no as-of selector; {"as_of":…} is rejected as an unknown key.
 // Build it with CurrentVersion or VersionNumber.
 type VersionSelector struct {
+	// Current selects the current values; exclusive with Number.
 	Current bool
-	Number  *int
+	// Number is the version number to rebuild (at least 1); exclusive with Current.
+	Number *int
 }
 
 // CurrentVersion selects the current values.
@@ -220,8 +222,12 @@ func decodeWindowRequest(m map[string]json.RawMessage, sel *[]Selector, from, to
 // WindowRequest is the body of the resolve and versions endpoints (spec §4.4): selectors and a
 // window, nothing else.
 type WindowRequest struct {
-	Select   []Selector
-	From, To time.Time
+	// Select lists one or more selectors; results come back per selector index.
+	Select []Selector
+	// From is the start of the request window (inclusive); RFC 3339, whole seconds, explicit offset.
+	From time.Time
+	// To is the end of the request window (exclusive, after From); RFC 3339, whole seconds, explicit offset.
+	To time.Time
 }
 
 // ResolveRequest is the body of POST /api/v1/series/resolve.

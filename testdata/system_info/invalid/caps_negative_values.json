@@ -1,0 +1,23 @@
+{
+  "service_version": "1.0.0",
+  "abap_package_version": "1.0.0",
+  "sid": "S4H",
+  "client": "210",
+  "release": "S4CORE 108",
+  "business_time_zone": "CET",
+  "intervals": [
+    "PT15M",
+    "PT30M",
+    "PT60M"
+  ],
+  "units": [
+    "KWH",
+    "MWH",
+    "K3"
+  ],
+  "caps": {
+    "max_window_seconds": 2678400,
+    "max_values": -1,
+    "max_resolve_window_seconds": 315619200
+  }
+}

@@ -170,10 +170,10 @@
     }
   },
   "query_request/from_unicode_digits.json": {
-    "go": "from: \"2026-01-14T00:00:0\u0660Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "go": "from: \"2026-01-14T00:00:0٠Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
     "python": {
       "loc": "from",
-      "msg": "'2026-01-14T00:00:0\u0660Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "msg": "'2026-01-14T00:00:0٠Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
       "type": "instant"
     }
   },
@@ -210,10 +210,10 @@
     }
   },
   "query_request/interval_unicode_digits.json": {
-    "go": "interval: \"PT1\u0665M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "go": "interval: \"PT1٥M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "interval",
-      "msg": "'PT1\u0665M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "msg": "'PT1٥M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
       "type": "value_error"
     }
   },
@@ -234,7 +234,7 @@
     }
   },
   "query_request/malo_unicode_digits.json": {
-    "go": "select: selector: malo: \"8725374990\u0668\" is not a market location id (11 digits)",
+    "go": "select: selector: malo: \"8725374990٨\" is not a market location id (11 digits)",
     "python": {
       "loc": "select.0.malo.malo",
       "type": "string_pattern_mismatch"
@@ -362,7 +362,7 @@
     }
   },
   "query_request/profile_unicode_digits.json": {
-    "go": "select: selector: profile: \"5\u0660000000000056\" is not a profile number (1 to 18 digits)",
+    "go": "select: selector: profile: \"5٠000000000056\" is not a profile number (1 to 18 digits)",
     "python": {
       "loc": "select.0.profile.profile",
       "type": "string_pattern_mismatch"
@@ -435,10 +435,10 @@
     }
   },
   "query_request/unit_degree.json": {
-    "go": "unit: \"\u00b0C\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "go": "unit: \"°C\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'\u00b0C' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "msg": "'°C' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
@@ -491,10 +491,10 @@
     }
   },
   "query_request/unit_micromolar.json": {
-    "go": "unit: \"\u00b5M\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "go": "unit: \"µM\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'\u00b5M' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "msg": "'µM' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
@@ -539,18 +539,18 @@
     }
   },
   "query_request/unit_superscript_digit.json": {
-    "go": "unit: \"m\u00b3\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "go": "unit: \"m³\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'m\u00b3' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "msg": "'m³' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
   "query_request/unit_symbol.json": {
-    "go": "unit: \"kWh\u2022\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "go": "unit: \"kWh•\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
     "python": {
       "loc": "unit",
-      "msg": "'kWh\u2022' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "msg": "'kWh•' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
       "type": "value_error"
     }
   },
@@ -807,10 +807,10 @@
     }
   },
   "records/series_interval_unicode_digits.json": {
-    "go": "interval: \"PT6\u0660M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "go": "interval: \"PT6٠M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
     "python": {
       "loc": "series.interval",
-      "msg": "'PT6\u0660M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "msg": "'PT6٠M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
       "type": "value_error"
     }
   },
@@ -851,7 +851,7 @@
     }
   },
   "records/series_profile_unicode_digits.json": {
-    "go": "profile: \"5\u0660000000000056\" is not a profile number without leading zeros",
+    "go": "profile: \"5٠000000000056\" is not a profile number without leading zeros",
     "python": {
       "loc": "series.profile",
       "type": "string_pattern_mismatch"
@@ -960,10 +960,10 @@
     }
   },
   "records/series_unit_raw_too_long.json": {
-    "go": "unit_raw: \"Mio. kWh (gerundet) \u2022 xxxxxxxxx\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "go": "unit_raw: \"Mio. kWh (gerundet) • xxxxxxxxx\" is not a SAP unit (1 to 30 characters, no control characters)",
     "python": {
       "loc": "series.unit_raw",
-      "msg": "'Mio. kWh (gerundet) \u2022 xxxxxxxxx' is not a SAP unit (1 to 30 characters, no control characters)",
+      "msg": "'Mio. kWh (gerundet) • xxxxxxxxx' is not a SAP unit (1 to 30 characters, no control characters)",
       "type": "value_error"
     }
   },
@@ -1053,10 +1053,10 @@
     }
   },
   "records/value_negative_zero_unicode.json": {
-    "go": "value: \"-0.\u0660\" is not a decimal string",
+    "go": "value: \"-0.٠\" is not a decimal string",
     "python": {
       "loc": "value.value",
-      "msg": "'-0.\u0660' is not a decimal string",
+      "msg": "'-0.٠' is not a decimal string",
       "type": "value_error"
     }
   },
@@ -1146,10 +1146,10 @@
     }
   },
   "records/value_unicode_digits.json": {
-    "go": "value: \"1\u0666\u0660\" is not a decimal string",
+    "go": "value: \"1٦٠\" is not a decimal string",
     "python": {
       "loc": "value.value",
-      "msg": "'1\u0666\u0660' is not a decimal string",
+      "msg": "'1٦٠' is not a decimal string",
       "type": "value_error"
     }
   },
@@ -1307,6 +1307,29 @@
       "type": "extra_forbidden"
     }
   },
+  "resolve_response/assignment_error_role_empty.json": {
+    "go": "resolve response: results: result: assignments: assignment: role: must not be empty",
+    "python": {
+      "loc": "results.0.assignments.0.role",
+      "type": "string_too_short"
+    }
+  },
+  "resolve_response/assignment_error_unit_lowercase.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit: \"kwh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "results.0.assignments.0.unit",
+      "type": "value_error",
+      "msg": "'kwh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)"
+    }
+  },
+  "resolve_response/assignment_error_unit_raw_empty.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "results.0.assignments.0.unit_raw",
+      "type": "value_error",
+      "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)"
+    }
+  },
   "resolve_response/assignment_from_without_to_with_error.json": {
     "go": "results: result: assignments: assignment: from and to must be set together",
     "python": {
@@ -1328,6 +1351,92 @@
     "python": {
       "loc": "results.0.assignments.0.profile",
       "type": "string_pattern_mismatch"
+    }
+  },
+  "resolve_response/assignment_role_empty.json": {
+    "go": "resolve response: results: result: assignments: assignment: role: must not be empty",
+    "python": {
+      "loc": "results.0.assignments.0.role",
+      "type": "string_too_short"
+    }
+  },
+  "resolve_response/assignment_role_missing.json": {
+    "go": "resolve response: results: result: assignments: assignment: role: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs role"
+    }
+  },
+  "resolve_response/assignment_unit_empty.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit: \"\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "results.0.assignments.0.unit",
+      "type": "value_error",
+      "msg": "'' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)"
+    }
+  },
+  "resolve_response/assignment_unit_lowercase.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit: \"kwh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "results.0.assignments.0.unit",
+      "type": "value_error",
+      "msg": "'kwh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)"
+    }
+  },
+  "resolve_response/assignment_unit_missing.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs unit"
+    }
+  },
+  "resolve_response/assignment_unit_number.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit: json: cannot unmarshal number into Go value of type string",
+    "python": {
+      "loc": "results.0.assignments.0.unit",
+      "type": "string_type"
+    }
+  },
+  "resolve_response/assignment_unit_raw_control_char.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit_raw: \"K\\aH\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "results.0.assignments.0.unit_raw",
+      "type": "value_error",
+      "msg": "'K\\x07H' is not a SAP unit (1 to 30 characters, no control characters)"
+    }
+  },
+  "resolve_response/assignment_unit_raw_empty.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "results.0.assignments.0.unit_raw",
+      "type": "value_error",
+      "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)"
+    }
+  },
+  "resolve_response/assignment_unit_raw_missing.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit_raw: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs unit_raw"
+    }
+  },
+  "resolve_response/assignment_unit_raw_null.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit_raw: must not be null",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs unit_raw"
+    }
+  },
+  "resolve_response/assignment_unit_raw_too_long.json": {
+    "go": "resolve response: results: result: assignments: assignment: unit_raw: \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "results.0.assignments.0.unit_raw",
+      "type": "value_error",
+      "msg": "'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' is not a SAP unit (1 to 30 characters, no control characters)"
     }
   },
   "resolve_response/both_assignments_and_error.json": {
@@ -1367,6 +1476,48 @@
       "type": "greater_than_equal"
     }
   },
+  "system_info/caps_boolean.json": {
+    "go": "system info: caps: max_window_seconds: json: cannot unmarshal bool into Go value of type int64",
+    "python": {
+      "loc": "caps.max_window_seconds",
+      "type": "int_type"
+    }
+  },
+  "system_info/caps_missing_max_values.json": {
+    "go": "system info: caps: max_values: is required",
+    "python": {
+      "loc": "caps.max_values",
+      "type": "missing"
+    }
+  },
+  "system_info/caps_negative_values.json": {
+    "go": "system info: caps: max_values: must be at least 1",
+    "python": {
+      "loc": "caps.max_values",
+      "type": "greater_than_equal"
+    }
+  },
+  "system_info/caps_not_integer.json": {
+    "go": "system info: caps: max_resolve_window_seconds: json: cannot unmarshal number 1.5 into Go value of type int64",
+    "python": {
+      "loc": "caps.max_resolve_window_seconds",
+      "type": "int_type"
+    }
+  },
+  "system_info/caps_overflow.json": {
+    "go": "system info: caps: max_values: json: cannot unmarshal number 9223372036854775808 into Go value of type int64",
+    "python": {
+      "loc": "caps.max_values",
+      "type": "less_than_equal"
+    }
+  },
+  "system_info/caps_zero_window.json": {
+    "go": "system info: caps: max_window_seconds: must be at least 1",
+    "python": {
+      "loc": "caps.max_window_seconds",
+      "type": "greater_than_equal"
+    }
+  },
   "system_info/empty_business_time_zone.json": {
     "go": "business_time_zone: must not be empty",
     "python": {
@@ -1382,11 +1533,47 @@
       "type": "value_error"
     }
   },
+  "system_info/missing_caps.json": {
+    "go": "system info: caps: is required",
+    "python": {
+      "loc": "caps",
+      "type": "missing"
+    }
+  },
   "system_info/missing_sid.json": {
     "go": "sid: is required",
     "python": {
       "loc": "sid",
       "type": "missing"
+    }
+  },
+  "system_info/missing_units.json": {
+    "go": "system info: units: is required",
+    "python": {
+      "loc": "units",
+      "type": "missing"
+    }
+  },
+  "system_info/unit_lowercase.json": {
+    "go": "system info: units[0]: \"kwh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "units.0",
+      "type": "value_error",
+      "msg": "'kwh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)"
+    }
+  },
+  "system_info/unit_not_string.json": {
+    "go": "system info: units: json: cannot unmarshal number into .0 of type string",
+    "python": {
+      "loc": "units.0",
+      "type": "string_type"
+    }
+  },
+  "system_info/units_null_entry.json": {
+    "go": "system info: units[1]: must not be null",
+    "python": {
+      "loc": "units.1",
+      "type": "string_type"
     }
   },
   "versions_request/cursor_not_allowed.json": {
@@ -1438,6 +1625,38 @@
     "python": {
       "loc": "version",
       "type": "extra_forbidden"
+    }
+  },
+  "versions_response/assignment_error_unit_raw_empty.json": {
+    "go": "versions response: results: result: assignments: assignment: unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "results.0.assignments.0.unit_raw",
+      "type": "value_error",
+      "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)"
+    }
+  },
+  "versions_response/assignment_role_missing.json": {
+    "go": "versions response: results: result: assignments: assignment: role: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs role"
+    }
+  },
+  "versions_response/assignment_unit_missing.json": {
+    "go": "versions response: results: result: assignments: assignment: unit: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs unit"
+    }
+  },
+  "versions_response/assignment_unit_raw_missing.json": {
+    "go": "versions response: results: result: assignments: assignment: unit_raw: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "type": "value_error",
+      "msg": "an assignment without error needs unit_raw"
     }
   },
   "versions_response/error_with_versions.json": {

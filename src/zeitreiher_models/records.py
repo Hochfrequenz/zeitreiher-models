@@ -29,18 +29,23 @@ from zeitreiher_models.timestamps import ResponseInstant, check_window
 class Version(ResponseModel):
     """An EDM profile version overlapping a series (spec §4.2, §5)."""
 
-    number: PositiveInt
-    from_: ResponseInstant = Field(alias="from")
-    #: ``None`` (``null``) for an open end.
-    to: ResponseInstant | None
-    #: ``None`` when the creation instant cannot be determined; then ``created_at_unknown`` is true.
-    created_at: ResponseInstant | None
-    created_at_unknown: StrictBool
-    reason: Text
-    description: Text
-    #: True for versions flagged as deleted in SAP. They are still listed; querying their values gives an
-    #: error record with code ``version_deleted``.
-    deleted: StrictBool
+    number: PositiveInt = Field(description="The version number (at least 1).")
+    from_: ResponseInstant = Field(
+        alias="from", description="Start of the version's range (inclusive), RFC 3339 UTC with Z."
+    )
+    to: ResponseInstant | None = Field(
+        description="End of the version's range (exclusive), RFC 3339 UTC with Z; null for an open end."
+    )
+    created_at: ResponseInstant | None = Field(
+        description="When the version was created (RFC 3339 UTC); null when unknown, then created_at_unknown is true."
+    )
+    created_at_unknown: StrictBool = Field(description="True exactly when created_at is null.")
+    reason: Text = Field(description="The SAP version reason code, as SAP delivers it (may be empty).")
+    description: Text = Field(description="The SAP version description (free text, may be empty).")
+    deleted: StrictBool = Field(
+        description="True for versions flagged as deleted in SAP. They are still listed; querying their values "
+        "gives an error record with code version_deleted."
+    )
 
     @model_validator(mode="after")
     def _consistent(self) -> Self:
@@ -55,23 +60,33 @@ class SeriesRecord(ResponseModel):
     """Opens a series: one profile assignment of one selector, cut to the request window."""
 
     type: Literal["series"] = "series"
-    series: PositiveInt
-    selector: NonNegativeInt
-    select: EchoedSelector
-    profile: ResponseProfile
-    #: The role of the profile assignment (SAP EPROFASS role, e.g. ``"0001"``), or ``None`` when the series
-    #: was not resolved through a role (e.g. ``by: profile``). The Resolver BAdI may override it.
-    role: NonEmptyStr | None
-    from_: ResponseInstant = Field(alias="from")
-    to: ResponseInstant
-    #: The canonical unit code (UN/ECE Rec. 20, e.g. ``"KWH"``) of the delivered values (after any conversion),
-    #: or ``None`` when the SAP unit has no mapping. The series is delivered either way.
-    unit: UnitCode | None
-    #: The SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not.
-    unit_raw: RawUnit
-    interval: Interval
-    attributes: Annotated[Mapping[Text, Text], AfterValidator(freeze_sorted)]
-    versions: tuple[Version, ...]
+    series: PositiveInt = Field(description="Number of this series within the response; value records refer to it.")
+    selector: NonNegativeInt = Field(description="Index of the request selector this series belongs to (0-based).")
+    select: EchoedSelector = Field(description="The request selector, echoed (profile numbers without leading zeros).")
+    profile: ResponseProfile = Field(description="The profile number without leading zeros (1 to 18 digits).")
+    role: NonEmptyStr | None = Field(
+        description="The role of the profile assignment (SAP EPROFASS role, e.g. '0001'), or null when the series "
+        "was not resolved through a role (e.g. by: profile). The Resolver BAdI may override it."
+    )
+    from_: ResponseInstant = Field(
+        alias="from", description="Start of the series (inclusive), cut to the request window; RFC 3339 UTC with Z."
+    )
+    to: ResponseInstant = Field(
+        description="End of the series (exclusive), cut to the request window; RFC 3339 UTC with Z."
+    )
+    unit: UnitCode | None = Field(
+        description="The canonical unit code (UN/ECE Rec. 20, e.g. 'KWH') of the delivered values (after any "
+        "conversion), or null when the SAP unit has no mapping. The series is delivered either way."
+    )
+    unit_raw: RawUnit = Field(
+        description="The SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not: 1 to 30 characters, "
+        "no control characters."
+    )
+    interval: Interval = Field(description="Interval of the delivered values as ISO 8601 minutes, e.g. 'PT15M'.")
+    attributes: Annotated[Mapping[Text, Text], AfterValidator(freeze_sorted)] = Field(
+        description="Metadata from the customer's Metadata BAdI; always written, possibly {}."
+    )
+    versions: tuple[Version, ...] = Field(description="Versions overlapping the series; always written, possibly [].")
 
     @model_validator(mode="after")
     def _window(self) -> Self:
@@ -83,16 +98,21 @@ class ValueRecord(ResponseModel):
     """One value of a series for ``[from, to)``."""
 
     type: Literal["value"] = "value"
-    series: PositiveInt
-    from_: ResponseInstant = Field(alias="from")
-    to: ResponseInstant
-    #: Already scaled; use :attr:`decimal` for arithmetic.
-    value: DecimalString
-    status: Status
-    #: The source of the value: the number of the stored version row it came from, or ``None`` when it is
-    #: a current value. With ``{"number": N}`` a series mixes both: current values overlaid with the stored
-    #: values of versions >= N (the lowest wins), only inside N's covered range.
-    version: PositiveInt | None
+    series: PositiveInt = Field(description="Number of the series record this value belongs to.")
+    from_: ResponseInstant = Field(
+        alias="from", description="Start of the value's interval (inclusive); RFC 3339 UTC with Z."
+    )
+    to: ResponseInstant = Field(description="End of the value's interval (exclusive); RFC 3339 UTC with Z.")
+    value: DecimalString = Field(
+        description="The already-scaled decimal value as a string in its shortest canonical form "
+        "('160', '0.022', '-3.5'); use the decimal property for arithmetic."
+    )
+    status: Status = Field(description="Active SAP status codes overlapping the interval, sorted and unique.")
+    version: PositiveInt | None = Field(
+        description="The source of the value: the number of the stored version row it came from, or null when it "
+        "is a current value. With {'number': N} a series mixes both: current values overlaid with the stored "
+        "values of versions >= N (the lowest wins), only inside N's covered range."
+    )
 
     @model_validator(mode="after")
     def _window(self) -> Self:
@@ -111,10 +131,12 @@ class ErrorRecord(ResponseModel):
     _omit_if_none: ClassVar[frozenset[str]] = frozenset({"profile"})
 
     type: Literal["error"] = "error"
-    selector: NonNegativeInt
-    select: EchoedSelector
-    profile: ResponseProfile | None = None
-    code: RecordCode
+    selector: NonNegativeInt = Field(description="Index of the request selector the problem belongs to (0-based).")
+    select: EchoedSelector = Field(description="The request selector, echoed.")
+    profile: ResponseProfile | None = Field(
+        default=None, description="The profile number the problem belongs to; omitted for a selector-level problem."
+    )
+    code: RecordCode = Field(description="The record-level error code (snake_case); see RecordErrorCode.")
 
 
 class EndRecord(ResponseModel):
@@ -125,12 +147,11 @@ class EndRecord(ResponseModel):
     """
 
     type: Literal["end"] = "end"
-    series: NonNegativeInt
-    values: NonNegativeInt
-    errors: NonNegativeInt
-    #: The cursor for the next page, or ``None`` when the result is complete.
-    next: Token | None
+    series: NonNegativeInt = Field(description="Number of series records on this page.")
+    values: NonNegativeInt = Field(description="Number of value records on this page.")
+    errors: NonNegativeInt = Field(description="Number of error records on this page.")
+    next: Token | None = Field(description="The cursor for the next page, or null when the result is complete.")
 
 
-#: One NDJSON line: a union over ``type``.
 Record = Annotated[SeriesRecord | ValueRecord | ErrorRecord | EndRecord, Field(discriminator="type")]
+"""One NDJSON line: a union over ``type``."""
