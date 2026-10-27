@@ -21,6 +21,12 @@ def _check_decimal(value: str) -> str:
     return value
 
 
+def _check_request_profile(value: str) -> str:
+    if not value.strip("0"):
+        raise ValueError(f"{value!r}: profile number 0 does not exist")
+    return value
+
+
 def _check_status(value: tuple[str, ...]) -> tuple[str, ...]:
     for previous, current in itertools.pairwise(value):
         if previous >= current:
@@ -38,8 +44,10 @@ def _check_unit(value: str) -> str:
 #: exponents, a plus sign, leading zeros and negative zero are rejected.
 DecimalString = Annotated[StrictStr, AfterValidator(_check_decimal)]
 
-#: A profile number in a request: 1 to 18 digits, leading zeros allowed.
-RequestProfile = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{1,18}$")]
+#: A profile number in a request: 1 to 18 digits, leading zeros allowed, not all zeros.
+RequestProfile = Annotated[
+    StrictStr, StringConstraints(pattern=r"^[0-9]{1,18}$"), AfterValidator(_check_request_profile)
+]
 
 #: A profile number in a response: without leading zeros.
 ResponseProfile = Annotated[StrictStr, StringConstraints(pattern=r"^[1-9][0-9]{0,17}$")]

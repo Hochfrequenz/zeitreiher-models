@@ -57,10 +57,14 @@ func (d *Decimal) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// validateRequestProfile accepts profile numbers with or without leading zeros (NUMC 18).
+// validateRequestProfile accepts profile numbers with or without leading zeros (NUMC 18). An all-zero
+// number is rejected: there is no profile 0, and its echo ("0") would not be a valid response profile.
 func validateRequestProfile(p string) error {
 	if !requestProfilePattern.MatchString(p) {
 		return fmt.Errorf("%q is not a profile number (1 to 18 digits)", p)
+	}
+	if strings.Trim(p, "0") == "" {
+		return fmt.Errorf("%q: profile number 0 does not exist", p)
 	}
 	return nil
 }
