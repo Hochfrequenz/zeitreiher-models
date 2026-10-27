@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 	"time"
+	_ "time/tzdata" // zone data for the LMT test on every platform
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -90,4 +91,11 @@ func TestValidateInstantRequiresARoundTrippableWireForm(t *testing.T) {
 	// A request window built from such values refuses to marshal instead of writing a different instant.
 	from := time.Date(2026, 1, 1, 0, 0, 0, 0, subMinute)
 	assert.Error(t, validateWindow(from, from.Add(time.Hour), requestSide))
+
+	// A real zone with a local mean time offset (-00:44:30 until 1972).
+	monrovia, err := time.LoadLocation("Africa/Monrovia")
+	require.NoError(t, err)
+	assert.Error(t, validateInstant(time.Date(1960, 1, 1, 0, 0, 0, 0, monrovia), requestSide))
+	assert.NoError(t, validateInstant(time.Date(1960, 1, 1, 0, 0, 0, 0, monrovia), responseSide))
+	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, monrovia), requestSide))
 }

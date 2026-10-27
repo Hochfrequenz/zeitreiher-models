@@ -5,6 +5,7 @@ import json
 import pickle
 from datetime import UTC, datetime, timedelta, timezone
 from decimal import Decimal
+from zoneinfo import ZoneInfo
 
 import pytest
 from pydantic import ValidationError
@@ -239,3 +240,21 @@ def test_mappings_are_read_only_sorted_hashable_and_picklable() -> None:
 def test_json_output_escapes_like_go() -> None:
     selector = CustomSelector(by="x", params={"k": "<&>\u2028\u2029"})
     assert selector.model_dump_json() == '{"by":"x","params":{"k":"\\u003c\\u0026\\u003e\\u2028\\u2029"}}'
+
+
+def test_local_mean_time_offsets_are_rejected_in_requests_and_converted_in_responses() -> None:
+    monrovia = ZoneInfo("Africa/Monrovia")  # -00:44:30 until 1972, as in timestamps_test.go
+    with pytest.raises(ValidationError):
+        VersionAsOf(as_of=datetime(1960, 1, 1, tzinfo=monrovia))
+    assert (
+        VersionAsOf(as_of=datetime(2026, 1, 1, tzinfo=monrovia)).model_dump_json() == '{"as_of":"2026-01-01T00:00:00Z"}'
+    )
+    value = ValueRecord(
+        series=1,
+        from_=datetime(1960, 1, 1, tzinfo=monrovia),
+        to=datetime(1960, 1, 2, tzinfo=monrovia),
+        value="1",
+        status=[],
+        version=None,
+    )
+    assert json.loads(dump_record(value))["from"] == "1960-01-01T00:44:30Z"
