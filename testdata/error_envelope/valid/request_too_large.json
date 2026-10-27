@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "request_too_large",
+    "message": "example message for request_too_large"
+  }
+}

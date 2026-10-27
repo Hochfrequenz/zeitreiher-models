@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package zeitreiher.v1;
+
+// Selector names the business object whose profile assignments are queried. It mirrors the JSON
+// shape exactly; the fields of the variant named by `by` are set, the others are empty:
+//
+//   {"by":"profile","profile":"50000000000056"}
+//   {"by":"malo","malo":"87253749908"}
+//   {"by":"<name>","params":{"<key>":"<string>"}}   custom resolver; `by` is snake_case and
+//                                                    neither "profile" nor "malo"
+//
+// In requests, `profile` may carry leading zeros (1 to 18 digits). Selectors echoed in responses
+// carry the profile number without leading zeros.
+message Selector {
+  string by = 1;
+  string profile = 2;
+  string malo = 3;
+  map<string, string> params = 4;
+}

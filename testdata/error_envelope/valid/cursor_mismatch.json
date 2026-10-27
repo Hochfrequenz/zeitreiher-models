@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "cursor_mismatch",
+    "message": "example message for cursor_mismatch"
+  }
+}

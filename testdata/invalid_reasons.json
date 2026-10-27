@@ -1,0 +1,1466 @@
+{
+  "error_envelope/code_not_snake_case.json": {
+    "go": "error: code: \"Bad Request\" is not an error code (snake_case)",
+    "python": {
+      "loc": "error.code.str-enum[RequestErrorCode]",
+      "type": "enum"
+    }
+  },
+  "error_envelope/message_not_string.json": {
+    "go": "error: message: json: cannot unmarshal number into Go value of type string",
+    "python": {
+      "loc": "error.message",
+      "type": "string_type"
+    }
+  },
+  "error_envelope/missing_message.json": {
+    "go": "error: message: is required",
+    "python": {
+      "loc": "error.message",
+      "type": "missing"
+    }
+  },
+  "error_envelope/not_enveloped.json": {
+    "go": "error: is required",
+    "python": {
+      "loc": "error",
+      "type": "missing"
+    }
+  },
+  "query_request/compact_offset.json": {
+    "go": "from: \"2026-01-14T00:00:00+0100\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00+0100': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/cursor_empty.json": {
+    "go": "cursor: must not be empty",
+    "python": {
+      "loc": "cursor",
+      "type": "string_too_short"
+    }
+  },
+  "query_request/custom_by_uppercase.json": {
+    "go": "select: selector: by: \"ContractAccount\" is not a selector kind (lower-case letters, digits, underscores)",
+    "python": {
+      "loc": "select.0.custom.by",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "query_request/custom_param_invalid_utf8.json": {
+    "go": "input is not valid UTF-8",
+    "python": {
+      "loc": "",
+      "type": "json_invalid"
+    }
+  },
+  "query_request/custom_param_lone_surrogate.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": {
+      "loc": "",
+      "type": "json_invalid"
+    }
+  },
+  "query_request/custom_params_empty_key.json": {
+    "go": "select: selector: params: keys must not be empty",
+    "python": {
+      "loc": "select.0.custom.params..[key]",
+      "type": "string_too_short"
+    }
+  },
+  "query_request/custom_params_non_string.json": {
+    "go": "select: selector \"contract_account\": params: account: must be a string",
+    "python": {
+      "loc": "select.0.custom.params.account",
+      "type": "string_type"
+    }
+  },
+  "query_request/custom_params_null_value.json": {
+    "go": "select: selector \"contract_account\": params: account: must be a string, not null",
+    "python": {
+      "loc": "select.0.custom.params.account",
+      "type": "string_type"
+    }
+  },
+  "query_request/custom_selector_reserved_by.json": {
+    "go": "select: selector \"profile\": unknown key(s) [\"params\"]",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "type": "missing"
+    }
+  },
+  "query_request/custom_selector_without_params.json": {
+    "go": "select: selector \"contract_account\": params: is required",
+    "python": {
+      "loc": "select.0.custom.params",
+      "type": "missing"
+    }
+  },
+  "query_request/date_only.json": {
+    "go": "from: \"2026-01-14\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/day_32.json": {
+    "go": "from: \"2026-01-32T00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-32T00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/empty_select.json": {
+    "go": "select: at least one selector is required",
+    "python": {
+      "loc": "select",
+      "type": "too_short"
+    }
+  },
+  "query_request/fractional_seconds.json": {
+    "go": "from: \"2026-01-14T00:00:00.000Z\": fractional seconds are not allowed (whole seconds only)",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00.000Z': fractional seconds are not allowed (whole seconds only)",
+      "type": "instant"
+    }
+  },
+  "query_request/from_after_to.json": {
+    "go": "from (2026-01-15T00:00:00Z) must be before to (2026-01-14T00:00:00Z)",
+    "python": {
+      "loc": "",
+      "msg": "from (2026-01-15T00:00:00Z) must be before to (2026-01-14T00:00:00Z)",
+      "type": "value_error"
+    }
+  },
+  "query_request/from_equals_to.json": {
+    "go": "from (2026-01-14T01:00:00+01:00) must be before to (2026-01-14T00:00:00Z)",
+    "python": {
+      "loc": "",
+      "msg": "from (2026-01-14T01:00:00+01:00) must be before to (2026-01-14T00:00:00Z)",
+      "type": "value_error"
+    }
+  },
+  "query_request/from_number.json": {
+    "go": "from: must be an RFC 3339 timestamp string",
+    "python": {
+      "loc": "from",
+      "msg": "1768348800: must be an RFC 3339 timestamp string",
+      "type": "instant"
+    }
+  },
+  "query_request/from_trailing_newline.json": {
+    "go": "from: \"2026-01-14T00:00:00Z\\n\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00Z\\n': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/from_underscore_key.json": {
+    "go": "unknown key(s) [\"from_\"]",
+    "python": {
+      "loc": "",
+      "msg": "unknown key(s) ['from_']",
+      "type": "unknown_key"
+    }
+  },
+  "query_request/from_unicode_digits.json": {
+    "go": "from: \"2026-01-14T00:00:0\u0660Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:0\u0660Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/hour_24.json": {
+    "go": "from: \"2026-01-13T24:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-13T24:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/interval_daily.json": {
+    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "python": {
+      "loc": "interval",
+      "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
+    }
+  },
+  "query_request/interval_empty.json": {
+    "go": "interval: must not be empty",
+    "python": {
+      "loc": "interval",
+      "msg": "'' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
+    }
+  },
+  "query_request/interval_hours.json": {
+    "go": "interval: \"PT1H\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "python": {
+      "loc": "interval",
+      "msg": "'PT1H' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
+    }
+  },
+  "query_request/interval_unicode_digits.json": {
+    "go": "interval: \"PT1\u0665M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "python": {
+      "loc": "interval",
+      "msg": "'PT1\u0665M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
+    }
+  },
+  "query_request/leap_second.json": {
+    "go": "from: \"2026-01-13T23:59:60Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-13T23:59:60Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/lowercase_t.json": {
+    "go": "from: \"2026-01-14t00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14t00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/malo_unicode_digits.json": {
+    "go": "select: selector: malo: \"8725374990\u0668\" is not a market location id (11 digits)",
+    "python": {
+      "loc": "select.0.malo.malo",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "query_request/malo_wrong_length.json": {
+    "go": "select: selector: malo: \"8725374990\" is not a market location id (11 digits)",
+    "python": {
+      "loc": "select.0.malo.malo",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "query_request/minus_0000_offset.json": {
+    "go": "from: \"2026-01-14T00:00:00-00:00\": the offset -00:00 means 'unknown offset' and is not allowed",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00-00:00': the offset -00:00 means 'unknown offset' and is not allowed",
+      "type": "instant"
+    }
+  },
+  "query_request/minute_60.json": {
+    "go": "from: \"2026-01-13T23:60:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-13T23:60:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/missing_from.json": {
+    "go": "from: is required",
+    "python": {
+      "loc": "from",
+      "type": "missing"
+    }
+  },
+  "query_request/missing_select.json": {
+    "go": "select: is required",
+    "python": {
+      "loc": "select",
+      "type": "missing"
+    }
+  },
+  "query_request/month_13.json": {
+    "go": "from: \"2026-13-01T00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-13-01T00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/naive_from.json": {
+    "go": "from: \"2026-01-14T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/naive_to.json": {
+    "go": "to: \"2026-01-15T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "to",
+      "msg": "'2026-01-15T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/null_to.json": {
+    "go": "to: must not be null",
+    "python": {
+      "loc": "to",
+      "msg": "None: must be an RFC 3339 timestamp string",
+      "type": "instant"
+    }
+  },
+  "query_request/offset_hour_24.json": {
+    "go": "from: \"2026-01-14T00:00:00+24:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00+24:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/offset_minute_60.json": {
+    "go": "from: \"2026-01-14T00:00:00+01:60\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00+01:60': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/profile_all_zeros.json": {
+    "go": "select: selector: profile: \"000\": profile number 0 does not exist",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "msg": "'000': profile number 0 does not exist",
+      "type": "value_error"
+    }
+  },
+  "query_request/profile_number_not_string.json": {
+    "go": "select: selector \"profile\": profile: json: cannot unmarshal number into Go value of type string",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "type": "string_type"
+    }
+  },
+  "query_request/profile_selector_non_digits.json": {
+    "go": "select: selector: profile: \"5000000000005A\" is not a profile number (1 to 18 digits)",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "query_request/profile_too_long.json": {
+    "go": "select: selector: profile: \"5555555555555555555\" is not a profile number (1 to 18 digits)",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "query_request/profile_trailing_newline.json": {
+    "go": "select: selector: profile: \"50000000000056\\n\" is not a profile number (1 to 18 digits)",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "query_request/profile_unicode_digits.json": {
+    "go": "select: selector: profile: \"5\u0660000000000056\" is not a profile number (1 to 18 digits)",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "query_request/profile_zero.json": {
+    "go": "select: selector: profile: \"0\": profile number 0 does not exist",
+    "python": {
+      "loc": "select.0.profile.profile",
+      "msg": "'0': profile number 0 does not exist",
+      "type": "value_error"
+    }
+  },
+  "query_request/selector_by_array.json": {
+    "go": "select: selector: by: json: cannot unmarshal array into Go value of type string",
+    "python": {
+      "loc": "select.0.custom.by",
+      "type": "string_type"
+    }
+  },
+  "query_request/selector_by_number.json": {
+    "go": "select: selector: by: json: cannot unmarshal number into Go value of type string",
+    "python": {
+      "loc": "select.0.custom.by",
+      "type": "string_type"
+    }
+  },
+  "query_request/selector_by_object.json": {
+    "go": "select: selector: by: json: cannot unmarshal object into Go value of type string",
+    "python": {
+      "loc": "select.0.custom.by",
+      "type": "string_type"
+    }
+  },
+  "query_request/selector_missing_by.json": {
+    "go": "select: selector: by: is required",
+    "python": {
+      "loc": "select.0.custom.by",
+      "type": "missing"
+    }
+  },
+  "query_request/selector_not_object.json": {
+    "go": "select: selector: must be a JSON object",
+    "python": {
+      "loc": "select.0.custom",
+      "type": "model_type"
+    }
+  },
+  "query_request/selector_unknown_field.json": {
+    "go": "select: selector \"profile\": unknown key(s) [\"malo\"]",
+    "python": {
+      "loc": "select.0.profile.malo",
+      "type": "extra_forbidden"
+    }
+  },
+  "query_request/space_separator.json": {
+    "go": "from: \"2026-01-14 00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14 00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "query_request/unit_control_char.json": {
+    "go": "unit: \"KW\\x1c\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'KW\\x1c' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_degree.json": {
+    "go": "unit: \"\u00b0C\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'\u00b0C' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_empty.json": {
+    "go": "unit: must not be empty",
+    "python": {
+      "loc": "unit",
+      "msg": "'' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_four_chars.json": {
+    "go": "unit: \"KWHH\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'KWHH' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_inner_space.json": {
+    "go": "unit: \"K H\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'K H' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_kvarh.json": {
+    "go": "unit: \"kvarh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'kvarh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_kwh_external.json": {
+    "go": "unit: \"kWh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'kWh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_lowercase.json": {
+    "go": "unit: \"mwh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'mwh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_micromolar.json": {
+    "go": "unit: \"\u00b5M\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'\u00b5M' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_nbsp.json": {
+    "go": "unit: \"KW\\u00a0\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'KW\\xa0' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_one_char.json": {
+    "go": "unit: \"K\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'K' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_padded.json": {
+    "go": "unit: \" KWH\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "' KWH' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_percent.json": {
+    "go": "unit: \"%\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'%' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_six_chars.json": {
+    "go": "unit: \"Mio.m3\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'Mio.m3' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_superscript_digit.json": {
+    "go": "unit: \"m\u00b3\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'m\u00b3' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_symbol.json": {
+    "go": "unit: \"kWh\u2022\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'kWh\u2022' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unit_too_long.json": {
+    "go": "unit: \"kvarh/h\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "unit",
+      "msg": "'kvarh/h' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "query_request/unknown_field.json": {
+    "go": "unknown key(s) [\"limit\"]",
+    "python": {
+      "loc": "limit",
+      "type": "extra_forbidden"
+    }
+  },
+  "query_request/uppercase_from_key.json": {
+    "go": "unknown key(s) [\"From\"]",
+    "python": {
+      "loc": "from",
+      "type": "missing"
+    }
+  },
+  "query_request/version_as_of_not_supported.json": {
+    "go": "version: version: unknown key(s) [\"as_of\"]",
+    "python": {
+      "loc": "version",
+      "msg": "exactly one of current or number must be set",
+      "type": "version_selector"
+    }
+  },
+  "query_request/version_current_not_empty.json": {
+    "go": "version: version: current must be an empty object {}",
+    "python": {
+      "loc": "version.current.current",
+      "msg": "current must be an empty object {}",
+      "type": "value_error"
+    }
+  },
+  "query_request/version_current_true.json": {
+    "go": "version: version: current must be an empty object {}",
+    "python": {
+      "loc": "version.current.current",
+      "type": "dict_type"
+    }
+  },
+  "query_request/version_empty.json": {
+    "go": "version: version: exactly one of current or number must be set",
+    "python": {
+      "loc": "version",
+      "msg": "exactly one of current or number must be set",
+      "type": "version_selector"
+    }
+  },
+  "query_request/version_null_sibling.json": {
+    "go": "version: version: number must not be null",
+    "python": {
+      "loc": "version",
+      "msg": "exactly one of current or number must be set",
+      "type": "version_selector"
+    }
+  },
+  "query_request/version_number_float.json": {
+    "go": "version: version: number: json: cannot unmarshal number 3.0 into Go value of type int",
+    "python": {
+      "loc": "version.number.number",
+      "type": "int_type"
+    }
+  },
+  "query_request/version_number_null.json": {
+    "go": "version: version: number must not be null",
+    "python": {
+      "loc": "version.number.number",
+      "type": "int_type"
+    }
+  },
+  "query_request/version_number_string.json": {
+    "go": "version: version: number: json: cannot unmarshal string into Go value of type int",
+    "python": {
+      "loc": "version.number.number",
+      "type": "int_type"
+    }
+  },
+  "query_request/version_number_zero.json": {
+    "go": "version: version: number: must be at least 1, got 0",
+    "python": {
+      "loc": "version.number.number",
+      "type": "greater_than_equal"
+    }
+  },
+  "query_request/version_two_keys.json": {
+    "go": "version: version: exactly one of current or number must be set",
+    "python": {
+      "loc": "version",
+      "msg": "exactly one of current or number must be set",
+      "type": "version_selector"
+    }
+  },
+  "query_request/version_unknown_key.json": {
+    "go": "version: version: unknown key(s) [\"latest\"]",
+    "python": {
+      "loc": "version",
+      "msg": "exactly one of current or number must be set",
+      "type": "version_selector"
+    }
+  },
+  "query_request/year_0000.json": {
+    "go": "from: \"0000-01-14T00:00:00Z\": years before 1900 are not allowed",
+    "python": {
+      "loc": "from",
+      "msg": "'0000-01-14T00:00:00Z': years before 1900 are not allowed",
+      "type": "instant"
+    }
+  },
+  "query_request/year_0001.json": {
+    "go": "from: \"0001-01-01T00:00:00Z\": years before 1900 are not allowed",
+    "python": {
+      "loc": "from",
+      "msg": "'0001-01-01T00:00:00Z': years before 1900 are not allowed",
+      "type": "instant"
+    }
+  },
+  "query_request/year_10000_in_utc.json": {
+    "go": "to: \"9999-12-31T22:00:00-05:00\": the instant is outside the years 1900 to 9999 in UTC",
+    "python": {
+      "loc": "to",
+      "msg": "'9999-12-31T22:00:00-05:00': the instant is outside the years 1900 to 9999 in UTC",
+      "type": "instant"
+    }
+  },
+  "query_request/year_1899.json": {
+    "go": "from: \"1899-12-31T23:59:59Z\": years before 1900 are not allowed",
+    "python": {
+      "loc": "from",
+      "msg": "'1899-12-31T23:59:59Z': years before 1900 are not allowed",
+      "type": "instant"
+    }
+  },
+  "query_request/year_1899_in_utc.json": {
+    "go": "from: \"1900-01-01T00:00:00+01:00\": the instant is outside the years 1900 to 9999 in UTC",
+    "python": {
+      "loc": "from",
+      "msg": "'1900-01-01T00:00:00+01:00': the instant is outside the years 1900 to 9999 in UTC",
+      "type": "instant"
+    }
+  },
+  "records/end_count_float.json": {
+    "go": "values: json: cannot unmarshal number 744.0 into Go value of type int",
+    "python": {
+      "loc": "end.values",
+      "type": "int_type"
+    }
+  },
+  "records/end_missing_next.json": {
+    "go": "next: is required",
+    "python": {
+      "loc": "end.next",
+      "type": "missing"
+    }
+  },
+  "records/end_negative_values.json": {
+    "go": "values: must be at least 0, got -1",
+    "python": {
+      "loc": "end.values",
+      "type": "greater_than_equal"
+    }
+  },
+  "records/end_next_empty.json": {
+    "go": "next: must not be empty",
+    "python": {
+      "loc": "end.next",
+      "type": "string_too_short"
+    }
+  },
+  "records/error_code_not_snake_case.json": {
+    "go": "code: \"ProfileNotFound\" is not an error code (snake_case)",
+    "python": {
+      "loc": "error.code.str-enum[RecordErrorCode]",
+      "type": "enum"
+    }
+  },
+  "records/error_missing_code.json": {
+    "go": "code: is required",
+    "python": {
+      "loc": "error.code",
+      "type": "missing"
+    }
+  },
+  "records/error_missing_select.json": {
+    "go": "select: is required",
+    "python": {
+      "loc": "error.select",
+      "type": "missing"
+    }
+  },
+  "records/error_missing_selector.json": {
+    "go": "selector: is required",
+    "python": {
+      "loc": "error.selector",
+      "type": "missing"
+    }
+  },
+  "records/error_profile_empty.json": {
+    "go": "profile: must not be empty",
+    "python": {
+      "loc": "error.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "records/missing_type.json": {
+    "go": "type: is required",
+    "python": {
+      "loc": "",
+      "type": "union_tag_not_found"
+    }
+  },
+  "records/not_an_object.json": {
+    "go": "must be a JSON object",
+    "python": {
+      "loc": "",
+      "type": "dict_type"
+    }
+  },
+  "records/series_attribute_not_string.json": {
+    "go": "attributes: n: must be a string",
+    "python": {
+      "loc": "series.attributes.n",
+      "type": "string_type"
+    }
+  },
+  "records/series_attribute_null.json": {
+    "go": "attributes: malo: must be a string, not null",
+    "python": {
+      "loc": "series.attributes.malo",
+      "type": "string_type"
+    }
+  },
+  "records/series_from_offset_plus_0200.json": {
+    "go": "from: \"2026-01-01T01:00:00+02:00\": response timestamps must be in UTC (Z)",
+    "python": {
+      "loc": "series.from",
+      "msg": "'2026-01-01T01:00:00+02:00': response timestamps must be in UTC (Z)",
+      "type": "instant"
+    }
+  },
+  "records/series_interval_p1d.json": {
+    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "python": {
+      "loc": "series.interval",
+      "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
+    }
+  },
+  "records/series_interval_unicode_digits.json": {
+    "go": "interval: \"PT6\u0660M\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "python": {
+      "loc": "series.interval",
+      "msg": "'PT6\u0660M' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
+    }
+  },
+  "records/series_missing_attributes.json": {
+    "go": "attributes: is required",
+    "python": {
+      "loc": "series.attributes",
+      "type": "missing"
+    }
+  },
+  "records/series_missing_select.json": {
+    "go": "select: is required",
+    "python": {
+      "loc": "series.select",
+      "type": "missing"
+    }
+  },
+  "records/series_missing_versions.json": {
+    "go": "versions: is required",
+    "python": {
+      "loc": "series.versions",
+      "type": "missing"
+    }
+  },
+  "records/series_naive_to.json": {
+    "go": "to: \"2026-01-31T23:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "series.to",
+      "msg": "'2026-01-31T23:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "records/series_profile_leading_zero.json": {
+    "go": "profile: \"050000000000056\" is not a profile number without leading zeros",
+    "python": {
+      "loc": "series.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "records/series_profile_unicode_digits.json": {
+    "go": "profile: \"5\u0660000000000056\" is not a profile number without leading zeros",
+    "python": {
+      "loc": "series.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "records/series_role_empty.json": {
+    "go": "role: must not be empty",
+    "python": {
+      "loc": "series.role",
+      "type": "string_too_short"
+    }
+  },
+  "records/series_role_missing.json": {
+    "go": "role: is required",
+    "python": {
+      "loc": "series.role",
+      "type": "missing"
+    }
+  },
+  "records/series_role_number.json": {
+    "go": "role: json: cannot unmarshal number into Go value of type string",
+    "python": {
+      "loc": "series.role",
+      "type": "string_type"
+    }
+  },
+  "records/series_select_by_array.json": {
+    "go": "select: selector: by: json: cannot unmarshal array into Go value of type string",
+    "python": {
+      "loc": "series.select.custom.by",
+      "type": "string_type"
+    }
+  },
+  "records/series_select_param_null.json": {
+    "go": "select: selector \"contract_account\": params: role: must be a string, not null",
+    "python": {
+      "loc": "series.select.custom.params.role",
+      "type": "string_type"
+    }
+  },
+  "records/series_select_profile_leading_zero.json": {
+    "go": "select: selector: profile: \"050000000000056\" is not a profile number without leading zeros",
+    "python": {
+      "loc": "series.select.profile.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "records/series_selector_negative.json": {
+    "go": "selector: must be at least 0, got -1",
+    "python": {
+      "loc": "series.selector",
+      "type": "greater_than_equal"
+    }
+  },
+  "records/series_unit_empty.json": {
+    "go": "unit: \"\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "series.unit",
+      "msg": "'' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "records/series_unit_lowercase.json": {
+    "go": "unit: \"kWh\" is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+    "python": {
+      "loc": "series.unit",
+      "msg": "'kWh' is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)",
+      "type": "value_error"
+    }
+  },
+  "records/series_unit_missing.json": {
+    "go": "unit: is required",
+    "python": {
+      "loc": "series.unit",
+      "type": "missing"
+    }
+  },
+  "records/series_unit_raw_control_char.json": {
+    "go": "unit_raw: \"KWH\\x1c\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "series.unit_raw",
+      "msg": "'KWH\\x1c' is not a SAP unit (1 to 30 characters, no control characters)",
+      "type": "value_error"
+    }
+  },
+  "records/series_unit_raw_empty.json": {
+    "go": "unit_raw: \"\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "series.unit_raw",
+      "msg": "'' is not a SAP unit (1 to 30 characters, no control characters)",
+      "type": "value_error"
+    }
+  },
+  "records/series_unit_raw_missing.json": {
+    "go": "unit_raw: is required",
+    "python": {
+      "loc": "series.unit_raw",
+      "type": "missing"
+    }
+  },
+  "records/series_unit_raw_null.json": {
+    "go": "unit_raw: must not be null",
+    "python": {
+      "loc": "series.unit_raw",
+      "type": "string_type"
+    }
+  },
+  "records/series_unit_raw_too_long.json": {
+    "go": "unit_raw: \"Mio. kWh (gerundet) \u2022 xxxxxxxxx\" is not a SAP unit (1 to 30 characters, no control characters)",
+    "python": {
+      "loc": "series.unit_raw",
+      "msg": "'Mio. kWh (gerundet) \u2022 xxxxxxxxx' is not a SAP unit (1 to 30 characters, no control characters)",
+      "type": "value_error"
+    }
+  },
+  "records/type_not_string.json": {
+    "go": "type must be a string",
+    "python": {
+      "loc": "",
+      "type": "union_tag_invalid"
+    }
+  },
+  "records/unknown_type.json": {
+    "go": "unknown type \"values\"",
+    "python": {
+      "loc": "",
+      "type": "union_tag_invalid"
+    }
+  },
+  "records/value_comma.json": {
+    "go": "value: \"0,022\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'0,022' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_exponent.json": {
+    "go": "value: \"1.6e2\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'1.6e2' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_fraction_trailing_zero.json": {
+    "go": "value: \"0.0220\" is not in shortest form (no trailing zeros after the decimal point): write \"0.022\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'0.0220' is not in shortest form (no trailing zeros after the decimal point): write '0.022'",
+      "type": "value_error"
+    }
+  },
+  "records/value_from_after_to.json": {
+    "go": "from (2026-01-01T00:00:00Z) must be before to (2025-12-31T23:00:00Z)",
+    "python": {
+      "loc": "value",
+      "msg": "from (2026-01-01T00:00:00Z) must be before to (2025-12-31T23:00:00Z)",
+      "type": "value_error"
+    }
+  },
+  "records/value_hour_24.json": {
+    "go": "to: \"2025-12-31T24:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "value.to",
+      "msg": "'2025-12-31T24:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "records/value_leading_zero.json": {
+    "go": "value: \"0160\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'0160' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_missing_status.json": {
+    "go": "status: is required",
+    "python": {
+      "loc": "value.status",
+      "type": "missing"
+    }
+  },
+  "records/value_negative_trailing_zero.json": {
+    "go": "value: \"-3.50\" is not in shortest form (no trailing zeros after the decimal point): write \"-3.5\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'-3.50' is not in shortest form (no trailing zeros after the decimal point): write '-3.5'",
+      "type": "value_error"
+    }
+  },
+  "records/value_negative_zero.json": {
+    "go": "value: \"-0\": negative zero is not allowed",
+    "python": {
+      "loc": "value.value",
+      "msg": "'-0': negative zero is not allowed",
+      "type": "value_error"
+    }
+  },
+  "records/value_negative_zero_unicode.json": {
+    "go": "value: \"-0.\u0660\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'-0.\u0660' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_number_not_string.json": {
+    "go": "value: must be a decimal string, not a JSON number",
+    "python": {
+      "loc": "value.value",
+      "type": "string_type"
+    }
+  },
+  "records/value_offset_not_z.json": {
+    "go": "from: \"2026-01-01T00:00:00+01:00\": response timestamps must be in UTC (Z)",
+    "python": {
+      "loc": "value.from",
+      "msg": "'2026-01-01T00:00:00+01:00': response timestamps must be in UTC (Z)",
+      "type": "instant"
+    }
+  },
+  "records/value_offset_plus_0000.json": {
+    "go": "from: \"2025-12-31T23:00:00+00:00\": response timestamps must be in UTC (Z)",
+    "python": {
+      "loc": "value.from",
+      "msg": "'2025-12-31T23:00:00+00:00': response timestamps must be in UTC (Z)",
+      "type": "instant"
+    }
+  },
+  "records/value_plus_sign.json": {
+    "go": "value: \"+160\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'+160' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_series_zero.json": {
+    "go": "series: must be at least 1, got 0",
+    "python": {
+      "loc": "value.series",
+      "type": "greater_than_equal"
+    }
+  },
+  "records/value_status_duplicate.json": {
+    "go": "status: status codes must be sorted and unique, got \"IU015\" before \"IU015\"",
+    "python": {
+      "loc": "value.status",
+      "msg": "status codes must be sorted and unique, got 'IU015' before 'IU015'",
+      "type": "value_error"
+    }
+  },
+  "records/value_status_empty_code.json": {
+    "go": "status: status codes must not be empty",
+    "python": {
+      "loc": "value.status.0",
+      "type": "string_too_short"
+    }
+  },
+  "records/value_status_unsorted.json": {
+    "go": "status: status codes must be sorted and unique, got \"IU016\" before \"IU012\"",
+    "python": {
+      "loc": "value.status",
+      "msg": "status codes must be sorted and unique, got 'IU016' before 'IU012'",
+      "type": "value_error"
+    }
+  },
+  "records/value_trailing_dot.json": {
+    "go": "value: \"160.\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'160.' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_trailing_newline.json": {
+    "go": "value: \"160\\n\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'160\\n' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_trailing_zero.json": {
+    "go": "value: \"160.0\" is not in shortest form (no trailing zeros after the decimal point): write \"160\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'160.0' is not in shortest form (no trailing zeros after the decimal point): write '160'",
+      "type": "value_error"
+    }
+  },
+  "records/value_unicode_digits.json": {
+    "go": "value: \"1\u0666\u0660\" is not a decimal string",
+    "python": {
+      "loc": "value.value",
+      "msg": "'1\u0666\u0660' is not a decimal string",
+      "type": "value_error"
+    }
+  },
+  "records/value_version_missing_key.json": {
+    "go": "version: is required",
+    "python": {
+      "loc": "value.version",
+      "type": "missing"
+    }
+  },
+  "records/value_version_zero.json": {
+    "go": "version: must be at least 1, got 0",
+    "python": {
+      "loc": "value.version",
+      "type": "greater_than_equal"
+    }
+  },
+  "records/value_year_1899.json": {
+    "go": "from: \"1899-12-31T23:00:00Z\": years before 1900 are not allowed",
+    "python": {
+      "loc": "value.from",
+      "msg": "'1899-12-31T23:00:00Z': years before 1900 are not allowed",
+      "type": "instant"
+    }
+  },
+  "records/value_zero_fraction.json": {
+    "go": "value: \"0.0\" is not in shortest form (no trailing zeros after the decimal point): write \"0\"",
+    "python": {
+      "loc": "value.value",
+      "msg": "'0.0' is not in shortest form (no trailing zeros after the decimal point): write '0'",
+      "type": "value_error"
+    }
+  },
+  "records/version_created_at_inconsistent.json": {
+    "go": "versions: version: created_at_unknown must be true exactly when created_at is null",
+    "python": {
+      "loc": "series.versions.0",
+      "msg": "created_at_unknown must be true exactly when created_at is null",
+      "type": "value_error"
+    }
+  },
+  "records/version_created_at_null_but_known.json": {
+    "go": "versions: version: created_at_unknown must be true exactly when created_at is null",
+    "python": {
+      "loc": "series.versions.0",
+      "msg": "created_at_unknown must be true exactly when created_at is null",
+      "type": "value_error"
+    }
+  },
+  "records/version_description_invalid_utf8.json": {
+    "go": "input is not valid UTF-8",
+    "python": {
+      "loc": "",
+      "type": "json_invalid"
+    }
+  },
+  "records/version_description_lone_high_surrogate.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": {
+      "loc": "",
+      "type": "json_invalid"
+    }
+  },
+  "records/version_description_lone_low_surrogate.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": {
+      "loc": "",
+      "type": "json_invalid"
+    }
+  },
+  "records/version_description_reversed_surrogates.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": {
+      "loc": "",
+      "type": "json_invalid"
+    }
+  },
+  "records/version_missing_to_key.json": {
+    "go": "versions: version: to: is required",
+    "python": {
+      "loc": "series.versions.0.to",
+      "type": "missing"
+    }
+  },
+  "records/version_number_zero.json": {
+    "go": "versions: version: number: must be at least 1, got 0",
+    "python": {
+      "loc": "series.versions.0.number",
+      "type": "greater_than_equal"
+    }
+  },
+  "records/version_to_before_from.json": {
+    "go": "versions: version: from (2026-01-01T23:00:00Z) must be before to (2026-01-01T22:00:00Z)",
+    "python": {
+      "loc": "series.versions.0",
+      "msg": "from (2026-01-01T23:00:00Z) must be before to (2026-01-01T22:00:00Z)",
+      "type": "value_error"
+    }
+  },
+  "resolve_request/cursor_not_allowed.json": {
+    "go": "unknown key(s) [\"cursor\"]",
+    "python": {
+      "loc": "cursor",
+      "type": "extra_forbidden"
+    }
+  },
+  "resolve_request/custom_selector_without_params.json": {
+    "go": "select: selector \"contract_account\": params: is required",
+    "python": {
+      "loc": "select.0.custom.params",
+      "type": "missing"
+    }
+  },
+  "resolve_request/empty_select.json": {
+    "go": "select: at least one selector is required",
+    "python": {
+      "loc": "select",
+      "type": "too_short"
+    }
+  },
+  "resolve_request/from_after_to.json": {
+    "go": "from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)",
+    "python": {
+      "loc": "",
+      "msg": "from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)",
+      "type": "value_error"
+    }
+  },
+  "resolve_request/naive_from.json": {
+    "go": "from: \"2026-01-14T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "resolve_request/selector_by_object.json": {
+    "go": "select: selector: by: json: cannot unmarshal object into Go value of type string",
+    "python": {
+      "loc": "select.0.custom.by",
+      "type": "string_type"
+    }
+  },
+  "resolve_request/unknown_field.json": {
+    "go": "unknown key(s) [\"interval\"]",
+    "python": {
+      "loc": "interval",
+      "type": "extra_forbidden"
+    }
+  },
+  "resolve_request/version_field_not_allowed.json": {
+    "go": "unknown key(s) [\"version\"]",
+    "python": {
+      "loc": "version",
+      "type": "extra_forbidden"
+    }
+  },
+  "resolve_response/assignment_from_without_to_with_error.json": {
+    "go": "results: result: assignments: assignment: from and to must be set together",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "msg": "from and to must be set together",
+      "type": "value_error"
+    }
+  },
+  "resolve_response/assignment_missing_to.json": {
+    "go": "results: result: assignments: assignment: from and to must be set together",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "msg": "from and to must be set together",
+      "type": "value_error"
+    }
+  },
+  "resolve_response/assignment_profile_leading_zero.json": {
+    "go": "results: result: assignments: assignment: profile: \"0050000000000056\" is not a profile number without leading zeros",
+    "python": {
+      "loc": "results.0.assignments.0.profile",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "resolve_response/both_assignments_and_error.json": {
+    "go": "results: result: exactly one of assignments or error must be set",
+    "python": {
+      "loc": "results.0",
+      "msg": "exactly one of assignments or error must be set",
+      "type": "value_error"
+    }
+  },
+  "resolve_response/error_without_code.json": {
+    "go": "results: result: error: code: is required",
+    "python": {
+      "loc": "results.0.error.code",
+      "type": "missing"
+    }
+  },
+  "resolve_response/missing_results.json": {
+    "go": "results: is required",
+    "python": {
+      "loc": "results",
+      "type": "missing"
+    }
+  },
+  "resolve_response/neither.json": {
+    "go": "results: result: exactly one of assignments or error must be set",
+    "python": {
+      "loc": "results.0",
+      "msg": "exactly one of assignments or error must be set",
+      "type": "value_error"
+    }
+  },
+  "resolve_response/selector_negative.json": {
+    "go": "results: result: selector: must be at least 0, got -1",
+    "python": {
+      "loc": "results.0.selector",
+      "type": "greater_than_equal"
+    }
+  },
+  "system_info/empty_business_time_zone.json": {
+    "go": "business_time_zone: must not be empty",
+    "python": {
+      "loc": "business_time_zone",
+      "type": "string_too_short"
+    }
+  },
+  "system_info/interval_p1d.json": {
+    "go": "intervals[1]: \"P1D\" is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+    "python": {
+      "loc": "intervals.1",
+      "msg": "'P1D' is not a sub-daily interval of the form PT<minutes>M, e.g. PT15M or PT60M (hours are written in minutes: PT60M, not PT1H)",
+      "type": "value_error"
+    }
+  },
+  "system_info/missing_sid.json": {
+    "go": "sid: is required",
+    "python": {
+      "loc": "sid",
+      "type": "missing"
+    }
+  },
+  "versions_request/cursor_not_allowed.json": {
+    "go": "unknown key(s) [\"cursor\"]",
+    "python": {
+      "loc": "cursor",
+      "type": "extra_forbidden"
+    }
+  },
+  "versions_request/custom_selector_without_params.json": {
+    "go": "select: selector \"contract_account\": params: is required",
+    "python": {
+      "loc": "select.0.custom.params",
+      "type": "missing"
+    }
+  },
+  "versions_request/empty_select.json": {
+    "go": "select: at least one selector is required",
+    "python": {
+      "loc": "select",
+      "type": "too_short"
+    }
+  },
+  "versions_request/from_after_to.json": {
+    "go": "from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)",
+    "python": {
+      "loc": "",
+      "msg": "from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)",
+      "type": "value_error"
+    }
+  },
+  "versions_request/naive_from.json": {
+    "go": "from: \"2026-01-14T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": {
+      "loc": "from",
+      "msg": "'2026-01-14T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+      "type": "instant"
+    }
+  },
+  "versions_request/unknown_field.json": {
+    "go": "unknown key(s) [\"interval\"]",
+    "python": {
+      "loc": "interval",
+      "type": "extra_forbidden"
+    }
+  },
+  "versions_request/version_field_not_allowed.json": {
+    "go": "unknown key(s) [\"version\"]",
+    "python": {
+      "loc": "version",
+      "type": "extra_forbidden"
+    }
+  },
+  "versions_response/error_with_versions.json": {
+    "go": "results: result: assignments: assignment: an assignment with error has no versions",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "msg": "an assignment with error has no versions",
+      "type": "value_error"
+    }
+  },
+  "versions_response/missing_versions.json": {
+    "go": "results: result: assignments: assignment: versions: is required",
+    "python": {
+      "loc": "results.0.assignments.0",
+      "msg": "versions is required for an assignment without error",
+      "type": "value_error"
+    }
+  },
+  "versions_response/version_number_zero.json": {
+    "go": "results: result: assignments: assignment: versions: version: number: must be at least 1, got 0",
+    "python": {
+      "loc": "results.0.assignments.0.versions.0.number",
+      "type": "greater_than_equal"
+    }
+  }
+}

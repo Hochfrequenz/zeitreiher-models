@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "not_found",
+    "message": "example message for not_found"
+  }
+}

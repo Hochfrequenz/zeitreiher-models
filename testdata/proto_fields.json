@@ -1,0 +1,114 @@
+{
+  "Assignment": {
+    "error": "ResultError = 5",
+    "from": "google.protobuf.Timestamp = 2",
+    "profile": "string = 1",
+    "to": "google.protobuf.Timestamp = 3",
+    "versions": "repeated Version = 4"
+  },
+  "CurrentVersion": {},
+  "EndRecord": {
+    "errors": "int64 = 3",
+    "next": "optional string = 4",
+    "series": "int64 = 1",
+    "values": "int64 = 2"
+  },
+  "ErrorRecord": {
+    "code": "string = 4",
+    "profile": "optional string = 3",
+    "select": "Selector = 2",
+    "selector": "int64 = 1"
+  },
+  "ListVersionsRequest": {
+    "from": "string = 2",
+    "select": "repeated Selector = 1",
+    "to": "string = 3"
+  },
+  "ListVersionsResponse": {
+    "results": "repeated SelectorResult = 1"
+  },
+  "QueryRequest": {
+    "cursor": "optional string = 7",
+    "from": "string = 2",
+    "interval": "optional string = 5",
+    "select": "repeated Selector = 1",
+    "to": "string = 3",
+    "unit": "optional string = 6",
+    "version": "VersionSelector = 4"
+  },
+  "Record": {
+    "end": "EndRecord = 4",
+    "error": "ErrorRecord = 3",
+    "series": "SeriesRecord = 1",
+    "value": "ValueRecord = 2"
+  },
+  "ResolveRequest": {
+    "from": "string = 2",
+    "select": "repeated Selector = 1",
+    "to": "string = 3"
+  },
+  "ResolveResponse": {
+    "results": "repeated SelectorResult = 1"
+  },
+  "ResultError": {
+    "code": "string = 1"
+  },
+  "Selector": {
+    "by": "string = 1",
+    "malo": "string = 3",
+    "params": "map<string, string> = 4",
+    "profile": "string = 2"
+  },
+  "SelectorResult": {
+    "assignments": "repeated Assignment = 3",
+    "error": "ResultError = 4",
+    "select": "Selector = 2",
+    "selector": "int64 = 1"
+  },
+  "SeriesRecord": {
+    "attributes": "map<string, string> = 9",
+    "from": "google.protobuf.Timestamp = 5",
+    "interval": "string = 8",
+    "profile": "string = 4",
+    "role": "optional string = 12",
+    "select": "Selector = 3",
+    "selector": "int64 = 2",
+    "series": "int64 = 1",
+    "to": "google.protobuf.Timestamp = 6",
+    "unit": "optional string = 7",
+    "unit_raw": "string = 11",
+    "versions": "repeated Version = 10"
+  },
+  "SystemRequest": {},
+  "SystemResponse": {
+    "abap_package_version": "string = 2",
+    "business_time_zone": "string = 6",
+    "client": "string = 4",
+    "intervals": "repeated string = 7",
+    "release": "string = 5",
+    "service_version": "string = 1",
+    "sid": "string = 3"
+  },
+  "ValueRecord": {
+    "from": "google.protobuf.Timestamp = 2",
+    "series": "int64 = 1",
+    "status": "repeated string = 5",
+    "to": "google.protobuf.Timestamp = 3",
+    "value": "string = 4",
+    "version": "optional int64 = 6"
+  },
+  "Version": {
+    "created_at": "google.protobuf.Timestamp = 4",
+    "created_at_unknown": "bool = 5",
+    "deleted": "bool = 8",
+    "description": "string = 7",
+    "from": "google.protobuf.Timestamp = 2",
+    "number": "int64 = 1",
+    "reason": "string = 6",
+    "to": "google.protobuf.Timestamp = 3"
+  },
+  "VersionSelector": {
+    "current": "CurrentVersion = 1",
+    "number": "int64 = 2"
+  }
+}

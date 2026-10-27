@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+package zeitreiher.v1;
+
+import "google/protobuf/timestamp.proto";
+import "zeitreiher/v1/selector.proto";
+
+// Conformance with the JSON contract (testdata/ in this repository) is defined through the
+// hand-written models: fixture -> model -> proto message (hand mapping) -> model -> JSON must equal
+// the fixture. protojson is NOT the JSON contract: it would wrap the Record oneof, use
+// lowerCamelCase and drop nulls and empty maps.
+//
+// Timestamps: request instants are RFC 3339 strings with whole seconds and an explicit offset
+// (Z or +hh:mm/-hh:mm; a missing offset and -00:00 are rejected), so the offset a client sent is
+// kept and "inputs without an offset are rejected" holds for gRPC as well. Response instants are
+// google.protobuf.Timestamp (always UTC). All intervals are half-open: [from, to).
+
+// QueryRequest is the request of SeriesService.Query (JSON: POST /api/v1/series/query).
+message QueryRequest {
+  // One or more selectors; records refer to them by index.
+  repeated Selector select = 1;
+  // RFC 3339 with explicit offset, e.g. "2026-01-01T00:00:00+01:00".
+  string from = 2;
+  // RFC 3339 with explicit offset; must be after `from`.
+  string to = 3;
+  // Optional; unset means the current values.
+  VersionSelector version = 4;
+  // Optional sub-daily ISO 8601 duration in minutes, e.g. "PT15M".
+  optional string interval = 5;
+  // Optional canonical unit code (UN/ECE Rec. 20, e.g. "KWH", "MWH", "KVR": 2 or 3 upper-case letters
+  // or digits); the server maps it to the customer's SAP unit. An unknown code is INVALID_ARGUMENT.
+  optional string unit = 6;
+  // Optional cursor from the previous response's end record.
+  optional string cursor = 7;
+}
+
+// VersionSelector chooses which values a query returns (exactly one form). v1 has no as-of
+// selector; field 3 (as_of) is reserved for a later version.
+message VersionSelector {
+  reserved 3;
+  reserved "as_of";
+
+  oneof kind {
+    // {"current": {}}
+    CurrentVersion current = 1;
+    // {"number": N}, N >= 1: the current values overlaid with the stored values of versions >= N
+    // (the lowest version wins), only inside N's covered range; gaps outside it.
+    int64 number = 2;
+  }
+}
+
+// CurrentVersion selects the current values; it has no fields.
+message CurrentVersion {}
+
+// Record is one message of the Query stream and equals exactly one NDJSON line. The JSON "type"
+// key ("series", "value", "error", "end") is the name of the oneof field that is set.
+message Record {
+  oneof record {
+    SeriesRecord series = 1;
+    ValueRecord value = 2;
+    ErrorRecord error = 3;
+    EndRecord end = 4;
+  }
+}
+
+// SeriesRecord opens a series: one profile assignment of one selector, cut to the request window.
+message SeriesRecord {
+  // Starts at 1 and continues across pages.
+  int64 series = 1;
+  // Index of the request selector.
+  int64 selector = 2;
+  // The request selector, echoed.
+  Selector select = 3;
+  // Profile number without leading zeros.
+  string profile = 4;
+  google.protobuf.Timestamp from = 5;
+  google.protobuf.Timestamp to = 6;
+  // Canonical unit code (UN/ECE Rec. 20, e.g. "KWH") of the delivered values (after any conversion);
+  // unset (JSON null) when the SAP unit has no mapping. The series is delivered either way.
+  optional string unit = 7;
+  // Interval of the delivered values (after any conversion).
+  string interval = 8;
+  // Metadata BAdI attributes; JSON always writes the object, possibly {}.
+  map<string, string> attributes = 9;
+  // Overlapping versions; JSON always writes the array, possibly [].
+  repeated Version versions = 10;
+  // The SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not: non-empty, at most 30
+  // characters, no control characters.
+  string unit_raw = 11;
+  // Role of the profile assignment (SAP EPROFASS role, e.g. "0001"); unset (JSON null) when the
+  // series was not resolved through a role (e.g. by: profile). The Resolver BAdI may override it.
+  optional string role = 12;
+}
+
+// Version is an EDM profile version overlapping a series.
+message Version {
+  // SAP version number (CVERSNO), >= 1.
+  int64 number = 1;
+  google.protobuf.Timestamp from = 2;
+  // Unset = open end (JSON null).
+  google.protobuf.Timestamp to = 3;
+  // Unset = unknown (JSON null); then created_at_unknown is true.
+  google.protobuf.Timestamp created_at = 4;
+  bool created_at_unknown = 5;
+  // May be empty.
+  string reason = 6;
+  // May be empty.
+  string description = 7;
+  // Flagged as deleted in SAP; still listed. Querying its values gives an error record with code
+  // version_deleted.
+  bool deleted = 8;
+}
+
+// ValueRecord is one value for [from, to).
+message ValueRecord {
+  int64 series = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  // Already-scaled decimal string in its shortest canonical form, e.g. "160", "0.022", "-3.5":
+  // optional minus, no leading zeros, no trailing zeros after the decimal point ("160.0" is
+  // invalid), no exponent, no plus sign, no negative zero.
+  string value = 4;
+  // Active SAP status codes, sorted and unique; JSON always writes the array.
+  repeated string status = 5;
+  // Source of the value: the number of the stored version row it came from; unset = a current value
+  // (JSON null). A {"number": N} query mixes both (see VersionSelector.number).
+  optional int64 version = 6;
+}
+
+// ErrorRecord reports a per-selector or per-assignment problem; the stream continues.
+message ErrorRecord {
+  int64 selector = 1;
+  Selector select = 2;
+  // Set where the problem concerns one profile assignment (JSON: omitted otherwise).
+  optional string profile = 3;
+  // snake_case; known values: selector_not_found, no_assignment, unknown_selector, bad_selector,
+  // access_denied, profile_not_found, profile_time_zone_missing, interval_size_unsupported,
+  // window_unaligned, assignment_unaligned, version_not_found, version_deleted, conversion_not_allowed,
+  // ambiguous_local_time, badi_failed. Clients must tolerate unknown codes.
+  string code = 4;
+}
+
+// EndRecord closes a successful response (page). A stream that ends without it (gRPC: with a
+// status error) is incomplete and must be treated as a failure.
+message EndRecord {
+  // Number of series, value and error records on this page only, not the whole result (a series
+  // record re-sent at the start of a continuation page counts again).
+  int64 series = 1;
+  int64 values = 2;
+  int64 errors = 3;
+  // Cursor for the next page; unset = complete (JSON null).
+  optional string next = 4;
+}

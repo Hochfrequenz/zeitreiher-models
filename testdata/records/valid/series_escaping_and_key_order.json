@@ -1,0 +1,41 @@
+{
+  "type": "series",
+  "series": 1,
+  "selector": 0,
+  "select": {
+    "by": "contract_account",
+    "params": {
+      "role": "supplier",
+      "account": "000012345678",
+      "Z": "<a href=\"x\">&amp;</a>\u2028\u2029\u0001\b\f\t\n\r\u007f\u001f\u00e4\ud83d\ude00\\/"
+    }
+  },
+  "profile": "50000000000056",
+  "role": null,
+  "from": "2025-12-31T23:00:00Z",
+  "to": "2026-01-31T23:00:00Z",
+  "unit": "KWH",
+  "unit_raw": "KWH",
+  "interval": "PT15M",
+  "attributes": {
+    "zeta": "z",
+    "Alpha": "<a href=\"x\">&amp;</a>\u2028\u2029\u0001\b\f\t\n\r\u007f\u001f\u00e4\ud83d\ude00\\/",
+    "alpha": "a",
+    "\u00e4": "umlaut key",
+    "10": "ten",
+    "9": "nine",
+    "nel": "a\u0085b\ufeff\ufffd"
+  },
+  "versions": [
+    {
+      "number": 3,
+      "from": "2026-01-01T23:00:00Z",
+      "to": null,
+      "created_at": "2026-02-03T08:12:00Z",
+      "created_at_unknown": false,
+      "reason": "BILL",
+      "description": "<a href=\"x\">&amp;</a>\u2028\u2029\u0001\b\f\t\n\r\u007f\u001f\u00e4\ud83d\ude00\\/",
+      "deleted": false
+    }
+  ]
+}

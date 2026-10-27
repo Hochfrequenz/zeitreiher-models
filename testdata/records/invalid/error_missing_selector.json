@@ -1,0 +1,9 @@
+{
+  "type": "error",
+  "select": {
+    "by": "profile",
+    "profile": "50000000000099"
+  },
+  "profile": "50000000000099",
+  "code": "profile_not_found"
+}

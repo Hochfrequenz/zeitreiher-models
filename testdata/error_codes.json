@@ -1,0 +1,34 @@
+{
+  "request": [
+    "invalid_request",
+    "unauthorized",
+    "forbidden",
+    "not_found",
+    "method_not_allowed",
+    "request_too_large",
+    "upstream_unreachable",
+    "internal",
+    "cursor_invalid",
+    "cursor_mismatch",
+    "cursor_expired",
+    "cursor_stale",
+    "upstream_timeout"
+  ],
+  "record": [
+    "selector_not_found",
+    "no_assignment",
+    "unknown_selector",
+    "bad_selector",
+    "access_denied",
+    "profile_not_found",
+    "profile_time_zone_missing",
+    "interval_size_unsupported",
+    "window_unaligned",
+    "assignment_unaligned",
+    "version_not_found",
+    "version_deleted",
+    "conversion_not_allowed",
+    "ambiguous_local_time",
+    "badi_failed"
+  ]
+}

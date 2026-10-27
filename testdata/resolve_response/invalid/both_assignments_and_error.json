@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "selector": 0,
+      "select": {
+        "by": "malo",
+        "malo": "87253749908"
+      },
+      "assignments": [],
+      "error": {
+        "code": "no_assignment"
+      }
+    }
+  ]
+}

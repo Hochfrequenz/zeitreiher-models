@@ -1,0 +1,15 @@
+{
+  "select": [
+    {
+      "by": "contract_account",
+      "params": {
+        "role": "supplier",
+        "account": "000012345678",
+        "b": "<&>",
+        "a": "\u2028"
+      }
+    }
+  ],
+  "from": "2026-01-14T00:00:00Z",
+  "to": "2026-01-15T00:00:00Z"
+}

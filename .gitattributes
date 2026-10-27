@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.go	text eol=lf
+*.py	text eol=lf
+*.json	text eol=lf
+*.ndjson	text eol=lf
+*.proto	text eol=lf
+*.md	text eol=lf
+*.yml	text eol=lf
+testdata/streams/invalid/crlf.ndjson -text

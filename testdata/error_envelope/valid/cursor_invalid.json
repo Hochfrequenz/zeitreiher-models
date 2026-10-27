@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "cursor_invalid",
+    "message": "example message for cursor_invalid"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "upstream_unreachable",
+    "message": "example message for upstream_unreachable"
+  }
+}
