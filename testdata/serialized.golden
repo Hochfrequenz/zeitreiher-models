@@ -5,7 +5,6 @@ error_envelope/cursor_mismatch.json	{"error":{"code":"cursor_mismatch","message"
 error_envelope/cursor_stale.json	{"error":{"code":"cursor_stale","message":"example message for cursor_stale"}}
 error_envelope/forbidden.json	{"error":{"code":"forbidden","message":"example message for forbidden"}}
 error_envelope/unauthorized.json	{"error":{"code":"unauthorized","message":"example message for unauthorized"}}
-error_envelope/unknown_code_preserved.json	{"error":{"code":"payload_too_large","message":"request body too large"}}
 error_envelope/upstream_timeout.json	{"error":{"code":"upstream_timeout","message":"example message for upstream_timeout"}}
 error_envelope/upstream_unavailable.json	{"error":{"code":"upstream_unavailable","message":"example message for upstream_unavailable"}}
 error_envelope/with_request_id.json	{"error":{"code":"bad_request","message":"from: \"2026-01-14T00:00:00\" has no offset","request_id":"7f3c1a9b2e4d5068"}}
@@ -51,7 +50,6 @@ records/error_no_assignment.json	{"type":"error","selector":0,"select":{"by":"ma
 records/error_profile_not_found.json	{"type":"error","selector":1,"select":{"by":"profile","profile":"50000000000099"},"profile":"50000000000099","code":"profile_not_found"}
 records/error_profile_time_zone_missing.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"profile_time_zone_missing"}
 records/error_selector_not_found.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"code":"selector_not_found"}
-records/error_unknown_code_preserved.json	{"type":"error","selector":1,"select":{"by":"profile","profile":"50000000000099"},"profile":"50000000000099","code":"some_future_code"}
 records/error_unknown_selector.json	{"type":"error","selector":0,"select":{"by":"street_address","params":{"city":"Grünwald"}},"code":"unknown_selector"}
 records/error_version_deleted.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"version_deleted"}
 records/error_version_not_found.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"version_not_found"}

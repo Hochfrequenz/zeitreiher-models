@@ -38,15 +38,12 @@ func AllRequestErrorCodes() []RequestErrorCode { return slices.Clone(requestErro
 // Parsing accepts unknown snake_case codes so that a newer server does not break older clients.
 func (c RequestErrorCode) IsKnown() bool { return slices.Contains(requestErrorCodes, c) }
 
-// Validate checks the code syntax (snake_case).
+// Validate checks the code syntax (snake_case). It accepts unknown codes, as parsing does.
 func (c RequestErrorCode) Validate() error { return validateCode(string(c)) }
 
-// MarshalJSON refuses codes that are not snake_case.
+// MarshalJSON writes only the public codes: error codes are strict on write, lenient on read.
 func (c RequestErrorCode) MarshalJSON() ([]byte, error) {
-	if err := c.Validate(); err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(c))
+	return marshalCode(string(c), c.IsKnown())
 }
 
 // UnmarshalJSON accepts any snake_case code; use IsKnown to tell known from unknown codes.
@@ -102,15 +99,12 @@ func AllRecordErrorCodes() []RecordErrorCode { return slices.Clone(recordErrorCo
 // Parsing accepts unknown snake_case codes so that a newer server does not break older clients.
 func (c RecordErrorCode) IsKnown() bool { return slices.Contains(recordErrorCodes, c) }
 
-// Validate checks the code syntax (snake_case).
+// Validate checks the code syntax (snake_case). It accepts unknown codes, as parsing does.
 func (c RecordErrorCode) Validate() error { return validateCode(string(c)) }
 
-// MarshalJSON refuses codes that are not snake_case.
+// MarshalJSON writes only the public codes: error codes are strict on write, lenient on read.
 func (c RecordErrorCode) MarshalJSON() ([]byte, error) {
-	if err := c.Validate(); err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(c))
+	return marshalCode(string(c), c.IsKnown())
 }
 
 // UnmarshalJSON accepts any snake_case code; use IsKnown to tell known from unknown codes.
@@ -195,6 +189,18 @@ func (d *ErrorDetail) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// marshalCode writes a known error code. Unknown codes are refused even when they are snake_case: a
+// parsed response may carry codes of a newer server, but a writer emits only the public vocabulary.
+func marshalCode(c string, known bool) ([]byte, error) {
+	if err := validateCode(c); err != nil {
+		return nil, err
+	}
+	if !known {
+		return nil, fmt.Errorf("%q is not a public error code; only the known codes can be written", c)
+	}
+	return json.Marshal(c)
+}
+
 var codePattern = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
 
 // validateCode checks that an error code is snake_case.
@@ -213,7 +219,7 @@ type ResultError struct {
 // MarshalJSON validates before writing.
 func (r ResultError) MarshalJSON() ([]byte, error) {
 	type wire ResultError
-	return json.Marshal(wire(r)) // RecordErrorCode.MarshalJSON validates the code syntax
+	return json.Marshal(wire(r)) // RecordErrorCode.MarshalJSON refuses unknown codes
 }
 
 // UnmarshalJSON enforces the presence rules.

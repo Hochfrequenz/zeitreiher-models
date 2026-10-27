@@ -4,7 +4,6 @@ from collections.abc import Iterable, Iterator
 
 from pydantic import TypeAdapter
 
-from zeitreiher_models._base import go_compatible_json
 from zeitreiher_models.records import EndRecord, Record
 
 RECORD_ADAPTER: TypeAdapter[Record] = TypeAdapter(Record)
@@ -20,8 +19,12 @@ def parse_record(line: str | bytes) -> Record:
 
 
 def dump_record(record: Record) -> str:
-    """Serialize a record to one JSON line without the trailing newline."""
-    return go_compatible_json(RECORD_ADAPTER.dump_json(record).decode("utf-8"))
+    """Serialize a record to one JSON line without the trailing newline.
+
+    The record serializes itself (not through the ``Record`` union), so that a refused value, such as an
+    unknown error code, raises its own error instead of a union-mismatch warning.
+    """
+    return record.model_dump_json()
 
 
 def iter_records(lines: Iterable[str | bytes]) -> Iterator[Record]:

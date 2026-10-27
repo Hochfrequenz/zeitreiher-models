@@ -41,7 +41,7 @@ so Go and Python agree on the contract by construction.
 | Unknown keys | Requests **reject** them (a typo fails loudly). Responses **ignore** them (additive server changes do not break older clients). |
 | Duplicate keys | Not rejected: when an object repeats a key, the **last** occurrence wins and earlier ones are ignored without validation (`{"unit":"K H","unit":"MWH"}` is read as `"MWH"`), in both languages and on both sides. Producers must not write duplicate keys; the models never do. Pinned by the `*duplicate_key_last_wins*` fixtures. |
 | `null` | Request fields that are optional may be omitted or `null`. In responses, `value.version`, `end.next`, `version.to` and `version.created_at` are always present and may be `null`; other optional response fields are omitted when unset. |
-| Error codes | Request-level codes in the error envelope `{"error":{"code","message","request_id"?}}`; record-level codes in `error` records and resolve/versions results. The known codes are listed in [`testdata/error_codes.json`](testdata/error_codes.json). Parsers accept unknown snake_case codes so that a newer server does not break older clients (Go `IsKnown()`, Python `RecordErrorCode | str`). |
+| Error codes | Request-level codes in the error envelope `{"error":{"code","message","request_id"?}}`; record-level codes in `error` records and resolve/versions results. The known codes are listed in [`testdata/error_codes.json`](testdata/error_codes.json). **Strict on write, lenient on read:** parsers accept unknown snake_case codes so that a newer server does not break older clients (Go `IsKnown()`, Python `RecordErrorCode | str`); writers refuse every code outside the public list (Go `MarshalJSON` returns an error, Python serialization raises `PydanticSerializationError`). |
 | NDJSON | One record per line, lines end with `\n` (the last one optionally), no `\r`, no blank lines. A response that does not end with exactly one `end` record was cut off and **must be treated as a failure**. |
 
 The full design lives in the `zeitreiher-go` repository (`docs/superpowers/specs/2026-10-27-zeitreiher-design.md`).
@@ -117,6 +117,8 @@ testdata/
   streams/{valid,invalid}/               whole NDJSON responses (DST days with 92/100 quarter hours, gaps, versions, paging, …)
   resolve_response/, versions_response/
   error_envelope/{valid,invalid}/        one valid fixture per request-level error code
+  records/read_only/, error_envelope/read_only/
+                                         unknown error codes: they parse, but writing them is refused
   system_info/
 ```
 

@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 from pydantic import BaseModel, ValidationError
+from pydantic_core import PydanticSerializationError
 
 from zeitreiher_models import (
     EndRecord,
@@ -132,6 +133,27 @@ def test_invalid_fixture_is_rejected(kind: str, path: Path) -> None:
         and reason.get("msg", "") in error["msg"]
     ]
     assert matching, f"{name}: expected {reason}, got {excinfo.value.errors()}"
+
+
+def _read_only_cases() -> list[Any]:
+    return [
+        pytest.param(kind, path, id=f"{kind}/{path.name}")
+        for kind in KINDS
+        for path in sorted((TESTDATA / kind / "read_only").glob("*.json"))
+    ]
+
+
+def test_there_are_read_only_fixtures() -> None:
+    assert _read_only_cases()
+
+
+@pytest.mark.parametrize(("kind", "path"), _read_only_cases())
+def test_read_only_fixture_parses_but_is_not_written(kind: str, path: Path) -> None:
+    """Error codes are strict on write, lenient on read (fixtures_test.go TestReadOnlyFixtures)."""
+    parse, dump = KINDS[kind]
+    value = parse(path.read_bytes())
+    with pytest.raises(PydanticSerializationError, match="is not a public error code"):
+        dump(value)
 
 
 def test_invalid_reasons_cover_exactly_the_invalid_fixtures() -> None:

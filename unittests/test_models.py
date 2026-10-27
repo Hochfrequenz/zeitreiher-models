@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 from pydantic import TypeAdapter, ValidationError
+from pydantic_core import PydanticSerializationError
 
 from zeitreiher_models import (
     Assignment,
@@ -202,6 +203,17 @@ def test_error_record_known_and_unknown_codes() -> None:
     assert isinstance(unknown, ErrorRecord)
     assert unknown.code == "brand_new"
     assert not isinstance(unknown.code, RecordErrorCode)
+    # Strict on write: an unknown code is read, but never written.
+    with pytest.raises(PydanticSerializationError, match="'brand_new' is not a public error code"):
+        dump_record(unknown)
+    with pytest.raises(PydanticSerializationError, match="'brand_new' is not a public error code"):
+        Assignment(profile="56", error={"code": "brand_new"}).model_dump_json()
+    with pytest.raises(PydanticSerializationError, match="'brand_new' is not a public error code"):
+        ErrorEnvelope(error=ErrorDetail(code="brand_new", message="m")).model_dump_json()
+    for record_code in RecordErrorCode:
+        Assignment(profile="56", error={"code": record_code.value}).model_dump_json()
+    for request_code in RequestErrorCode:
+        ErrorEnvelope(error=ErrorDetail(code=request_code.value, message="m")).model_dump_json()
 
 
 def test_error_envelope_code() -> None:

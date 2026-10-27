@@ -105,6 +105,22 @@ func TestErrorCodesKnownAndUnknown(t *testing.T) {
 	assert.Equal(t, zrm.RecordErrorCode("brand_new"), code)
 	assert.False(t, code.IsKnown())
 	assert.True(t, zrm.RecordErrorProfileNotFound.IsKnown())
+
+	// Strict on write: an unknown code is read, but never written.
+	_, err = zrm.MarshalRecord(rec)
+	assert.ErrorContains(t, err, `"brand_new" is not a public error code`)
+	_, err = json.Marshal(zrm.ResultError{Code: "brand_new"})
+	assert.ErrorContains(t, err, `"brand_new" is not a public error code`)
+	_, err = json.Marshal(zrm.ErrorEnvelope{Error: zrm.ErrorDetail{Code: "brand_new", Message: "m"}})
+	assert.ErrorContains(t, err, `"brand_new" is not a public error code`)
+	for _, c := range zrm.AllRecordErrorCodes() {
+		_, err = json.Marshal(zrm.ResultError{Code: c})
+		assert.NoError(t, err, c)
+	}
+	for _, c := range zrm.AllRequestErrorCodes() {
+		_, err = json.Marshal(zrm.ErrorEnvelope{Error: zrm.ErrorDetail{Code: c, Message: "m"}})
+		assert.NoError(t, err, c)
+	}
 }
 
 func TestErrorEnvelope(t *testing.T) {

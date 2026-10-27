@@ -145,6 +145,27 @@ func TestInvalidFixturesAreRejected(t *testing.T) {
 	}
 }
 
+// TestReadOnlyFixtures: error codes are strict on write and lenient on read. A fixture under
+// <kind>/read_only/ carries an unknown snake_case code: it parses, the code is kept, and writing it back
+// is refused because only the public codes may be written.
+func TestReadOnlyFixtures(t *testing.T) {
+	n := 0
+	for kind, c := range kinds {
+		files, err := filepath.Glob(filepath.Join(testdata, kind, "read_only", "*.json"))
+		require.NoError(t, err)
+		for _, path := range files {
+			n++
+			t.Run(kind+"/"+filepath.Base(path), func(t *testing.T) {
+				v, err := c.parse(read(t, path))
+				require.NoError(t, err, "unknown snake_case codes must parse")
+				_, err = c.dump(v)
+				assert.ErrorContains(t, err, "is not a public error code")
+			})
+		}
+	}
+	assert.Positive(t, n, "no read_only fixtures")
+}
+
 func TestValidStreams(t *testing.T) {
 	for _, path := range fixtureFiles(t, "streams", "valid", ".ndjson") {
 		t.Run(filepath.Base(path), func(t *testing.T) {

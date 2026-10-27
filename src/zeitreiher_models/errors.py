@@ -3,7 +3,7 @@
 from enum import StrEnum
 from typing import Annotated, Any, ClassVar
 
-from pydantic import BeforeValidator, Field
+from pydantic import BeforeValidator, Field, PlainSerializer
 
 from zeitreiher_models._base import ResponseModel
 from zeitreiher_models.scalars import CodeStr, Text
@@ -53,12 +53,24 @@ def _known(enum: type[StrEnum]) -> Any:
     return BeforeValidator(convert)
 
 
-#: A request-level code. Known codes become :class:`RequestErrorCode` members; unknown snake_case
-#: codes are kept as ``str`` so that a newer server does not break older clients.
-RequestCode = Annotated[RequestErrorCode | CodeStr, _known(RequestErrorCode)]
+def _public_only(enum: type[StrEnum]) -> Any:
+    """Serializer that writes only the public codes (as Go's ``MarshalJSON``)."""
+
+    def serialize(value: StrEnum | str) -> str:
+        if not isinstance(value, enum):
+            raise ValueError(f"{value!r} is not a public error code; only the known codes can be written")
+        return value.value
+
+    return PlainSerializer(serialize, return_type=str)
+
+
+#: A request-level code: strict on write, lenient on read. Known codes become :class:`RequestErrorCode`
+#: members; unknown snake_case codes are kept as ``str`` so that a newer server does not break older
+#: clients, but they cannot be written (serializing raises).
+RequestCode = Annotated[RequestErrorCode | CodeStr, _known(RequestErrorCode), _public_only(RequestErrorCode)]
 
 #: A record-level code; see :data:`RequestCode`.
-RecordCode = Annotated[RecordErrorCode | CodeStr, _known(RecordErrorCode)]
+RecordCode = Annotated[RecordErrorCode | CodeStr, _known(RecordErrorCode), _public_only(RecordErrorCode)]
 
 
 class ErrorDetail(ResponseModel):
