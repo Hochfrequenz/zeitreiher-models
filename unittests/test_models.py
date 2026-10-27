@@ -91,9 +91,9 @@ def test_sub_second_datetime_is_rejected() -> None:
 
 
 def test_request_datetime_with_sub_minute_offset_is_rejected() -> None:
-    # isoformat() would write "+00:00:30", which the timestamp parser rejects.
+    # RFC 3339 has no offset seconds: "+00:00:30" cannot be written, and "+00:00" would move the instant.
     odd = timezone(timedelta(seconds=30))
-    with pytest.raises(ValidationError, match="RFC 3339"):
+    with pytest.raises(ValidationError, match="the offset cannot be written without changing the instant"):
         QueryRequest(
             select=[ProfileSelector(profile="56")],
             from_=datetime(2026, 1, 1, tzinfo=odd),
@@ -249,7 +249,7 @@ def test_json_output_escapes_like_go() -> None:
 
 def test_local_mean_time_offsets_are_rejected_in_requests_and_converted_in_responses() -> None:
     monrovia = ZoneInfo("Africa/Monrovia")  # -00:44:30 until 1972, as in timestamps_test.go
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError, match="the offset cannot be written without changing the instant"):
         VersionAsOf(as_of=datetime(1960, 1, 1, tzinfo=monrovia))
     assert (
         VersionAsOf(as_of=datetime(2026, 1, 1, tzinfo=monrovia)).model_dump_json() == '{"as_of":"2026-01-01T00:00:00Z"}'

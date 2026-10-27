@@ -80,7 +80,8 @@ func TestValidateWindowComparesInstantsAcrossOffsets(t *testing.T) {
 func TestValidateInstantRequiresARoundTrippableWireForm(t *testing.T) {
 	subMinute := time.FixedZone("", 30)
 	// RFC 3339 drops offset seconds, so the written instant would move by 30 s.
-	assert.Error(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, subMinute), requestSide))
+	assert.ErrorContains(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, subMinute), requestSide),
+		"the offset cannot be written without changing the instant")
 	// In UTC the same instant is representable.
 	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, subMinute), responseSide))
 	// A five-digit year does not match the wire grammar.
@@ -95,7 +96,8 @@ func TestValidateInstantRequiresARoundTrippableWireForm(t *testing.T) {
 	// A real zone with a local mean time offset (-00:44:30 until 1972).
 	monrovia, err := time.LoadLocation("Africa/Monrovia")
 	require.NoError(t, err)
-	assert.Error(t, validateInstant(time.Date(1960, 1, 1, 0, 0, 0, 0, monrovia), requestSide))
+	assert.ErrorContains(t, validateInstant(time.Date(1960, 1, 1, 0, 0, 0, 0, monrovia), requestSide),
+		"the offset cannot be written without changing the instant")
 	assert.NoError(t, validateInstant(time.Date(1960, 1, 1, 0, 0, 0, 0, monrovia), responseSide))
 	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, monrovia), requestSide))
 }

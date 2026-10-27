@@ -88,6 +88,10 @@ def _round_trips(value: datetime, *, utc_only: bool) -> datetime:
     written as ``+00:00:30``, and converting a fractional-second offset to UTC introduces microseconds.
     """
     _check(value)
+    offset = value.utcoffset()
+    if offset is not None and offset % timedelta(minutes=1):
+        # RFC 3339 offsets have whole minutes (Go reports the same).
+        raise _error("the offset cannot be written without changing the instant", value)
     if _parse(_format(value), utc_only=utc_only) != value:
         raise _error("does not survive serialization unchanged", value)
     return value
