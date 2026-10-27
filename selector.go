@@ -9,8 +9,10 @@ import (
 // Selector kinds known to every Zeitreiher installation. Any other kind is a custom selector that a
 // customer resolver implements.
 const (
+	// SelectorByProfile selects a profile by its number.
 	SelectorByProfile = "profile"
-	SelectorByMaLo    = "malo"
+	// SelectorByMaLo selects the profiles assigned to a market location (11 digits).
+	SelectorByMaLo = "malo"
 )
 
 // Selector names the business object whose profile assignments are queried. It is a union over By:

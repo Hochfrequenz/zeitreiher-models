@@ -1,17 +1,24 @@
 """Base classes shared by all models."""
 
+import ast
+import inspect
+import itertools
+import textwrap
 from collections.abc import Mapping
+from enum import Enum, StrEnum
 from typing import Any, ClassVar, NoReturn, TypeVar
 
 from pydantic import (
     BaseModel,
     ConfigDict,
+    GetJsonSchemaHandler,
     SerializerFunctionWrapHandler,
     ValidationInfo,
     model_serializer,
     model_validator,
 )
-from pydantic_core import PydanticCustomError
+from pydantic.json_schema import JsonSchemaValue
+from pydantic_core import CoreSchema, PydanticCustomError
 
 _K = TypeVar("_K")
 _V = TypeVar("_V")
@@ -113,3 +120,40 @@ class ResponseModel(_Model):
     """A response object: unknown keys are ignored so that additive server changes do not break clients."""
 
     model_config = ConfigDict(extra="ignore")
+
+
+def member_descriptions(enum: type[Enum]) -> dict[str, str]:
+    """Map each member value of ``enum`` to its attribute docstring (the string literal below the member).
+
+    Empty when the source is not available (e.g. a frozen application).
+    """
+    try:
+        tree = ast.parse(textwrap.dedent(inspect.getsource(enum)))
+    except (OSError, TypeError, SyntaxError):
+        return {}
+    body = tree.body[0].body if tree.body and isinstance(tree.body[0], ast.ClassDef) else []
+    descriptions: dict[str, str] = {}
+    for node, following in itertools.pairwise(body):
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and isinstance(following, ast.Expr)
+            and isinstance(following.value, ast.Constant)
+            and isinstance(following.value.value, str)
+        ):
+            member = enum[node.targets[0].id]
+            descriptions[str(member.value)] = inspect.cleandoc(following.value.value)
+    return descriptions
+
+
+class DocumentedStrEnum(StrEnum):
+    """A ``StrEnum`` whose member docstrings are added to the JSON schema as ``x-enum-descriptions``."""
+
+    @classmethod
+    def __get_pydantic_json_schema__(cls, core_schema: CoreSchema, handler: GetJsonSchemaHandler) -> JsonSchemaValue:
+        schema = handler.resolve_ref_schema(handler(core_schema))
+        descriptions = member_descriptions(cls)
+        if descriptions:
+            schema["x-enum-descriptions"] = descriptions
+        return schema

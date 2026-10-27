@@ -153,5 +153,5 @@ class EndRecord(ResponseModel):
     next: Token | None = Field(description="The cursor for the next page, or null when the result is complete.")
 
 
-#: One NDJSON line: a union over ``type``.
 Record = Annotated[SeriesRecord | ValueRecord | ErrorRecord | EndRecord, Field(discriminator="type")]
+"""One NDJSON line: a union over ``type``."""

@@ -8,8 +8,8 @@ from typing import Annotated, Any
 
 from pydantic import AfterValidator, BeforeValidator, Field, StrictInt, StrictStr, StringConstraints
 
-#: Upper bound of every integer, so that Go (int64) and Python agree.
 INT64_MAX = 2**63 - 1
+"""Upper bound of every integer, so that Go (int64) and Python agree."""
 
 _DECIMAL = re.compile(r"^-?(0|[1-9][0-9]*)(\.[0-9]+)?$")
 
@@ -27,11 +27,11 @@ def _check_text(value: Any) -> Any:
     return value
 
 
-#: A string that can be written as UTF-8 unchanged (no lone surrogates). Every free-text field uses it.
 Text = Annotated[StrictStr, BeforeValidator(_check_text)]
+"""A string that can be written as UTF-8 unchanged (no lone surrogates). Every free-text field uses it."""
 
-#: The validator of :data:`Text`, for types that add constraints (``Annotated[StrictStr, …, CHECK_TEXT]``).
 CHECK_TEXT = BeforeValidator(_check_text)
+"""The validator of :data:`Text`, for types that add constraints (``Annotated[StrictStr, …, CHECK_TEXT]``)."""
 
 
 def _check_decimal(value: str) -> str:
@@ -60,22 +60,23 @@ def _check_status(value: tuple[str, ...]) -> tuple[str, ...]:
     return value
 
 
-#: An already-scaled decimal number in its shortest canonical string form, e.g. ``"160"``, ``"0.022"``,
-#: ``"25.25"`` or ``"-3.5"``. JSON numbers, exponents, a plus sign, leading zeros, negative zero and
-#: trailing zeros after the decimal point (``"160.0"``) are rejected: after parsing, 160.0 and 160 are the
-#: same number, so the wire carries one spelling.
 DecimalString = Annotated[StrictStr, AfterValidator(_check_decimal)]
+"""An already-scaled decimal number in its shortest canonical string form, e.g. ``"160"``, ``"0.022"``, ``"25.25"``
+or ``"-3.5"``. JSON numbers, exponents, a plus sign, leading zeros, negative zero and trailing zeros after the
+decimal point (``"160.0"``) are rejected: after parsing, 160.0 and 160 are the same number, so the wire carries
+one spelling.
+"""
 
-#: A profile number in a request: 1 to 18 digits, leading zeros allowed, not all zeros.
 RequestProfile = Annotated[
     StrictStr, StringConstraints(pattern=r"^[0-9]{1,18}$"), AfterValidator(_check_request_profile)
 ]
+"""A profile number in a request: 1 to 18 digits, leading zeros allowed, not all zeros."""
 
-#: A profile number in a response: without leading zeros.
 ResponseProfile = Annotated[StrictStr, StringConstraints(pattern=r"^[1-9][0-9]{0,17}$")]
+"""A profile number in a response: without leading zeros."""
 
-#: A market location id: 11 digits.
 MaLo = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{11}$")]
+"""A market location id: 11 digits."""
 
 _INTERVAL = re.compile(r"^PT[1-9][0-9]*M$")
 
@@ -89,12 +90,13 @@ def _check_interval(value: str) -> str:
     return value
 
 
-#: A sub-daily interval as an ISO 8601 duration in minutes, e.g. ``"PT15M"``. Hours are written in minutes
-#: (``"PT60M"``); ``"PT1H"`` is rejected so that every interval has exactly one spelling.
 Interval = Annotated[StrictStr, AfterValidator(_check_interval)]
+"""A sub-daily interval as an ISO 8601 duration in minutes, e.g. ``"PT15M"``. Hours are written in minutes
+(``"PT60M"``); ``"PT1H"`` is rejected so that every interval has exactly one spelling.
+"""
 
-#: The longest ``unit_raw`` (SAP unit key of a series record), in characters (code points).
 MAX_RAW_UNIT_LENGTH = 30
+"""The longest ``unit_raw`` (SAP unit key of a series record), in characters (code points)."""
 
 _UNIT_CODE = re.compile(r"^[A-Z0-9]{2,3}$")
 
@@ -115,32 +117,34 @@ def _check_raw_unit(value: str) -> str:
     return value
 
 
-#: A canonical unit: a UN/ECE Recommendation 20 code such as ``"KWH"``, ``"MWH"`` or ``"KVR"`` (2 or 3
-#: upper-case ASCII letters or digits). Requests and series records use it; whether a well-formed code is
-#: supported is the server's decision (an unknown code is a 400).
 UnitCode = Annotated[StrictStr, AfterValidator(_check_unit_code), CHECK_TEXT]
+"""A canonical unit: a UN/ECE Recommendation 20 code such as ``"KWH"``, ``"MWH"`` or ``"KVR"`` (2 or 3 upper-case
+ASCII letters or digits). Requests and series records use it; whether a well-formed code is supported is the
+server's decision (an unknown code is a 400).
+"""
 
-#: The SAP unit key (T006 MSEHI) of a series record as SAP delivers it, mapped or not: any non-empty text
-#: of at most 30 characters without control characters (read leniently, like unknown keys).
 RawUnit = Annotated[StrictStr, AfterValidator(_check_raw_unit), CHECK_TEXT]
+"""The SAP unit key (T006 MSEHI) of a series record as SAP delivers it, mapped or not: any non-empty text of at
+most 30 characters without control characters (read leniently, like unknown keys).
+"""
 
-#: A non-empty opaque token (cursor).
 Token = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]
+"""A non-empty opaque token (cursor)."""
 
-#: A non-empty string.
 NonEmptyStr = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]
+"""A non-empty string."""
 
-#: Status codes, sorted and unique.
 Status = Annotated[tuple[NonEmptyStr, ...], AfterValidator(_check_status)]
+"""Status codes, sorted and unique."""
 
-#: An integer ≥ 0 (indices and counters).
 NonNegativeInt = Annotated[StrictInt, Field(ge=0, le=INT64_MAX)]
+"""An integer ≥ 0 (indices and counters)."""
 
-#: An integer ≥ 1 (series and version numbers).
 PositiveInt = Annotated[StrictInt, Field(ge=1, le=INT64_MAX)]
+"""An integer ≥ 1 (series and version numbers)."""
 
-#: A snake_case error code.
 CodeStr = Annotated[StrictStr, StringConstraints(pattern=r"^[a-z][a-z0-9_]*$")]
+"""A snake_case error code."""
 
 
 def to_decimal(value: str) -> Decimal:

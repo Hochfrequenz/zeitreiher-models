@@ -47,7 +47,6 @@ def _version_tag(value: Any) -> str | None:
     return None
 
 
-#: Exactly one of ``current`` or ``number``. v1 has no as-of selector; ``{"as_of": …}`` is rejected.
 VersionSelector = Annotated[
     Annotated[CurrentVersion, Tag("current")] | Annotated[VersionNumber, Tag("number")],
     Discriminator(
@@ -56,6 +55,7 @@ VersionSelector = Annotated[
         custom_error_message="exactly one of current or number must be set",
     ),
 ]
+"""Exactly one of ``current`` or ``number``. v1 has no as-of selector; ``{"as_of": …}`` is rejected."""
 
 _SelectList = Annotated[tuple[Selector, ...], Field(min_length=1)]
 

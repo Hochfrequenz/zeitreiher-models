@@ -7,6 +7,7 @@ from pydantic import TypeAdapter
 from zeitreiher_models.records import EndRecord, Record
 
 RECORD_ADAPTER: TypeAdapter[Record] = TypeAdapter(Record)
+"""The pydantic adapter that parses and writes one NDJSON line as a :data:`~zeitreiher_models.Record`."""
 
 
 class MissingEndError(ValueError):

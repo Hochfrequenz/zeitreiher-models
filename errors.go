@@ -16,19 +16,42 @@ type RequestErrorCode string
 // vocabulary (btpingo.ErrorCode in httperr.go), shared by the Hochfrequenz BTP services; the cursor
 // codes and upstream_timeout are Zeitreiher's own.
 const (
-	RequestErrorInvalidRequest      RequestErrorCode = "invalid_request"
-	RequestErrorUnauthorized        RequestErrorCode = "unauthorized"
-	RequestErrorForbidden           RequestErrorCode = "forbidden"
-	RequestErrorNotFound            RequestErrorCode = "not_found"
-	RequestErrorMethodNotAllowed    RequestErrorCode = "method_not_allowed"
-	RequestErrorRequestTooLarge     RequestErrorCode = "request_too_large"
+	// RequestErrorInvalidRequest: The request is invalid: missing offset, fractional seconds, from not
+	// before to, bad selector shape, too many selectors, unsupported interval, unknown unit, or a window
+	// longer than the resolve limit. HTTP 400; gRPC INVALID_ARGUMENT.
+	RequestErrorInvalidRequest RequestErrorCode = "invalid_request"
+	// RequestErrorUnauthorized: Authentication is missing or invalid. HTTP 401; gRPC UNAUTHENTICATED.
+	RequestErrorUnauthorized RequestErrorCode = "unauthorized"
+	// RequestErrorForbidden: The caller is authenticated but not allowed to use the API. HTTP 403; gRPC
+	// PERMISSION_DENIED.
+	RequestErrorForbidden RequestErrorCode = "forbidden"
+	// RequestErrorNotFound: Unknown route. HTTP 404; gRPC NOT_FOUND.
+	RequestErrorNotFound RequestErrorCode = "not_found"
+	// RequestErrorMethodNotAllowed: The HTTP method is not allowed for the route. HTTP 405; gRPC
+	// UNIMPLEMENTED.
+	RequestErrorMethodNotAllowed RequestErrorCode = "method_not_allowed"
+	// RequestErrorRequestTooLarge: The request body exceeds the size limit. HTTP 413; gRPC
+	// RESOURCE_EXHAUSTED.
+	RequestErrorRequestTooLarge RequestErrorCode = "request_too_large"
+	// RequestErrorUpstreamUnreachable: The SAP system could not be reached, or failed in a way the service
+	// cannot pass on, before the first record. HTTP 502; gRPC UNAVAILABLE.
 	RequestErrorUpstreamUnreachable RequestErrorCode = "upstream_unreachable"
-	RequestErrorInternal            RequestErrorCode = "internal"
-	RequestErrorCursorInvalid       RequestErrorCode = "cursor_invalid"
-	RequestErrorCursorMismatch      RequestErrorCode = "cursor_mismatch"
-	RequestErrorCursorExpired       RequestErrorCode = "cursor_expired"
-	RequestErrorCursorStale         RequestErrorCode = "cursor_stale"
-	RequestErrorUpstreamTimeout     RequestErrorCode = "upstream_timeout"
+	// RequestErrorInternal: Unexpected failure of the service before the first record. HTTP 500; gRPC
+	// INTERNAL.
+	RequestErrorInternal RequestErrorCode = "internal"
+	// RequestErrorCursorInvalid: The cursor is malformed or its signature is bad. HTTP 400; gRPC
+	// INVALID_ARGUMENT.
+	RequestErrorCursorInvalid RequestErrorCode = "cursor_invalid"
+	// RequestErrorCursorMismatch: The cursor does not match this request. HTTP 400; gRPC INVALID_ARGUMENT.
+	RequestErrorCursorMismatch RequestErrorCode = "cursor_mismatch"
+	// RequestErrorCursorExpired: The cursor has expired. HTTP 400; gRPC INVALID_ARGUMENT.
+	RequestErrorCursorExpired RequestErrorCode = "cursor_expired"
+	// RequestErrorCursorStale: The profile assignments changed since the cursor was issued; restart the
+	// query. HTTP 409; gRPC ABORTED.
+	RequestErrorCursorStale RequestErrorCode = "cursor_stale"
+	// RequestErrorUpstreamTimeout: The SAP system did not answer in time before the first record. HTTP
+	// 504; gRPC DEADLINE_EXCEEDED.
+	RequestErrorUpstreamTimeout RequestErrorCode = "upstream_timeout"
 )
 
 var requestErrorCodes = []RequestErrorCode{
@@ -72,23 +95,41 @@ type RecordErrorCode string
 
 // Record-level error codes (spec §4.3, consolidated list).
 const (
-	RecordErrorSelectorNotFound        RecordErrorCode = "selector_not_found"
-	RecordErrorNoAssignment            RecordErrorCode = "no_assignment"
-	RecordErrorUnknownSelector         RecordErrorCode = "unknown_selector"
-	RecordErrorBadSelector             RecordErrorCode = "bad_selector"
-	RecordErrorAccessDenied            RecordErrorCode = "access_denied"
-	RecordErrorProfileNotFound         RecordErrorCode = "profile_not_found"
-	RecordErrorProfileTimeZoneMissing  RecordErrorCode = "profile_time_zone_missing"
+	// RecordErrorSelectorNotFound: The selector matches no business object (e.g. an unknown market
+	// location).
+	RecordErrorSelectorNotFound RecordErrorCode = "selector_not_found"
+	// RecordErrorNoAssignment: The selector exists but has no profile assignment in the request window.
+	RecordErrorNoAssignment RecordErrorCode = "no_assignment"
+	// RecordErrorUnknownSelector: The selector kind (by) is not known to this installation.
+	RecordErrorUnknownSelector RecordErrorCode = "unknown_selector"
+	// RecordErrorBadSelector: The selector's parameters are not acceptable to its resolver.
+	RecordErrorBadSelector RecordErrorCode = "bad_selector"
+	// RecordErrorAccessDenied: The caller is not allowed to read this profile.
+	RecordErrorAccessDenied RecordErrorCode = "access_denied"
+	// RecordErrorProfileNotFound: The profile does not exist.
+	RecordErrorProfileNotFound RecordErrorCode = "profile_not_found"
+	// RecordErrorProfileTimeZoneMissing: The profile has no time zone, so its values cannot be read.
+	RecordErrorProfileTimeZoneMissing RecordErrorCode = "profile_time_zone_missing"
+	// RecordErrorIntervalSizeUnsupported: The profile's interval size is not supported.
 	RecordErrorIntervalSizeUnsupported RecordErrorCode = "interval_size_unsupported"
-	RecordErrorWindowUnaligned         RecordErrorCode = "window_unaligned"
-	RecordErrorAssignmentUnaligned     RecordErrorCode = "assignment_unaligned"
-	RecordErrorVersionNotFound         RecordErrorCode = "version_not_found"
-	// RecordErrorVersionDeleted: the requested {"number":N} names a version that is flagged as deleted
+	// RecordErrorWindowUnaligned: The request window is not aligned to the profile's intervals.
+	RecordErrorWindowUnaligned RecordErrorCode = "window_unaligned"
+	// RecordErrorAssignmentUnaligned: The bounds of the profile assignment are not aligned to the
+	// profile's intervals.
+	RecordErrorAssignmentUnaligned RecordErrorCode = "assignment_unaligned"
+	// RecordErrorVersionNotFound: The requested version number does not exist for the profile.
+	RecordErrorVersionNotFound RecordErrorCode = "version_not_found"
+	// RecordErrorVersionDeleted: The requested {"number": N} names a version that is flagged as deleted
 	// (it is still listed by the versions endpoint, with deleted: true).
-	RecordErrorVersionDeleted       RecordErrorCode = "version_deleted"
+	RecordErrorVersionDeleted RecordErrorCode = "version_deleted"
+	// RecordErrorConversionNotAllowed: The requested unit or interval conversion is not allowed for the
+	// profile.
 	RecordErrorConversionNotAllowed RecordErrorCode = "conversion_not_allowed"
-	RecordErrorAmbiguousLocalTime   RecordErrorCode = "ambiguous_local_time"
-	RecordErrorBadiFailed           RecordErrorCode = "badi_failed"
+	// RecordErrorAmbiguousLocalTime: A local time in the window occurs twice (daylight saving change) and
+	// cannot be mapped to one instant.
+	RecordErrorAmbiguousLocalTime RecordErrorCode = "ambiguous_local_time"
+	// RecordErrorBadiFailed: A customer BAdI (resolver or metadata) failed.
+	RecordErrorBadiFailed RecordErrorCode = "badi_failed"
 )
 
 var recordErrorCodes = []RecordErrorCode{

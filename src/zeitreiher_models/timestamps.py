@@ -7,27 +7,32 @@ from typing import Annotated, Any
 from pydantic import AfterValidator, BeforeValidator, PlainSerializer
 from pydantic_core import PydanticCustomError
 
-#: The only accepted spelling of an instant: upper-case ``T``, whole seconds, explicit offset.
-#: The Go models use the same expression.
 INSTANT_PATTERN = re.compile(
     r"^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])"
     r"T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]"
     r"(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
 )
+"""The only accepted spelling of an instant: upper-case ``T``, whole seconds, explicit offset. The Go models use
+the same expression.
+"""
 
-#: An otherwise well-formed instant with fractional seconds, rejected with a message that names the rule.
-#: The Go models use the same expression.
 FRACTIONAL_PATTERN = re.compile(
     r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]+(Z|[+-][0-9]{2}:[0-9]{2})$"
 )
+"""An otherwise well-formed instant with fractional seconds, rejected with a message that names the rule. The Go
+models use the same expression.
+"""
 
-#: The earliest year an instant may be written with (as four digits); the Go models use the same.
 MIN_YEAR = "1900"
+"""The earliest year an instant may be written with (as four digits); the Go models use the same."""
 
-#: The years the instant itself (in UTC) may lie in, so that every request instant can also be written
-#: as a response instant (``Z``). The Go models use the same.
 MIN_UTC_YEAR = 1900
+"""The earliest year the instant itself (in UTC) may lie in, so that every request instant can also be written
+as a response instant (``Z``). The Go models use the same.
+"""
+
 MAX_UTC_YEAR = 9999
+"""The latest year the instant itself (in UTC) may lie in; see :data:`MIN_UTC_YEAR`."""
 
 
 def _error(message: str, value: object) -> PydanticCustomError:
@@ -105,7 +110,6 @@ def _round_trips(value: datetime, *, utc_only: bool) -> datetime:
     return value
 
 
-#: A request instant: any explicit offset, kept as given (``+00:00`` is written as ``Z``).
 RequestInstant = Annotated[
     datetime,
     BeforeValidator(lambda v: _parse(v, utc_only=False)),
@@ -113,8 +117,8 @@ RequestInstant = Annotated[
     AfterValidator(lambda v: _round_trips(v, utc_only=False)),
     PlainSerializer(_format, return_type=str),
 ]
+"""A request instant: any explicit offset, kept as given (``+00:00`` is written as ``Z``)."""
 
-#: A response instant: JSON input must use ``Z``; ``datetime`` objects are converted to UTC.
 ResponseInstant = Annotated[
     datetime,
     BeforeValidator(lambda v: _parse(v, utc_only=True)),
@@ -123,6 +127,7 @@ ResponseInstant = Annotated[
     AfterValidator(lambda v: _round_trips(v, utc_only=True)),
     PlainSerializer(_format, return_type=str),
 ]
+"""A response instant: JSON input must use ``Z``; ``datetime`` objects are converted to UTC."""
 
 
 def check_window(start: datetime, end: datetime) -> None:

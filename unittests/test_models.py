@@ -27,6 +27,7 @@ from zeitreiher_models import (
     RecordErrorCode,
     RequestErrorCode,
     ResolveRequest,
+    ResultError,
     SeriesRecord,
     SystemInfo,
     ValueRecord,
@@ -457,3 +458,11 @@ def test_unknown_code_survives_python_mode_dump() -> None:
         '{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"code":"brand_new"}'
     )
     assert record.model_dump()["code"] == "brand_new"
+
+
+@pytest.mark.parametrize("enum", [RequestErrorCode, RecordErrorCode])
+def test_error_code_members_are_documented_in_the_json_schema(enum: type[RequestErrorCode | RecordErrorCode]) -> None:
+    schema = ResultError.model_json_schema() if enum is RecordErrorCode else ErrorDetail.model_json_schema()
+    descriptions = schema["$defs"][enum.__name__]["x-enum-descriptions"]
+    assert set(descriptions) == {member.value for member in enum}
+    assert all(text.strip() for text in descriptions.values())

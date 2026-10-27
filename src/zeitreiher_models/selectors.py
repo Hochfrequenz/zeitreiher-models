@@ -8,11 +8,14 @@ from pydantic import AfterValidator, Discriminator, Field, StrictStr, StringCons
 from zeitreiher_models._base import RequestModel, ResponseModel, freeze_sorted
 from zeitreiher_models.scalars import CHECK_TEXT, MaLo, RequestProfile, ResponseProfile, Text
 
-#: Selector kinds every installation knows; any other ``by`` is a custom (customer) resolver.
 KNOWN_SELECTOR_KINDS = frozenset({"profile", "malo"})
+"""Selector kinds every installation knows; any other ``by`` is a custom (customer) resolver."""
 
 CustomKind = Annotated[StrictStr, StringConstraints(pattern=r"^[a-z][a-z0-9_]*$")]
+"""The name of a customer resolver (``by``): snake_case, starting with a lower-case letter."""
+
 ParamKey = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]
+"""The key of a custom selector parameter: a non-empty string."""
 
 
 class ProfileSelector(RequestModel):
@@ -51,13 +54,13 @@ def _selector_tag(value: Any) -> str:
     return by if isinstance(by, str) and by in KNOWN_SELECTOR_KINDS else "custom"
 
 
-#: A request selector: a union over ``by``.
 Selector = Annotated[
     Annotated[ProfileSelector, Tag("profile")]
     | Annotated[MaLoSelector, Tag("malo")]
     | Annotated[CustomSelector, Tag("custom")],
     Discriminator(_selector_tag),
 ]
+"""A request selector: a union over ``by``."""
 
 
 class EchoedProfileSelector(ResponseModel):
@@ -90,10 +93,10 @@ class EchoedCustomSelector(ResponseModel):
         return value
 
 
-#: The request selector echoed in responses (``select``): unknown keys ignored, profile normalized.
 EchoedSelector = Annotated[
     Annotated[EchoedProfileSelector, Tag("profile")]
     | Annotated[EchoedMaLoSelector, Tag("malo")]
     | Annotated[EchoedCustomSelector, Tag("custom")],
     Discriminator(_selector_tag),
 ]
+"""The request selector echoed in responses (``select``): unknown keys ignored, profile normalized."""

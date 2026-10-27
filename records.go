@@ -9,10 +9,14 @@ import (
 
 // Record types, the value of the "type" key of every NDJSON line.
 const (
+	// RecordTypeSeries opens a series: one profile assignment of one selector, cut to the request window.
 	RecordTypeSeries = "series"
-	RecordTypeValue  = "value"
-	RecordTypeError  = "error"
-	RecordTypeEnd    = "end"
+	// RecordTypeValue is one value of a series for a half-open interval [from, to).
+	RecordTypeValue = "value"
+	// RecordTypeError is a per-selector or per-assignment problem; the stream continues.
+	RecordTypeError = "error"
+	// RecordTypeEnd closes a successful response; a response without it is incomplete and a failure.
+	RecordTypeEnd = "end"
 )
 
 // Record is one line of a query response (NDJSON) and one gRPC Record message. It is one of
