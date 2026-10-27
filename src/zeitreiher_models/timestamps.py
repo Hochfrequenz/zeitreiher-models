@@ -57,11 +57,24 @@ def _format(value: datetime) -> str:
     return text
 
 
+def _round_trips(value: datetime, *, utc_only: bool) -> datetime:
+    """Check the normalized value: its wire form must parse back to the same instant.
+
+    ``datetime`` objects skip the string checks of :func:`_parse`; an offset with seconds would be
+    written as ``+00:00:30``, and converting a fractional-second offset to UTC introduces microseconds.
+    """
+    _check(value)
+    if _parse(_format(value), utc_only=utc_only) != value:
+        raise _error("does not survive serialization unchanged", value)
+    return value
+
+
 #: A request instant: any explicit offset, kept as given (``+00:00`` is written as ``Z``).
 RequestInstant = Annotated[
     datetime,
     BeforeValidator(lambda v: _parse(v, utc_only=False)),
     AfterValidator(_check),
+    AfterValidator(lambda v: _round_trips(v, utc_only=False)),
     PlainSerializer(_format, return_type=str),
 ]
 
@@ -71,6 +84,7 @@ ResponseInstant = Annotated[
     BeforeValidator(lambda v: _parse(v, utc_only=True)),
     AfterValidator(_check),
     AfterValidator(_to_utc),
+    AfterValidator(lambda v: _round_trips(v, utc_only=True)),
     PlainSerializer(_format, return_type=str),
 ]
 

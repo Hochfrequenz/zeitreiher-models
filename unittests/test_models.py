@@ -82,6 +82,44 @@ def test_sub_second_datetime_is_rejected() -> None:
         )
 
 
+def test_request_datetime_with_sub_minute_offset_is_rejected() -> None:
+    # isoformat() would write "+00:00:30", which the timestamp parser rejects.
+    odd = timezone(timedelta(seconds=30))
+    with pytest.raises(ValidationError, match="RFC 3339"):
+        QueryRequest(
+            select=[ProfileSelector(profile="56")],
+            from_=datetime(2026, 1, 1, tzinfo=odd),
+            to=datetime(2026, 1, 2, tzinfo=odd),
+        )
+
+
+def test_response_datetime_whose_utc_conversion_has_microseconds_is_rejected() -> None:
+    odd = timezone(timedelta(seconds=30, microseconds=500_000))
+    with pytest.raises(ValidationError, match="whole seconds"):
+        ValueRecord(
+            series=1,
+            from_=datetime(2026, 1, 1, tzinfo=odd),
+            to=datetime(2026, 1, 2, tzinfo=odd),
+            value="1",
+            status=[],
+            version=None,
+        )
+
+
+def test_response_datetime_with_sub_minute_offset_is_converted_to_utc() -> None:
+    # The instant is representable in UTC, so the response side accepts it (as the Go models do).
+    value = ValueRecord(
+        series=1,
+        from_=datetime(2026, 1, 1, tzinfo=timezone(timedelta(seconds=30))),
+        to=datetime(2026, 1, 2, tzinfo=UTC),
+        value="1",
+        status=[],
+        version=None,
+    )
+    assert json.loads(dump_record(value))["from"] == "2025-12-31T23:59:30Z"
+    assert parse_record(dump_record(value)) == value
+
+
 def test_custom_selector_cannot_use_a_built_in_kind() -> None:
     with pytest.raises(ValidationError, match="built-in"):
         CustomSelector(by="malo", params={})
