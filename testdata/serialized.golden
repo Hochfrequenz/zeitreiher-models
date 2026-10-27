@@ -31,6 +31,8 @@ query_request/version_current.json	{"select":[{"by":"profile","profile":"5000000
 query_request/version_number.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","version":{"number":3}}
 query_request/with_cursor.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","cursor":"v1.eyJrIjoiY3VycmVudCJ9.c2lnbmF0dXJl"}
 query_request/year_1900.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"1900-01-01T00:00:00Z","to":"2026-01-15T00:00:00Z"}
+query_request/year_1900_in_utc.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"1900-01-01T00:00:00-01:00","to":"2026-01-15T00:00:00Z"}
+query_request/year_9999_in_utc.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"9999-12-31T18:59:59-05:00"}
 records/end_empty_page.json	{"type":"end","series":0,"values":0,"errors":0,"next":"v1.eyJuIjozfQ.c2ln"}
 records/end_spec_example.json	{"type":"end","series":1,"values":744,"errors":1,"next":null}
 records/end_with_cursor.json	{"type":"end","series":1,"values":744,"errors":1,"next":"v1.eyJuIjoyfQ.c2ln"}

@@ -315,9 +315,17 @@
     "go": "from: \"0001-01-01T00:00:00Z\": years before 1900 are not allowed",
     "python": "from\n  '0001-01-01T00:00:00Z': years before 1900 are not allowed"
   },
+  "query_request/year_10000_in_utc.json": {
+    "go": "to: \"9999-12-31T22:00:00-05:00\": the instant is outside the years 1900 to 9999 in UTC",
+    "python": "to\n  '9999-12-31T22:00:00-05:00': the instant is outside the years 1900 to 9999 in UTC"
+  },
   "query_request/year_1899.json": {
     "go": "from: \"1899-12-31T23:59:59Z\": years before 1900 are not allowed",
     "python": "from\n  '1899-12-31T23:59:59Z': years before 1900 are not allowed"
+  },
+  "query_request/year_1899_in_utc.json": {
+    "go": "from: \"1900-01-01T00:00:00+01:00\": the instant is outside the years 1900 to 9999 in UTC",
+    "python": "from\n  '1900-01-01T00:00:00+01:00': the instant is outside the years 1900 to 9999 in UTC"
   },
   "records/end_count_float.json": {
     "go": "values: json: cannot unmarshal number 744.0 into Go value of type int",

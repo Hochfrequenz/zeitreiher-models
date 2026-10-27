@@ -29,7 +29,7 @@ so Go and Python agree on the contract by construction.
 | Topic | Rule |
 |---|---|
 | Intervals | Half-open everywhere: `[from, to)`; `from` must be before `to`. |
-| Request timestamps | RFC 3339, whole seconds, **explicit offset** (`Z` or `±hh:mm`), ASCII digits only, hours 00–23, years from 1900. Kept as sent (`+02:00` stays `+02:00`). A missing offset (`2026-01-01T00:00:00`) and the "unknown offset" `-00:00` are rejected. |
+| Request timestamps | RFC 3339, whole seconds, **explicit offset** (`Z` or `±hh:mm`), ASCII digits only, hours 00–23. The instant must lie in the years 1900–9999 **in UTC**, so that it can be echoed in a response (`1900-01-01T00:00:00+01:00` is 1899 in UTC and rejected). Kept as sent (`+02:00` stays `+02:00`). A missing offset (`2026-01-01T00:00:00`) and the "unknown offset" `-00:00` are rejected. |
 | Response timestamps | RFC 3339, whole seconds, always UTC (`Z`). Instants built in code must survive the round trip (no offsets with seconds, years 1900–9999). |
 | Values | Already-scaled decimal **strings** (`"160"`, `"0.022"`, `"-12.5"`), never JSON numbers. No exponent, no plus sign, no leading zeros, no negative zero. |
 | Profile numbers | In requests 1–18 digits, leading zeros allowed, not all zeros; in responses without leading zeros. |

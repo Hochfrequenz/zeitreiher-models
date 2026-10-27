@@ -15,8 +15,13 @@ INSTANT_PATTERN = re.compile(
     r"(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
 )
 
-#: The earliest year an instant may have (as four digits); the Go models use the same.
+#: The earliest year an instant may be written with (as four digits); the Go models use the same.
 MIN_YEAR = "1900"
+
+#: The years the instant itself (in UTC) may lie in, so that every request instant can also be written
+#: as a response instant (``Z``). The Go models use the same.
+MIN_UTC_YEAR = 1900
+MAX_UTC_YEAR = 9999
 
 
 def _error(message: str, value: object) -> PydanticCustomError:
@@ -37,9 +42,20 @@ def _parse(value: Any, *, utc_only: bool) -> datetime:
     if utc_only and not value.endswith("Z"):
         raise _error("response timestamps must be in UTC (Z)", value)
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
     except ValueError as exc:
         raise _error(f"is not a valid timestamp ({exc})", value) from exc
+    if not MIN_UTC_YEAR <= _utc_year(parsed) <= MAX_UTC_YEAR:
+        raise _error(f"the instant is outside the years {MIN_UTC_YEAR} to {MAX_UTC_YEAR} in UTC", value)
+    return parsed
+
+
+def _utc_year(value: datetime) -> int:
+    """The year of ``value`` in UTC; ``datetime`` cannot hold years after 9999, so those give 10000."""
+    try:
+        return value.astimezone(UTC).year
+    except OverflowError:
+        return MAX_UTC_YEAR + 1
 
 
 def _check(value: datetime) -> datetime:

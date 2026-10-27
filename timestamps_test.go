@@ -99,3 +99,17 @@ func TestValidateInstantRequiresARoundTrippableWireForm(t *testing.T) {
 	assert.NoError(t, validateInstant(time.Date(1960, 1, 1, 0, 0, 0, 0, monrovia), responseSide))
 	assert.NoError(t, validateInstant(time.Date(2026, 1, 1, 0, 0, 0, 0, monrovia), requestSide))
 }
+
+func TestYearBoundsApplyToTheUTCInstant(t *testing.T) {
+	plusOne, minusFive := time.FixedZone("", 3600), time.FixedZone("", -5*3600)
+	// Written in local time these are years 1900 and 9999, but the instants lie in 1899 and 10000 UTC,
+	// which no response could carry.
+	for _, tm := range []time.Time{
+		time.Date(1900, 1, 1, 0, 0, 0, 0, plusOne),
+		time.Date(9999, 12, 31, 22, 0, 0, 0, minusFive),
+	} {
+		assert.ErrorContains(t, validateInstant(tm, requestSide), "outside the years 1900 to 9999 in UTC")
+	}
+	assert.NoError(t, validateInstant(time.Date(1900, 1, 1, 0, 0, 0, 0, time.FixedZone("", -3600)), requestSide))
+	assert.NoError(t, validateInstant(time.Date(9999, 12, 31, 18, 59, 59, 0, minusFive), requestSide))
+}

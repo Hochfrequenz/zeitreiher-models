@@ -258,3 +258,20 @@ def test_local_mean_time_offsets_are_rejected_in_requests_and_converted_in_respo
         version=None,
     )
     assert json.loads(dump_record(value))["from"] == "1960-01-01T00:44:30Z"
+
+
+@pytest.mark.parametrize(
+    "instant",
+    [
+        datetime(1900, 1, 1, tzinfo=CET),  # 1899-12-31T23:00:00Z
+        datetime(9999, 12, 31, 22, tzinfo=timezone(timedelta(hours=-5))),  # 10000-01-01T03:00:00Z
+    ],
+)
+def test_request_year_bounds_apply_to_the_utc_instant(instant: datetime) -> None:
+    with pytest.raises(ValidationError, match="outside the years 1900 to 9999 in UTC"):
+        VersionAsOf(as_of=instant)
+
+
+def test_request_year_bounds_accept_the_utc_limits() -> None:
+    VersionAsOf(as_of=datetime(1900, 1, 1, tzinfo=timezone(timedelta(hours=-1))))
+    VersionAsOf(as_of=datetime(9999, 12, 31, 18, 59, 59, tzinfo=timezone(timedelta(hours=-5))))

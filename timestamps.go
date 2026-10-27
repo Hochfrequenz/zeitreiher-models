@@ -13,8 +13,16 @@ import (
 // seconds and an explicit offset. The Python models use the same expression.
 var instantPattern = regexp.MustCompile(`^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$`)
 
-// minYear is the earliest year an instant may have (as four digits); the Python models use the same.
+// minYear is the earliest year an instant may be written with (as four digits); the Python models
+// use the same.
 const minYear = "1900"
+
+// minUTCYear and maxUTCYear bound the year of the instant itself (in UTC), so that every request
+// instant can also be written as a response instant ("Z"). The Python models use the same.
+const (
+	minUTCYear = 1900
+	maxUTCYear = 9999
+)
 
 // side says whether a value travels in a request or in a response; some rules differ.
 type side uint8
@@ -53,6 +61,9 @@ func parseInstantString(s string, kind side) (time.Time, error) {
 	t, err := time.Parse(time.RFC3339, s)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("%q is not a valid timestamp: %w", s, err)
+	}
+	if y := t.UTC().Year(); y < minUTCYear || y > maxUTCYear {
+		return time.Time{}, fmt.Errorf("%q: the instant is outside the years %d to %d in UTC", s, minUTCYear, maxUTCYear)
 	}
 	return t, nil
 }
