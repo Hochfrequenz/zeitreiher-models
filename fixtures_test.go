@@ -105,14 +105,35 @@ func TestValidFixturesRoundTrip(t *testing.T) {
 	}
 }
 
+// invalidReasons maps every invalid fixture to a substring of the error each language must report,
+// so that a fixture cannot pass by being rejected for the wrong reason. The Python tests use the
+// same file (unittests/test_fixtures.py).
+func invalidReasons(t *testing.T) map[string]struct{ Go, Python string } {
+	t.Helper()
+	var reasons map[string]struct{ Go, Python string }
+	require.NoError(t, json.Unmarshal(read(t, filepath.Join(testdata, "invalid_reasons.json")), &reasons))
+	return reasons
+}
+
 func TestInvalidFixturesAreRejected(t *testing.T) {
+	reasons := invalidReasons(t)
+	seen := map[string]bool{}
 	for kind, c := range kinds {
 		for _, path := range fixtureFiles(t, kind, "invalid", ".json") {
-			t.Run(kind+"/"+filepath.Base(path), func(t *testing.T) {
+			name := kind + "/" + filepath.Base(path)
+			seen[name] = true
+			t.Run(name, func(t *testing.T) {
 				_, err := c.parse(read(t, path))
-				assert.Error(t, err)
+				require.Error(t, err)
+				reason, ok := reasons[name]
+				require.True(t, ok, "add %s to testdata/invalid_reasons.json", name)
+				require.NotEmpty(t, reason.Go)
+				assert.Contains(t, err.Error(), reason.Go)
 			})
 		}
+	}
+	for name := range reasons {
+		assert.True(t, seen[name], "invalid_reasons.json lists %s, which is not an invalid fixture", name)
 	}
 }
 

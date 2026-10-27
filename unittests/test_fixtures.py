@@ -94,11 +94,22 @@ def test_serialized_bytes_match_golden() -> None:
     assert sorted(lines) == golden
 
 
+#: Invalid fixture → the substrings each language's error must contain (shared with fixtures_test.go).
+REASONS: dict[str, dict[str, str]] = json.loads((TESTDATA / "invalid_reasons.json").read_bytes())
+
+
 @pytest.mark.parametrize(("kind", "path"), _cases("invalid"))
 def test_invalid_fixture_is_rejected(kind: str, path: Path) -> None:
     parse, _ = KINDS[kind]
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError) as excinfo:
         parse(path.read_bytes())
+    reason = REASONS[f"{kind}/{path.name}"]["python"]
+    assert reason
+    assert reason in str(excinfo.value)
+
+
+def test_invalid_reasons_cover_exactly_the_invalid_fixtures() -> None:
+    assert set(REASONS) == {f"{kind}/{path.name}" for kind in KINDS for path in _files(kind, "invalid", ".json")}
 
 
 def _end_counts_match(records: list[Record]) -> None:

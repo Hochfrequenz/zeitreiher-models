@@ -131,8 +131,9 @@ that escaping; in Go, `json.Marshal`, `MarshalRecord` and a default `json.Encode
 encoder with `SetEscapeHTML(false)` would not). After an intended change, regenerate the file with
 `go test -run Golden -update .` and check the diff.
 
-Every invalid fixture has an entry in `testdata/invalid_reasons.json`: a substring that both
-languages' error messages must contain, so a fixture cannot pass by being rejected for the wrong reason.
+Every invalid fixture has an entry in `testdata/invalid_reasons.json`: for each language a substring
+its error message must contain (the field path and the failed rule), so a fixture cannot pass by
+being rejected for the wrong reason.
 
 ## gRPC
 

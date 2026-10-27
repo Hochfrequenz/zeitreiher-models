@@ -1,0 +1,678 @@
+{
+  "error_envelope/code_not_snake_case.json": {
+    "go": "error: code: \"Bad Request\" is not an error code (snake_case)",
+    "python": "error.code.str-enum[RequestErrorCode]\n  Input should be 'bad_request', 'unauthorized', 'forbidden', 'cursor_invalid', 'cursor_mismatch', 'cursor_expired', 'cursor_stale', 'upstream_unavailable' or 'upstream_timeout'"
+  },
+  "error_envelope/message_not_string.json": {
+    "go": "error: message: json: cannot unmarshal number into Go value of type string",
+    "python": "error.message\n  Input should be a valid string"
+  },
+  "error_envelope/missing_message.json": {
+    "go": "error: message: is required",
+    "python": "error.message\n  Field required"
+  },
+  "error_envelope/not_enveloped.json": {
+    "go": "error: is required",
+    "python": "error\n  Field required"
+  },
+  "query_request/compact_offset.json": {
+    "go": "from: \"2026-01-14T00:00:00+0100\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00+0100': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/cursor_empty.json": {
+    "go": "cursor: must not be empty",
+    "python": "cursor\n  String should have at least 1 character"
+  },
+  "query_request/custom_by_uppercase.json": {
+    "go": "select: selector: by: \"ContractAccount\" is not a selector kind (lower-case letters, digits, underscores)",
+    "python": "select.0.custom.by\n  String should match pattern '^[a-z][a-z0-9_]*$'"
+  },
+  "query_request/custom_param_invalid_utf8.json": {
+    "go": "input is not valid UTF-8",
+    "python": "Invalid JSON: invalid unicode code point at line 7 column 23"
+  },
+  "query_request/custom_param_lone_surrogate.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": "Invalid JSON: unexpected end of hex escape at line 7 column 28"
+  },
+  "query_request/custom_params_empty_key.json": {
+    "go": "select: selector: params: keys must not be empty",
+    "python": "select.0.custom.params..[key]\n  String should have at least 1 character"
+  },
+  "query_request/custom_params_non_string.json": {
+    "go": "select: selector \"contract_account\": params: account: must be a string",
+    "python": "select.0.custom.params.account\n  Input should be a valid string"
+  },
+  "query_request/custom_params_null_value.json": {
+    "go": "select: selector \"contract_account\": params: account: must be a string, not null",
+    "python": "select.0.custom.params.account\n  Input should be a valid string"
+  },
+  "query_request/custom_selector_reserved_by.json": {
+    "go": "select: selector \"profile\": unknown key(s) [\"params\"]",
+    "python": "select.0.profile.profile\n  Field required"
+  },
+  "query_request/custom_selector_without_params.json": {
+    "go": "select: selector \"contract_account\": params: is required",
+    "python": "select.0.custom.params\n  Field required"
+  },
+  "query_request/date_only.json": {
+    "go": "from: \"2026-01-14\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/day_32.json": {
+    "go": "from: \"2026-01-32T00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-32T00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/empty_select.json": {
+    "go": "select: at least one selector is required",
+    "python": "select\n  Tuple should have at least 1 item after validation, not 0"
+  },
+  "query_request/fractional_seconds.json": {
+    "go": "from: \"2026-01-14T00:00:00.000Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00.000Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/from_after_to.json": {
+    "go": "from (2026-01-15T00:00:00Z) must be before to (2026-01-14T00:00:00Z)",
+    "python": "Value error, from (2026-01-15T00:00:00Z) must be before to (2026-01-14T00:00:00Z)"
+  },
+  "query_request/from_equals_to.json": {
+    "go": "from (2026-01-14T01:00:00+01:00) must be before to (2026-01-14T00:00:00Z)",
+    "python": "Value error, from (2026-01-14T01:00:00+01:00) must be before to (2026-01-14T00:00:00Z)"
+  },
+  "query_request/from_number.json": {
+    "go": "from: must be an RFC 3339 timestamp string",
+    "python": "from\n  1768348800: must be an RFC 3339 timestamp string"
+  },
+  "query_request/from_trailing_newline.json": {
+    "go": "from: \"2026-01-14T00:00:00Z\\n\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00Z\\n': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/from_underscore_key.json": {
+    "go": "unknown key(s) [\"from_\"]",
+    "python": "unknown key(s) ['from_']"
+  },
+  "query_request/from_unicode_digits.json": {
+    "go": "from: \"2026-01-14T00:00:0\u0660Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:0\u0660Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/hour_24.json": {
+    "go": "from: \"2026-01-13T24:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-13T24:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/interval_daily.json": {
+    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
+    "python": "interval\n  String should match pattern '^PT[1-9][0-9]*M$'"
+  },
+  "query_request/interval_empty.json": {
+    "go": "interval: must not be empty",
+    "python": "interval\n  String should match pattern '^PT[1-9][0-9]*M$'"
+  },
+  "query_request/interval_hours.json": {
+    "go": "interval: \"PT1H\" is not a sub-daily interval of the form PT<minutes>M",
+    "python": "interval\n  String should match pattern '^PT[1-9][0-9]*M$'"
+  },
+  "query_request/interval_unicode_digits.json": {
+    "go": "interval: \"PT1\u0665M\" is not a sub-daily interval of the form PT<minutes>M",
+    "python": "interval\n  String should match pattern '^PT[1-9][0-9]*M$'"
+  },
+  "query_request/leap_second.json": {
+    "go": "from: \"2026-01-13T23:59:60Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-13T23:59:60Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/lowercase_t.json": {
+    "go": "from: \"2026-01-14t00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14t00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/malo_unicode_digits.json": {
+    "go": "select: selector: malo: \"8725374990\u0668\" is not a market location id (11 digits)",
+    "python": "select.0.malo.malo\n  String should match pattern '^[0-9]{11}$'"
+  },
+  "query_request/malo_wrong_length.json": {
+    "go": "select: selector: malo: \"8725374990\" is not a market location id (11 digits)",
+    "python": "select.0.malo.malo\n  String should match pattern '^[0-9]{11}$'"
+  },
+  "query_request/minus_0000_offset.json": {
+    "go": "from: \"2026-01-14T00:00:00-00:00\": the offset -00:00 means 'unknown offset' and is not allowed",
+    "python": "from\n  '2026-01-14T00:00:00-00:00': the offset -00:00 means 'unknown offset' and is not allowed"
+  },
+  "query_request/minute_60.json": {
+    "go": "from: \"2026-01-13T23:60:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-13T23:60:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/missing_from.json": {
+    "go": "from: is required",
+    "python": "from\n  Field required"
+  },
+  "query_request/missing_select.json": {
+    "go": "select: is required",
+    "python": "select\n  Field required"
+  },
+  "query_request/month_13.json": {
+    "go": "from: \"2026-13-01T00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-13-01T00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/naive_as_of.json": {
+    "go": "version: version: as_of: \"2026-02-03T09:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "version.as_of.as_of\n  '2026-02-03T09:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/naive_from.json": {
+    "go": "from: \"2026-01-14T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/naive_to.json": {
+    "go": "to: \"2026-01-15T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "to\n  '2026-01-15T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/null_to.json": {
+    "go": "to: must not be null",
+    "python": "to\n  None: must be an RFC 3339 timestamp string"
+  },
+  "query_request/offset_hour_24.json": {
+    "go": "from: \"2026-01-14T00:00:00+24:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00+24:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/offset_minute_60.json": {
+    "go": "from: \"2026-01-14T00:00:00+01:60\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00+01:60': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/profile_all_zeros.json": {
+    "go": "select: selector: profile: \"000\": profile number 0 does not exist",
+    "python": "select.0.profile.profile\n  Value error, '000': profile number 0 does not exist"
+  },
+  "query_request/profile_number_not_string.json": {
+    "go": "select: selector \"profile\": profile: json: cannot unmarshal number into Go value of type string",
+    "python": "select.0.profile.profile\n  Input should be a valid string"
+  },
+  "query_request/profile_selector_non_digits.json": {
+    "go": "select: selector: profile: \"5000000000005A\" is not a profile number (1 to 18 digits)",
+    "python": "select.0.profile.profile\n  String should match pattern '^[0-9]{1,18}$'"
+  },
+  "query_request/profile_too_long.json": {
+    "go": "select: selector: profile: \"5555555555555555555\" is not a profile number (1 to 18 digits)",
+    "python": "select.0.profile.profile\n  String should match pattern '^[0-9]{1,18}$'"
+  },
+  "query_request/profile_trailing_newline.json": {
+    "go": "select: selector: profile: \"50000000000056\\n\" is not a profile number (1 to 18 digits)",
+    "python": "select.0.profile.profile\n  String should match pattern '^[0-9]{1,18}$'"
+  },
+  "query_request/profile_unicode_digits.json": {
+    "go": "select: selector: profile: \"5\u0660000000000056\" is not a profile number (1 to 18 digits)",
+    "python": "select.0.profile.profile\n  String should match pattern '^[0-9]{1,18}$'"
+  },
+  "query_request/profile_zero.json": {
+    "go": "select: selector: profile: \"0\": profile number 0 does not exist",
+    "python": "select.0.profile.profile\n  Value error, '0': profile number 0 does not exist"
+  },
+  "query_request/selector_by_array.json": {
+    "go": "select: selector: by: json: cannot unmarshal array into Go value of type string",
+    "python": "select.0.custom.by\n  Input should be a valid string"
+  },
+  "query_request/selector_by_number.json": {
+    "go": "select: selector: by: json: cannot unmarshal number into Go value of type string",
+    "python": "select.0.custom.by\n  Input should be a valid string"
+  },
+  "query_request/selector_by_object.json": {
+    "go": "select: selector: by: json: cannot unmarshal object into Go value of type string",
+    "python": "select.0.custom.by\n  Input should be a valid string"
+  },
+  "query_request/selector_missing_by.json": {
+    "go": "select: selector: by: is required",
+    "python": "select.0.custom.by\n  Field required"
+  },
+  "query_request/selector_not_object.json": {
+    "go": "select: selector: must be a JSON object",
+    "python": "select.0.custom\n  Input should be an object"
+  },
+  "query_request/selector_unknown_field.json": {
+    "go": "select: selector \"profile\": unknown key(s) [\"malo\"]",
+    "python": "select.0.profile.malo\n  Extra inputs are not permitted"
+  },
+  "query_request/space_separator.json": {
+    "go": "from: \"2026-01-14 00:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14 00:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "query_request/unit_control_char.json": {
+    "go": "unit: \"KW\\x1c\" is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %\u00b0/._-)",
+    "python": "unit\n  String should match pattern '^[0-9A-Za-z%\u00b0/._-]{1,3}$'"
+  },
+  "query_request/unit_empty.json": {
+    "go": "unit: must not be empty",
+    "python": "unit\n  String should match pattern '^[0-9A-Za-z%\u00b0/._-]{1,3}$'"
+  },
+  "query_request/unit_inner_space.json": {
+    "go": "unit: \"K H\" is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %\u00b0/._-)",
+    "python": "unit\n  String should match pattern '^[0-9A-Za-z%\u00b0/._-]{1,3}$'"
+  },
+  "query_request/unit_nbsp.json": {
+    "go": "unit: \"KW\\u00a0\" is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %\u00b0/._-)",
+    "python": "unit\n  String should match pattern '^[0-9A-Za-z%\u00b0/._-]{1,3}$'"
+  },
+  "query_request/unit_padded.json": {
+    "go": "unit: \" KWH\" is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %\u00b0/._-)",
+    "python": "unit\n  String should match pattern '^[0-9A-Za-z%\u00b0/._-]{1,3}$'"
+  },
+  "query_request/unit_too_long.json": {
+    "go": "unit: \"KWHH\" is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %\u00b0/._-)",
+    "python": "unit\n  String should match pattern '^[0-9A-Za-z%\u00b0/._-]{1,3}$'"
+  },
+  "query_request/unknown_field.json": {
+    "go": "unknown key(s) [\"limit\"]",
+    "python": "limit\n  Extra inputs are not permitted"
+  },
+  "query_request/uppercase_from_key.json": {
+    "go": "unknown key(s) [\"From\"]",
+    "python": "from\n  Field required"
+  },
+  "query_request/version_as_of_null_sibling.json": {
+    "go": "version: version: as_of must not be null",
+    "python": "version\n  exactly one of current, number or as_of must be set"
+  },
+  "query_request/version_current_not_empty.json": {
+    "go": "version: version: current must be an empty object {}",
+    "python": "version.current.current\n  Value error, current must be an empty object {}"
+  },
+  "query_request/version_current_true.json": {
+    "go": "version: version: current must be an empty object {}",
+    "python": "version.current.current\n  Input should be an object"
+  },
+  "query_request/version_empty.json": {
+    "go": "version: version: exactly one of current, number or as_of must be set",
+    "python": "version\n  exactly one of current, number or as_of must be set"
+  },
+  "query_request/version_null_sibling.json": {
+    "go": "version: version: number must not be null",
+    "python": "version\n  exactly one of current, number or as_of must be set"
+  },
+  "query_request/version_number_float.json": {
+    "go": "version: version: number: json: cannot unmarshal number 3.0 into Go value of type int",
+    "python": "version.number.number\n  Input should be a valid integer"
+  },
+  "query_request/version_number_null.json": {
+    "go": "version: version: number must not be null",
+    "python": "version.number.number\n  Input should be a valid integer"
+  },
+  "query_request/version_number_string.json": {
+    "go": "version: version: number: json: cannot unmarshal string into Go value of type int",
+    "python": "version.number.number\n  Input should be a valid integer"
+  },
+  "query_request/version_number_zero.json": {
+    "go": "version: version: number: must be at least 1, got 0",
+    "python": "version.number.number\n  Input should be greater than or equal to 1"
+  },
+  "query_request/version_two_keys.json": {
+    "go": "version: version: exactly one of current, number or as_of must be set",
+    "python": "version\n  exactly one of current, number or as_of must be set"
+  },
+  "query_request/version_unknown_key.json": {
+    "go": "version: version: unknown key(s) [\"latest\"]",
+    "python": "version\n  exactly one of current, number or as_of must be set"
+  },
+  "query_request/year_0000.json": {
+    "go": "from: \"0000-01-14T00:00:00Z\": years before 1900 are not allowed",
+    "python": "from\n  '0000-01-14T00:00:00Z': years before 1900 are not allowed"
+  },
+  "query_request/year_0001.json": {
+    "go": "from: \"0001-01-01T00:00:00Z\": years before 1900 are not allowed",
+    "python": "from\n  '0001-01-01T00:00:00Z': years before 1900 are not allowed"
+  },
+  "query_request/year_1899.json": {
+    "go": "from: \"1899-12-31T23:59:59Z\": years before 1900 are not allowed",
+    "python": "from\n  '1899-12-31T23:59:59Z': years before 1900 are not allowed"
+  },
+  "records/end_count_float.json": {
+    "go": "values: json: cannot unmarshal number 744.0 into Go value of type int",
+    "python": "end.values\n  Input should be a valid integer"
+  },
+  "records/end_missing_next.json": {
+    "go": "next: is required",
+    "python": "end.next\n  Field required"
+  },
+  "records/end_negative_values.json": {
+    "go": "values: must be at least 0, got -1",
+    "python": "end.values\n  Input should be greater than or equal to 0"
+  },
+  "records/end_next_empty.json": {
+    "go": "next: must not be empty",
+    "python": "end.next\n  String should have at least 1 character"
+  },
+  "records/error_code_not_snake_case.json": {
+    "go": "code: \"ProfileNotFound\" is not an error code (snake_case)",
+    "python": "error.code.str-enum[RecordErrorCode]\n  Input should be 'selector_not_found', 'no_assignment', 'unknown_selector', 'bad_selector', 'access_denied', 'profile_not_found', 'profile_time_zone_missing', 'interval_size_unsupported', 'window_unaligned', 'assignment_unaligned', 'version_not_found', 'conversion_not_allowed', 'ambiguous_local_time' or 'badi_failed'"
+  },
+  "records/error_missing_code.json": {
+    "go": "code: is required",
+    "python": "error.code\n  Field required"
+  },
+  "records/error_missing_select.json": {
+    "go": "select: is required",
+    "python": "error.select\n  Field required"
+  },
+  "records/error_missing_selector.json": {
+    "go": "selector: is required",
+    "python": "error.selector\n  Field required"
+  },
+  "records/error_profile_empty.json": {
+    "go": "profile: must not be empty",
+    "python": "error.profile\n  String should match pattern '^[1-9][0-9]{0,17}$'"
+  },
+  "records/missing_type.json": {
+    "go": "type: is required",
+    "python": "Unable to extract tag using discriminator 'type'"
+  },
+  "records/not_an_object.json": {
+    "go": "must be a JSON object",
+    "python": "Input should be an object"
+  },
+  "records/series_attribute_not_string.json": {
+    "go": "attributes: n: must be a string",
+    "python": "series.attributes.n\n  Input should be a valid string"
+  },
+  "records/series_attribute_null.json": {
+    "go": "attributes: malo: must be a string, not null",
+    "python": "series.attributes.malo\n  Input should be a valid string"
+  },
+  "records/series_from_offset_plus_0200.json": {
+    "go": "from: \"2026-01-01T01:00:00+02:00\": response timestamps must be in UTC (Z)",
+    "python": "series.from\n  '2026-01-01T01:00:00+02:00': response timestamps must be in UTC (Z)"
+  },
+  "records/series_interval_p1d.json": {
+    "go": "interval: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
+    "python": "series.interval\n  String should match pattern '^PT[1-9][0-9]*M$'"
+  },
+  "records/series_interval_unicode_digits.json": {
+    "go": "interval: \"PT6\u0660M\" is not a sub-daily interval of the form PT<minutes>M",
+    "python": "series.interval\n  String should match pattern '^PT[1-9][0-9]*M$'"
+  },
+  "records/series_missing_attributes.json": {
+    "go": "attributes: is required",
+    "python": "series.attributes\n  Field required"
+  },
+  "records/series_missing_select.json": {
+    "go": "select: is required",
+    "python": "series.select\n  Field required"
+  },
+  "records/series_missing_versions.json": {
+    "go": "versions: is required",
+    "python": "series.versions\n  Field required"
+  },
+  "records/series_naive_to.json": {
+    "go": "to: \"2026-01-31T23:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "series.to\n  '2026-01-31T23:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "records/series_profile_leading_zero.json": {
+    "go": "profile: \"050000000000056\" is not a profile number without leading zeros",
+    "python": "series.profile\n  String should match pattern '^[1-9][0-9]{0,17}$'"
+  },
+  "records/series_profile_unicode_digits.json": {
+    "go": "profile: \"5\u0660000000000056\" is not a profile number without leading zeros",
+    "python": "series.profile\n  String should match pattern '^[1-9][0-9]{0,17}$'"
+  },
+  "records/series_select_by_array.json": {
+    "go": "select: selector: by: json: cannot unmarshal array into Go value of type string",
+    "python": "series.select.custom.by\n  Input should be a valid string"
+  },
+  "records/series_select_param_null.json": {
+    "go": "select: selector \"contract_account\": params: role: must be a string, not null",
+    "python": "series.select.custom.params.role\n  Input should be a valid string"
+  },
+  "records/series_select_profile_leading_zero.json": {
+    "go": "select: selector: profile: \"050000000000056\" is not a profile number without leading zeros",
+    "python": "series.select.profile.profile\n  String should match pattern '^[1-9][0-9]{0,17}$'"
+  },
+  "records/series_selector_negative.json": {
+    "go": "selector: must be at least 0, got -1",
+    "python": "series.selector\n  Input should be greater than or equal to 0"
+  },
+  "records/series_unit_control_char.json": {
+    "go": "unit: \"KWH\\x1c\" is not a unit (1 to 3 characters out of A-Z, a-z, 0-9, %\u00b0/._-)",
+    "python": "series.unit\n  String should match pattern '^[0-9A-Za-z%\u00b0/._-]{1,3}$'"
+  },
+  "records/type_not_string.json": {
+    "go": "type must be a string",
+    "python": "Input tag '1' found using 'type' does not match any of the expected tags: 'series', 'value', 'error', 'end'"
+  },
+  "records/unknown_type.json": {
+    "go": "unknown type \"values\"",
+    "python": "Input tag 'values' found using 'type' does not match any of the expected tags: 'series', 'value', 'error', 'end'"
+  },
+  "records/value_comma.json": {
+    "go": "value: \"0,022\" is not a decimal string",
+    "python": "value.value\n  Value error, '0,022' is not a decimal string"
+  },
+  "records/value_exponent.json": {
+    "go": "value: \"1.6e2\" is not a decimal string",
+    "python": "value.value\n  Value error, '1.6e2' is not a decimal string"
+  },
+  "records/value_from_after_to.json": {
+    "go": "from (2026-01-01T00:00:00Z) must be before to (2025-12-31T23:00:00Z)",
+    "python": "value\n  Value error, from (2026-01-01T00:00:00Z) must be before to (2025-12-31T23:00:00Z)"
+  },
+  "records/value_hour_24.json": {
+    "go": "to: \"2025-12-31T24:00:00Z\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "value.to\n  '2025-12-31T24:00:00Z': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "records/value_leading_zero.json": {
+    "go": "value: \"0160\" is not a decimal string",
+    "python": "value.value\n  Value error, '0160' is not a decimal string"
+  },
+  "records/value_missing_status.json": {
+    "go": "status: is required",
+    "python": "value.status\n  Field required"
+  },
+  "records/value_negative_zero.json": {
+    "go": "value: \"-0\": negative zero is not allowed",
+    "python": "value.value\n  Value error, '-0': negative zero is not allowed"
+  },
+  "records/value_negative_zero_unicode.json": {
+    "go": "value: \"-0.\u0660\" is not a decimal string",
+    "python": "value.value\n  Value error, '-0.\u0660' is not a decimal string"
+  },
+  "records/value_number_not_string.json": {
+    "go": "value: must be a decimal string, not a JSON number",
+    "python": "value.value\n  Input should be a valid string"
+  },
+  "records/value_offset_not_z.json": {
+    "go": "from: \"2026-01-01T00:00:00+01:00\": response timestamps must be in UTC (Z)",
+    "python": "value.from\n  '2026-01-01T00:00:00+01:00': response timestamps must be in UTC (Z)"
+  },
+  "records/value_offset_plus_0000.json": {
+    "go": "from: \"2025-12-31T23:00:00+00:00\": response timestamps must be in UTC (Z)",
+    "python": "value.from\n  '2025-12-31T23:00:00+00:00': response timestamps must be in UTC (Z)"
+  },
+  "records/value_plus_sign.json": {
+    "go": "value: \"+160\" is not a decimal string",
+    "python": "value.value\n  Value error, '+160' is not a decimal string"
+  },
+  "records/value_series_zero.json": {
+    "go": "series: must be at least 1, got 0",
+    "python": "value.series\n  Input should be greater than or equal to 1"
+  },
+  "records/value_status_duplicate.json": {
+    "go": "status: status codes must be sorted and unique, got \"IU015\" before \"IU015\"",
+    "python": "value.status\n  Value error, status codes must be sorted and unique, got 'IU015' before 'IU015'"
+  },
+  "records/value_status_empty_code.json": {
+    "go": "status: status codes must not be empty",
+    "python": "value.status.0\n  String should have at least 1 character"
+  },
+  "records/value_status_unsorted.json": {
+    "go": "status: status codes must be sorted and unique, got \"IU016\" before \"IU012\"",
+    "python": "value.status\n  Value error, status codes must be sorted and unique, got 'IU016' before 'IU012'"
+  },
+  "records/value_trailing_dot.json": {
+    "go": "value: \"160.\" is not a decimal string",
+    "python": "value.value\n  Value error, '160.' is not a decimal string"
+  },
+  "records/value_trailing_newline.json": {
+    "go": "value: \"160\\n\" is not a decimal string",
+    "python": "value.value\n  Value error, '160\\n' is not a decimal string"
+  },
+  "records/value_unicode_digits.json": {
+    "go": "value: \"1\u0666\u0660\" is not a decimal string",
+    "python": "value.value\n  Value error, '1\u0666\u0660' is not a decimal string"
+  },
+  "records/value_version_missing_key.json": {
+    "go": "version: is required",
+    "python": "value.version\n  Field required"
+  },
+  "records/value_version_zero.json": {
+    "go": "version: must be at least 1, got 0",
+    "python": "value.version\n  Input should be greater than or equal to 1"
+  },
+  "records/value_year_1899.json": {
+    "go": "from: \"1899-12-31T23:00:00Z\": years before 1900 are not allowed",
+    "python": "value.from\n  '1899-12-31T23:00:00Z': years before 1900 are not allowed"
+  },
+  "records/version_created_at_inconsistent.json": {
+    "go": "versions: version: created_at_unknown must be true exactly when created_at is null",
+    "python": "series.versions.0\n  Value error, created_at_unknown must be true exactly when created_at is null"
+  },
+  "records/version_created_at_null_but_known.json": {
+    "go": "versions: version: created_at_unknown must be true exactly when created_at is null",
+    "python": "series.versions.0\n  Value error, created_at_unknown must be true exactly when created_at is null"
+  },
+  "records/version_description_invalid_utf8.json": {
+    "go": "input is not valid UTF-8",
+    "python": "Invalid JSON: invalid unicode code point at line 23 column 35"
+  },
+  "records/version_description_lone_high_surrogate.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": "Invalid JSON: unexpected end of hex escape at line 23 column 40"
+  },
+  "records/version_description_lone_low_surrogate.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": "Invalid JSON: lone leading surrogate in hex escape at line 23 column 39"
+  },
+  "records/version_description_reversed_surrogates.json": {
+    "go": "string contains an unpaired UTF-16 surrogate escape (\\uD800-\\uDFFF)",
+    "python": "Invalid JSON: lone leading surrogate in hex escape at line 23 column 39"
+  },
+  "records/version_missing_to_key.json": {
+    "go": "versions: version: to: is required",
+    "python": "series.versions.0.to\n  Field required"
+  },
+  "records/version_number_zero.json": {
+    "go": "versions: version: number: must be at least 1, got 0",
+    "python": "series.versions.0.number\n  Input should be greater than or equal to 1"
+  },
+  "records/version_to_before_from.json": {
+    "go": "versions: version: from (2026-01-01T23:00:00Z) must be before to (2026-01-01T22:00:00Z)",
+    "python": "series.versions.0\n  Value error, from (2026-01-01T23:00:00Z) must be before to (2026-01-01T22:00:00Z)"
+  },
+  "resolve_request/cursor_not_allowed.json": {
+    "go": "unknown key(s) [\"cursor\"]",
+    "python": "cursor\n  Extra inputs are not permitted"
+  },
+  "resolve_request/custom_selector_without_params.json": {
+    "go": "select: selector \"contract_account\": params: is required",
+    "python": "select.0.custom.params\n  Field required"
+  },
+  "resolve_request/empty_select.json": {
+    "go": "select: at least one selector is required",
+    "python": "select\n  Tuple should have at least 1 item after validation, not 0"
+  },
+  "resolve_request/from_after_to.json": {
+    "go": "from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)",
+    "python": "Value error, from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)"
+  },
+  "resolve_request/naive_from.json": {
+    "go": "from: \"2026-01-14T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "resolve_request/selector_by_object.json": {
+    "go": "select: selector: by: json: cannot unmarshal object into Go value of type string",
+    "python": "select.0.custom.by\n  Input should be a valid string"
+  },
+  "resolve_request/unknown_field.json": {
+    "go": "unknown key(s) [\"interval\"]",
+    "python": "interval\n  Extra inputs are not permitted"
+  },
+  "resolve_request/version_field_not_allowed.json": {
+    "go": "unknown key(s) [\"version\"]",
+    "python": "version\n  Extra inputs are not permitted"
+  },
+  "resolve_response/assignment_from_without_to_with_error.json": {
+    "go": "results: result: assignments: assignment: from and to must be set together",
+    "python": "results.0.assignments.0\n  Value error, from and to must be set together"
+  },
+  "resolve_response/assignment_missing_to.json": {
+    "go": "results: result: assignments: assignment: from and to must be set together",
+    "python": "results.0.assignments.0\n  Value error, from and to must be set together"
+  },
+  "resolve_response/assignment_profile_leading_zero.json": {
+    "go": "results: result: assignments: assignment: profile: \"0050000000000056\" is not a profile number without leading zeros",
+    "python": "results.0.assignments.0.profile\n  String should match pattern '^[1-9][0-9]{0,17}$'"
+  },
+  "resolve_response/both_assignments_and_error.json": {
+    "go": "results: result: exactly one of assignments or error must be set",
+    "python": "results.0\n  Value error, exactly one of assignments or error must be set"
+  },
+  "resolve_response/error_without_code.json": {
+    "go": "results: result: error: code: is required",
+    "python": "results.0.error.code\n  Field required"
+  },
+  "resolve_response/missing_results.json": {
+    "go": "results: is required",
+    "python": "results\n  Field required"
+  },
+  "resolve_response/neither.json": {
+    "go": "results: result: exactly one of assignments or error must be set",
+    "python": "results.0\n  Value error, exactly one of assignments or error must be set"
+  },
+  "resolve_response/selector_negative.json": {
+    "go": "results: result: selector: must be at least 0, got -1",
+    "python": "results.0.selector\n  Input should be greater than or equal to 0"
+  },
+  "system_info/empty_business_time_zone.json": {
+    "go": "business_time_zone: must not be empty",
+    "python": "business_time_zone\n  String should have at least 1 character"
+  },
+  "system_info/interval_p1d.json": {
+    "go": "intervals[1]: \"P1D\" is not a sub-daily interval of the form PT<minutes>M",
+    "python": "intervals.1\n  String should match pattern '^PT[1-9][0-9]*M$'"
+  },
+  "system_info/missing_sid.json": {
+    "go": "sid: is required",
+    "python": "sid\n  Field required"
+  },
+  "versions_request/cursor_not_allowed.json": {
+    "go": "unknown key(s) [\"cursor\"]",
+    "python": "cursor\n  Extra inputs are not permitted"
+  },
+  "versions_request/custom_selector_without_params.json": {
+    "go": "select: selector \"contract_account\": params: is required",
+    "python": "select.0.custom.params\n  Field required"
+  },
+  "versions_request/empty_select.json": {
+    "go": "select: at least one selector is required",
+    "python": "select\n  Tuple should have at least 1 item after validation, not 0"
+  },
+  "versions_request/from_after_to.json": {
+    "go": "from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)",
+    "python": "Value error, from (2026-01-16T00:00:00Z) must be before to (2026-01-15T00:00:00Z)"
+  },
+  "versions_request/naive_from.json": {
+    "go": "from: \"2026-01-14T00:00:00\" is not an RFC 3339 timestamp with whole seconds and an explicit offset",
+    "python": "from\n  '2026-01-14T00:00:00': is not an RFC 3339 timestamp with whole seconds and an explicit offset"
+  },
+  "versions_request/unknown_field.json": {
+    "go": "unknown key(s) [\"interval\"]",
+    "python": "interval\n  Extra inputs are not permitted"
+  },
+  "versions_request/version_field_not_allowed.json": {
+    "go": "unknown key(s) [\"version\"]",
+    "python": "version\n  Extra inputs are not permitted"
+  },
+  "versions_response/error_with_versions.json": {
+    "go": "results: result: assignments: assignment: an assignment with error has no versions",
+    "python": "results.0.assignments.0\n  Value error, an assignment with error has no versions"
+  },
+  "versions_response/missing_versions.json": {
+    "go": "results: result: assignments: assignment: versions: is required",
+    "python": "results.0.assignments.0\n  Value error, versions is required for an assignment without error"
+  },
+  "versions_response/version_number_zero.json": {
+    "go": "results: result: assignments: assignment: versions: version: number: must be at least 1, got 0",
+    "python": "results.0.assignments.0.versions.0.number\n  Input should be greater than or equal to 1"
+  }
+}
