@@ -1,4 +1,4 @@
-{"type":"series","series":1,"selector":0,"select":{"by":"profile","profile":"50000000000056"},"profile":"50000000000056","from":"2026-09-29T22:00:00Z","to":"2026-09-30T22:00:00Z","unit":"KWH","unit_raw":"KWH","interval":"PT15M","attributes":{},"versions":[]}
+{"type":"series","series":1,"selector":0,"select":{"by":"profile","profile":"50000000000056"},"profile":"50000000000056","role":null,"from":"2026-09-29T22:00:00Z","to":"2026-09-30T22:00:00Z","unit":"KWH","unit_raw":"KWH","interval":"PT15M","attributes":{},"versions":[]}
 {"type":"value","series":1,"from":"2026-09-29T22:00:00Z","to":"2026-09-29T22:15:00Z","value":"20","status":["IU015"],"version":null}
 {"type":"value","series":1,"from":"2026-09-29T22:15:00Z","to":"2026-09-29T22:30:00Z","value":"22","status":["IU015"],"version":null}
 {"type":"value","series":1,"from":"2026-09-29T22:30:00Z","to":"2026-09-29T22:45:00Z","value":"24","status":["IU015"],"version":null}

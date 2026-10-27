@@ -70,6 +70,7 @@
     "from": "google.protobuf.Timestamp = 5",
     "interval": "string = 8",
     "profile": "string = 4",
+    "role": "optional string = 12",
     "select": "Selector = 3",
     "selector": "int64 = 2",
     "series": "int64 = 1",

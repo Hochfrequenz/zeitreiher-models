@@ -11,6 +11,7 @@ from zeitreiher_models.errors import RecordCode
 from zeitreiher_models.scalars import (
     DecimalString,
     Interval,
+    NonEmptyStr,
     NonNegativeInt,
     PositiveInt,
     RawUnit,
@@ -58,6 +59,9 @@ class SeriesRecord(ResponseModel):
     selector: NonNegativeInt
     select: EchoedSelector
     profile: ResponseProfile
+    #: The role of the profile assignment (SAP EPROFASS role, e.g. ``"0001"``), or ``None`` when the series
+    #: was not resolved through a role (e.g. ``by: profile``). The Resolver BAdI may override it.
+    role: NonEmptyStr | None
     from_: ResponseInstant = Field(alias="from")
     to: ResponseInstant
     #: The canonical unit code (UN/ECE Rec. 20, e.g. ``"KWH"``) of the delivered values (after any conversion),

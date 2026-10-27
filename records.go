@@ -136,6 +136,9 @@ type SeriesRecord struct {
 	Select Selector
 	// Profile is the SAP profile number, without leading zeros.
 	Profile string
+	// Role is the role of the profile assignment (SAP EPROFASS role, e.g. "0001"), or nil when the series
+	// was not resolved through a role (e.g. by: profile). The Resolver BAdI may override it.
+	Role *string
 	// From and To bound the assignment, cut to the request window.
 	From, To time.Time
 	// Unit is the canonical unit code (UN/ECE Rec. 20, e.g. "KWH") of the delivered values (after any
@@ -170,6 +173,11 @@ func (r *SeriesRecord) Validate() error {
 	if err := validateResponseProfile(r.Profile); err != nil {
 		return fieldError("profile", err)
 	}
+	if r.Role != nil {
+		if err := validateToken(*r.Role); err != nil {
+			return fieldError("role", err)
+		}
+	}
 	if err := validateWindow(r.From, r.To, responseSide); err != nil {
 		return err
 	}
@@ -195,7 +203,7 @@ func (r *SeriesRecord) Validate() error {
 	return nil
 }
 
-// MarshalJSON validates and writes the record with "type" first; a nil Unit is written as null.
+// MarshalJSON validates and writes the record with "type" first; a nil Role or Unit is written as null.
 func (r *SeriesRecord) MarshalJSON() ([]byte, error) {
 	if err := r.Validate(); err != nil {
 		return nil, fmt.Errorf("series record: %w", err)
@@ -214,6 +222,7 @@ func (r *SeriesRecord) MarshalJSON() ([]byte, error) {
 		Selector   int               `json:"selector"`
 		Select     echoedSelector    `json:"select"`
 		Profile    string            `json:"profile"`
+		Role       *string           `json:"role"`
 		From       string            `json:"from"`
 		To         string            `json:"to"`
 		Unit       *string           `json:"unit"`
@@ -222,7 +231,7 @@ func (r *SeriesRecord) MarshalJSON() ([]byte, error) {
 		Attributes map[string]string `json:"attributes"`
 		Versions   []Version         `json:"versions"`
 	}{
-		RecordTypeSeries, r.Series, r.Selector, echoedSelector(r.Select), r.Profile,
+		RecordTypeSeries, r.Series, r.Selector, echoedSelector(r.Select), r.Profile, r.Role,
 		formatInstant(r.From, responseSide), formatInstant(r.To, responseSide), r.Unit, r.UnitRaw, r.Interval,
 		attributes, versions,
 	})
@@ -232,7 +241,7 @@ func (r *SeriesRecord) MarshalJSON() ([]byte, error) {
 func (r *SeriesRecord) UnmarshalJSON(b []byte) error {
 	m, err := checkRecord(b, RecordTypeSeries, rules{
 		"series": required, "selector": required, "select": required, "profile": required,
-		"from": required, "to": required, "unit": requiredNullable, "unit_raw": required, "interval": required,
+		"role": requiredNullable, "from": required, "to": required, "unit": requiredNullable, "unit_raw": required, "interval": required,
 		"attributes": required, "versions": required,
 	})
 	if err != nil {
@@ -240,12 +249,15 @@ func (r *SeriesRecord) UnmarshalJSON(b []byte) error {
 	}
 	var out SeriesRecord
 	var sel echoedSelector
+	if !isNull(m["role"]) {
+		out.Role = new(string)
+	}
 	if !isNull(m["unit"]) {
 		out.Unit = new(string)
 	}
 	for key, dst := range map[string]any{
 		"series": &out.Series, "selector": &out.Selector, "select": &sel, "profile": &out.Profile,
-		"unit": out.Unit, "unit_raw": &out.UnitRaw, "interval": &out.Interval, "attributes": &out.Attributes,
+		"role": out.Role, "unit": out.Unit, "unit_raw": &out.UnitRaw, "interval": &out.Interval, "attributes": &out.Attributes,
 		"versions": &out.Versions,
 	} {
 		if err := decodeField(m, key, dst); err != nil {

@@ -314,3 +314,28 @@ func TestSeriesUnits(t *testing.T) {
 	_, err = zrm.MarshalRecord(series(ptr("KWH"), ""))
 	assert.ErrorContains(t, err, "unit_raw")
 }
+
+// TestSeriesRole: every series record carries the role of its profile assignment, or null when the
+// series was not resolved through a role (e.g. by: profile).
+func TestSeriesRole(t *testing.T) {
+	from := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	series := func(role *string) *zrm.SeriesRecord {
+		return &zrm.SeriesRecord{
+			Series: 1, Select: zrm.MaLoSelector("87253749908"), Profile: "56", Role: role, From: from,
+			To: from.Add(time.Hour), Unit: ptr("KWH"), UnitRaw: "KWH", Interval: "PT15M",
+		}
+	}
+	b, err := zrm.MarshalRecord(series(ptr("0001")))
+	require.NoError(t, err)
+	assert.Contains(t, string(b), `"profile":"56","role":"0001","from"`)
+	back, err := zrm.ParseRecord(b)
+	require.NoError(t, err)
+	assert.Equal(t, "0001", *back.(*zrm.SeriesRecord).Role)
+
+	b, err = zrm.MarshalRecord(series(nil))
+	require.NoError(t, err)
+	assert.Contains(t, string(b), `"role":null`)
+
+	_, err = zrm.MarshalRecord(series(ptr("")))
+	assert.ErrorContains(t, err, "role: must not be empty")
+}

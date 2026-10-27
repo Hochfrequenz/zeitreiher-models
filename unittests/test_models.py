@@ -164,6 +164,7 @@ def test_series_record_writes_empty_collections() -> None:
         selector=0,
         select=MaLoSelector(malo="87253749908").model_dump(),
         profile="50000000000056",
+        role="0001",
         from_=datetime(2026, 1, 1, tzinfo=UTC),
         to=datetime(2026, 1, 2, tzinfo=UTC),
         unit="KWH",
@@ -318,6 +319,7 @@ _SERIES: dict[str, Any] = {
     "selector": 0,
     "select": {"by": "profile", "profile": "56"},
     "profile": "56",
+    "role": None,
     "from_": _FROM,
     "to": _TO,
     "unit": "KWH",
@@ -437,3 +439,12 @@ def test_request_unit_is_a_canonical_code(unit: str) -> None:
 def test_request_unit_rejects_sap_spellings(unit: str) -> None:
     with pytest.raises(ValidationError, match="is not a unit code"):
         QueryRequest(select=[ProfileSelector(profile="56")], from_=_FROM, to=_TO, unit=unit)
+
+
+def test_series_role_is_written_after_the_profile_and_may_be_null() -> None:
+    with_role = SeriesRecord(**{**_SERIES, "role": "0001"})
+    assert '"profile":"56","role":"0001","from"' in dump_record(with_role)
+    assert parse_record(dump_record(with_role)) == with_role
+    assert '"role":null' in dump_record(SeriesRecord(**{**_SERIES, "role": None}))
+    with pytest.raises(ValidationError):
+        SeriesRecord(**{**_SERIES, "role": ""})

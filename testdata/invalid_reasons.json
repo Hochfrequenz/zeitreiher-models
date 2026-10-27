@@ -857,6 +857,27 @@
       "type": "string_pattern_mismatch"
     }
   },
+  "records/series_role_empty.json": {
+    "go": "role: must not be empty",
+    "python": {
+      "loc": "series.role",
+      "type": "string_too_short"
+    }
+  },
+  "records/series_role_missing.json": {
+    "go": "role: is required",
+    "python": {
+      "loc": "series.role",
+      "type": "missing"
+    }
+  },
+  "records/series_role_number.json": {
+    "go": "role: json: cannot unmarshal number into Go value of type string",
+    "python": {
+      "loc": "series.role",
+      "type": "string_type"
+    }
+  },
   "records/series_select_by_array.json": {
     "go": "select: selector: by: json: cannot unmarshal array into Go value of type string",
     "python": {

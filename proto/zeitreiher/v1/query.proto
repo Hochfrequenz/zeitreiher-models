@@ -87,6 +87,9 @@ message SeriesRecord {
   // The SAP unit key (T006 MSEHI) as SAP delivers it, mapped or not: non-empty, at most 30
   // characters, no control characters.
   string unit_raw = 11;
+  // Role of the profile assignment (SAP EPROFASS role, e.g. "0001"); unset (JSON null) when the
+  // series was not resolved through a role (e.g. by: profile). The Resolver BAdI may override it.
+  optional string role = 12;
 }
 
 // Version is an EDM profile version overlapping a series.
