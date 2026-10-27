@@ -304,9 +304,9 @@ func TestSeriesUnits(t *testing.T) {
 	require.NoError(t, err)
 	assert.Nil(t, back.(*zrm.SeriesRecord).Unit)
 
-	b, err = zrm.MarshalRecord(series(ptr("KVR"), "kvarh"))
+	b, err = zrm.MarshalRecord(series(ptr("K3"), "kvarh"))
 	require.NoError(t, err)
-	assert.Contains(t, string(b), `"unit":"KVR","unit_raw":"kvarh"`)
+	assert.Contains(t, string(b), `"unit":"K3","unit_raw":"kvarh"`)
 
 	for _, bad := range []string{"kWh", "", "KWHH", "K", "°C"} {
 		_, err = zrm.MarshalRecord(series(ptr(bad), "KWH"))

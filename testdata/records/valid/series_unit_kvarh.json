@@ -10,7 +10,7 @@
   "role": "0001",
   "from": "2025-12-31T23:00:00Z",
   "to": "2026-01-31T23:00:00Z",
-  "unit": "KVR",
+  "unit": "K3",
   "unit_raw": "kvarh",
   "interval": "PT15M",
   "attributes": {},

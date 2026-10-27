@@ -421,8 +421,8 @@ def test_series_unit_is_a_canonical_code_or_null_and_unit_raw_is_the_sap_key() -
     unmapped = SeriesRecord(**{**_SERIES, "unit": None, "unit_raw": "µM"})
     assert '"unit":null,"unit_raw":"µM"' in dump_record(unmapped)
     assert parse_record(dump_record(unmapped)) == unmapped
-    mapped = SeriesRecord(**{**_SERIES, "unit": "KVR", "unit_raw": "kvarh"})
-    assert '"unit":"KVR","unit_raw":"kvarh"' in dump_record(mapped)
+    mapped = SeriesRecord(**{**_SERIES, "unit": "K3", "unit_raw": "kvarh"})
+    assert '"unit":"K3","unit_raw":"kvarh"' in dump_record(mapped)
 
 
 @pytest.mark.parametrize("unit", ["kWh", "", "KWHH", "K", "°C"])
