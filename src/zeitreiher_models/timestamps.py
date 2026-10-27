@@ -15,6 +15,9 @@ INSTANT_PATTERN = re.compile(
     r"(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
 )
 
+#: The earliest year an instant may have (as four digits); the Go models use the same.
+MIN_YEAR = "1900"
+
 
 def _error(message: str, value: object) -> PydanticCustomError:
     return PydanticCustomError("instant", "{value}: " + message, {"value": repr(value)})
@@ -27,8 +30,8 @@ def _parse(value: Any, *, utc_only: bool) -> datetime:
         raise _error("must be an RFC 3339 timestamp string", value)
     if not INSTANT_PATTERN.fullmatch(value):
         raise _error("is not an RFC 3339 timestamp with whole seconds and an explicit offset", value)
-    if value.startswith("0000"):
-        raise _error("year 0000 is not allowed", value)
+    if value[:4] < MIN_YEAR:
+        raise _error(f"years before {MIN_YEAR} are not allowed", value)
     if value.endswith("-00:00"):
         raise _error("the offset -00:00 means 'unknown offset' and is not allowed", value)
     if utc_only and not value.endswith("Z"):

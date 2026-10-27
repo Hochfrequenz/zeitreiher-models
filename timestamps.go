@@ -13,6 +13,9 @@ import (
 // seconds and an explicit offset. The Python models use the same expression.
 var instantPattern = regexp.MustCompile(`^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$`)
 
+// minYear is the earliest year an instant may have (as four digits); the Python models use the same.
+const minYear = "1900"
+
 // side says whether a value travels in a request or in a response; some rules differ.
 type side uint8
 
@@ -38,8 +41,8 @@ func parseInstantString(s string, kind side) (time.Time, error) {
 	if !instantPattern.MatchString(s) {
 		return time.Time{}, fmt.Errorf("%q is not an RFC 3339 timestamp with whole seconds and an explicit offset", s)
 	}
-	if strings.HasPrefix(s, "0000") {
-		return time.Time{}, fmt.Errorf("%q: year 0000 is not allowed", s)
+	if s[:4] < minYear {
+		return time.Time{}, fmt.Errorf("%q: years before %s are not allowed", s, minYear)
 	}
 	if strings.HasSuffix(s, "-00:00") {
 		return time.Time{}, fmt.Errorf("%q: the offset -00:00 means 'unknown offset' and is not allowed", s)
