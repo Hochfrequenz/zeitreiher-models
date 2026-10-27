@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strconv"
 	"time"
+	"unicode/utf8"
 )
 
 // presence says whether a JSON key must exist and whether it may be null.
@@ -46,6 +48,9 @@ func isNull(raw json.RawMessage) bool {
 func checkObject(b []byte, r rules, unknown unknownKeys) (map[string]json.RawMessage, error) {
 	if isNull(b) {
 		return nil, errors.New("must be a JSON object, not null")
+	}
+	if err := checkText(b); err != nil {
+		return nil, err
 	}
 	var m map[string]json.RawMessage
 	if err := json.Unmarshal(b, &m); err != nil {
@@ -160,4 +165,50 @@ func instantPtr(t *time.Time, kind side) *string {
 	}
 	s := formatInstant(*t, kind)
 	return &s
+}
+
+// backslash starts a JSON escape sequence.
+const backslash = 0x5C
+
+var errUnpairedSurrogate = errors.New(`string contains an unpaired UTF-16 surrogate escape (\uD800-\uDFFF)`)
+
+// checkText rejects input that encoding/json would silently repair to U+FFFD: invalid UTF-8 and
+// \u escapes of unpaired UTF-16 surrogates. The Python models reject both.
+func checkText(b []byte) error {
+	if !utf8.Valid(b) {
+		return errors.New("input is not valid UTF-8")
+	}
+	for i := 0; i < len(b); i++ {
+		if b[i] != backslash {
+			continue
+		}
+		if i+6 > len(b) || b[i+1] != 'u' {
+			i++ // skip the escaped character
+			continue
+		}
+		switch r := hex4(b[i+2 : i+6]); {
+		case r >= 0xD800 && r <= 0xDBFF:
+			if i+12 > len(b) || b[i+6] != backslash || b[i+7] != 'u' {
+				return errUnpairedSurrogate
+			}
+			if lo := hex4(b[i+8 : i+12]); lo < 0xDC00 || lo > 0xDFFF {
+				return errUnpairedSurrogate
+			}
+			i += 11
+		case r >= 0xDC00 && r <= 0xDFFF:
+			return errUnpairedSurrogate
+		default:
+			i += 5
+		}
+	}
+	return nil
+}
+
+// hex4 decodes four hex digits, or returns -1; malformed escapes are left to encoding/json.
+func hex4(h []byte) int {
+	v, err := strconv.ParseUint(string(h), 16, 32)
+	if err != nil {
+		return -1
+	}
+	return int(v)
 }

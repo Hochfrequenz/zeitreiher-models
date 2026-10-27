@@ -36,3 +36,20 @@ func TestCheckObject(t *testing.T) {
 		assert.Error(t, err, notAnObject)
 	}
 }
+
+func TestCheckText(t *testing.T) {
+	bs := "\\"
+	for _, ok := range []string{
+		`{"a":"x"}`, `{"a":"` + bs + `ud83d` + bs + `ude00"}`, // a surrogate pair
+		`{"a":"` + bs + bs + `ud800"}`, // an escaped backslash followed by "ud800"
+		`{"a":"` + bs + `"` + bs + bs + `"}`, `{"a":"` + bs + `u00e4"}`,
+	} {
+		assert.NoError(t, checkText([]byte(ok)), ok)
+	}
+	for _, bad := range []string{
+		`{"a":"` + bs + `ud800"}`, `{"a":"` + bs + `udc00"}`, `{"a":"` + bs + `ud800` + bs + `u0041"}`,
+		`{"a":"` + bs + `ud800"`, "{\"a\":\"\xff\"}",
+	} {
+		assert.Error(t, checkText([]byte(bad)), bad)
+	}
+}
