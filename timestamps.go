@@ -11,7 +11,7 @@ import (
 
 // instantPattern is the only accepted spelling of an instant: RFC 3339 with an upper-case "T", whole
 // seconds and an explicit offset. The Python models use the same expression.
-var instantPattern = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$`)
+var instantPattern = regexp.MustCompile(`^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$`)
 
 // side says whether a value travels in a request or in a response; some rules differ.
 type side uint8

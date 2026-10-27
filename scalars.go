@@ -9,19 +9,19 @@ import (
 )
 
 var (
-	decimalPattern         = regexp.MustCompile(`^-?(0|[1-9]\d*)(\.\d+)?$`)
-	requestProfilePattern  = regexp.MustCompile(`^\d{1,18}$`)
-	responseProfilePattern = regexp.MustCompile(`^[1-9]\d{0,17}$`)
-	maloPattern            = regexp.MustCompile(`^\d{11}$`)
+	decimalPattern         = regexp.MustCompile(`^-?(0|[1-9][0-9]*)(\.[0-9]+)?$`)
+	requestProfilePattern  = regexp.MustCompile(`^[0-9]{1,18}$`)
+	responseProfilePattern = regexp.MustCompile(`^[1-9][0-9]{0,17}$`)
+	maloPattern            = regexp.MustCompile(`^[0-9]{11}$`)
 	customByPattern        = regexp.MustCompile(`^[a-z][a-z0-9_]*$`)
-	intervalPattern        = regexp.MustCompile(`^PT[1-9]\d*M$`)
+	intervalPattern        = regexp.MustCompile(`^PT[1-9][0-9]*M$`)
 )
 
 // Decimal is an already-scaled decimal number in its string form, e.g. "160" or "0.022".
 //
 // Values are strings on the wire so that no client loses precision by parsing them as floats.
 // The accepted syntax is an optional minus, an integer part without leading zeros and an optional
-// fractional part: ^-?(0|[1-9]\d*)(\.\d+)?$. Exponents, a plus sign, negative zero and JSON numbers
+// fractional part: ^-?(0|[1-9][0-9]*)(\.[0-9]+)?$. Exponents, a plus sign, negative zero and JSON numbers
 // are rejected.
 type Decimal string
 

@@ -9,7 +9,9 @@ from pydantic_core import PydanticCustomError
 
 #: The only accepted spelling of an instant: upper-case ``T``, whole seconds, explicit offset.
 #: The Go models use the same expression.
-INSTANT_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$")
+INSTANT_PATTERN = re.compile(
+    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(Z|[+-](?:[01][0-9]|2[0-3]):[0-5][0-9])$"
+)
 
 
 def _error(message: str, value: object) -> PydanticCustomError:
@@ -21,7 +23,7 @@ def _parse(value: Any, *, utc_only: bool) -> datetime:
         return value
     if not isinstance(value, str):
         raise _error("must be an RFC 3339 timestamp string", value)
-    if not INSTANT_PATTERN.match(value):
+    if not INSTANT_PATTERN.fullmatch(value):
         raise _error("is not an RFC 3339 timestamp with whole seconds and an explicit offset", value)
     if value.startswith("0000"):
         raise _error("year 0000 is not allowed", value)

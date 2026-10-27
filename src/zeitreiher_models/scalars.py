@@ -10,11 +10,11 @@ from pydantic import AfterValidator, Field, StrictInt, StrictStr, StringConstrai
 #: Upper bound of every integer, so that Go (int64) and Python agree.
 INT64_MAX = 2**63 - 1
 
-_DECIMAL = re.compile(r"^-?(0|[1-9]\d*)(\.\d+)?$")
+_DECIMAL = re.compile(r"^-?(0|[1-9][0-9]*)(\.[0-9]+)?$")
 
 
 def _check_decimal(value: str) -> str:
-    if not _DECIMAL.match(value):
+    if not _DECIMAL.fullmatch(value):
         raise ValueError(f"{value!r} is not a decimal string")
     if value.startswith("-") and not value.strip("-0."):
         raise ValueError(f"{value!r}: negative zero is not allowed")
@@ -39,16 +39,16 @@ def _check_unit(value: str) -> str:
 DecimalString = Annotated[StrictStr, AfterValidator(_check_decimal)]
 
 #: A profile number in a request: 1 to 18 digits, leading zeros allowed.
-RequestProfile = Annotated[StrictStr, StringConstraints(pattern=r"^\d{1,18}$")]
+RequestProfile = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{1,18}$")]
 
 #: A profile number in a response: without leading zeros.
-ResponseProfile = Annotated[StrictStr, StringConstraints(pattern=r"^[1-9]\d{0,17}$")]
+ResponseProfile = Annotated[StrictStr, StringConstraints(pattern=r"^[1-9][0-9]{0,17}$")]
 
 #: A market location id: 11 digits.
-MaLo = Annotated[StrictStr, StringConstraints(pattern=r"^\d{11}$")]
+MaLo = Annotated[StrictStr, StringConstraints(pattern=r"^[0-9]{11}$")]
 
 #: A sub-daily interval as an ISO 8601 duration in minutes, e.g. ``"PT15M"``.
-Interval = Annotated[StrictStr, StringConstraints(pattern=r"^PT[1-9]\d*M$")]
+Interval = Annotated[StrictStr, StringConstraints(pattern=r"^PT[1-9][0-9]*M$")]
 
 #: An SAP unit such as ``"KWH"``.
 Unit = Annotated[StrictStr, AfterValidator(_check_unit)]
