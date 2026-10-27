@@ -12,23 +12,30 @@ import (
 // response that failed as a whole (before any NDJSON record was written).
 type RequestErrorCode string
 
-// Request-level error codes (spec §4.3, consolidated list).
+// Request-level error codes (spec §4.3, consolidated list). The first eight are btpingo's request-level
+// vocabulary (btpingo.ErrorCode in httperr.go), shared by the Hochfrequenz BTP services; the cursor
+// codes and upstream_timeout are Zeitreiher's own.
 const (
-	RequestErrorBadRequest          RequestErrorCode = "bad_request"
+	RequestErrorInvalidRequest      RequestErrorCode = "invalid_request"
 	RequestErrorUnauthorized        RequestErrorCode = "unauthorized"
 	RequestErrorForbidden           RequestErrorCode = "forbidden"
+	RequestErrorNotFound            RequestErrorCode = "not_found"
+	RequestErrorMethodNotAllowed    RequestErrorCode = "method_not_allowed"
+	RequestErrorRequestTooLarge     RequestErrorCode = "request_too_large"
+	RequestErrorUpstreamUnreachable RequestErrorCode = "upstream_unreachable"
+	RequestErrorInternal            RequestErrorCode = "internal"
 	RequestErrorCursorInvalid       RequestErrorCode = "cursor_invalid"
 	RequestErrorCursorMismatch      RequestErrorCode = "cursor_mismatch"
 	RequestErrorCursorExpired       RequestErrorCode = "cursor_expired"
 	RequestErrorCursorStale         RequestErrorCode = "cursor_stale"
-	RequestErrorUpstreamUnavailable RequestErrorCode = "upstream_unavailable"
 	RequestErrorUpstreamTimeout     RequestErrorCode = "upstream_timeout"
 )
 
 var requestErrorCodes = []RequestErrorCode{
-	RequestErrorBadRequest, RequestErrorUnauthorized, RequestErrorForbidden, RequestErrorCursorInvalid,
-	RequestErrorCursorMismatch, RequestErrorCursorExpired, RequestErrorCursorStale,
-	RequestErrorUpstreamUnavailable, RequestErrorUpstreamTimeout,
+	RequestErrorInvalidRequest, RequestErrorUnauthorized, RequestErrorForbidden, RequestErrorNotFound,
+	RequestErrorMethodNotAllowed, RequestErrorRequestTooLarge, RequestErrorUpstreamUnreachable,
+	RequestErrorInternal, RequestErrorCursorInvalid, RequestErrorCursorMismatch, RequestErrorCursorExpired,
+	RequestErrorCursorStale, RequestErrorUpstreamTimeout,
 }
 
 // AllRequestErrorCodes returns every request-level error code in specification order.

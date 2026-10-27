@@ -1,6 +1,6 @@
 {
   "error": {
-    "code": "bad_request",
+    "code": "invalid_request",
     "message": "from: \"2026-01-14T00:00:00\" has no offset",
     "request_id": "7f3c1a9b2e4d5068"
   }

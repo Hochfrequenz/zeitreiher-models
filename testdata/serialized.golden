@@ -1,13 +1,17 @@
-error_envelope/bad_request.json	{"error":{"code":"bad_request","message":"example message for bad_request"}}
 error_envelope/cursor_expired.json	{"error":{"code":"cursor_expired","message":"example message for cursor_expired"}}
 error_envelope/cursor_invalid.json	{"error":{"code":"cursor_invalid","message":"example message for cursor_invalid"}}
 error_envelope/cursor_mismatch.json	{"error":{"code":"cursor_mismatch","message":"example message for cursor_mismatch"}}
 error_envelope/cursor_stale.json	{"error":{"code":"cursor_stale","message":"example message for cursor_stale"}}
 error_envelope/forbidden.json	{"error":{"code":"forbidden","message":"example message for forbidden"}}
+error_envelope/internal.json	{"error":{"code":"internal","message":"example message for internal"}}
+error_envelope/invalid_request.json	{"error":{"code":"invalid_request","message":"example message for invalid_request"}}
+error_envelope/method_not_allowed.json	{"error":{"code":"method_not_allowed","message":"example message for method_not_allowed"}}
+error_envelope/not_found.json	{"error":{"code":"not_found","message":"example message for not_found"}}
+error_envelope/request_too_large.json	{"error":{"code":"request_too_large","message":"example message for request_too_large"}}
 error_envelope/unauthorized.json	{"error":{"code":"unauthorized","message":"example message for unauthorized"}}
 error_envelope/upstream_timeout.json	{"error":{"code":"upstream_timeout","message":"example message for upstream_timeout"}}
-error_envelope/upstream_unavailable.json	{"error":{"code":"upstream_unavailable","message":"example message for upstream_unavailable"}}
-error_envelope/with_request_id.json	{"error":{"code":"bad_request","message":"from: \"2026-01-14T00:00:00\" has no offset","request_id":"7f3c1a9b2e4d5068"}}
+error_envelope/upstream_unreachable.json	{"error":{"code":"upstream_unreachable","message":"example message for upstream_unreachable"}}
+error_envelope/with_request_id.json	{"error":{"code":"invalid_request","message":"from: \"2026-01-14T00:00:00\" has no offset","request_id":"7f3c1a9b2e4d5068"}}
 query_request/custom_selector.json	{"select":[{"by":"contract_account","params":{"account":"000012345678","role":"supplier"}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/custom_selector_empty_params.json	{"select":[{"by":"pod","params":{}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/custom_selector_params_key_order.json	{"select":[{"by":"contract_account","params":{"a":"\u2028","account":"000012345678","b":"\u003c\u0026\u003e","role":"supplier"}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}

@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "method_not_allowed",
+    "message": "example message for method_not_allowed"
+  }
+}

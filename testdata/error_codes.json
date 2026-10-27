@@ -1,13 +1,17 @@
 {
   "request": [
-    "bad_request",
+    "invalid_request",
     "unauthorized",
     "forbidden",
+    "not_found",
+    "method_not_allowed",
+    "request_too_large",
+    "upstream_unreachable",
+    "internal",
     "cursor_invalid",
     "cursor_mismatch",
     "cursor_expired",
     "cursor_stale",
-    "upstream_unavailable",
     "upstream_timeout"
   ],
   "record": [

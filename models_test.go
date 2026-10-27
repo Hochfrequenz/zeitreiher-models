@@ -265,10 +265,10 @@ func TestInvalidUTF8RefusesToMarshal(t *testing.T) {
 		},
 		"end next": &zrm.EndRecord{Next: &badString},
 		"error message": zrm.ErrorEnvelope{Error: zrm.ErrorDetail{
-			Code: zrm.RequestErrorBadRequest, Message: bad,
+			Code: zrm.RequestErrorInvalidRequest, Message: bad,
 		}},
 		"error request id": zrm.ErrorEnvelope{Error: zrm.ErrorDetail{
-			Code: zrm.RequestErrorBadRequest, Message: "m", RequestID: bad,
+			Code: zrm.RequestErrorInvalidRequest, Message: "m", RequestID: bad,
 		}},
 		"system sid":     system(func(s *zrm.SystemInfo) { s.SID = bad }),
 		"system release": system(func(s *zrm.SystemInfo) { s.Release = bad }),

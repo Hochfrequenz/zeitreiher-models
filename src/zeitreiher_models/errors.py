@@ -10,16 +10,24 @@ from zeitreiher_models.scalars import CodeStr, Text
 
 
 class RequestErrorCode(StrEnum):
-    """Request-level error codes (spec §4.3), carried by :class:`ErrorEnvelope`."""
+    """Request-level error codes (spec §4.3), carried by :class:`ErrorEnvelope`.
 
-    BAD_REQUEST = "bad_request"
+    The first eight are btpingo's request-level vocabulary (``btpingo.ErrorCode`` in ``httperr.go``), shared
+    by the Hochfrequenz BTP services; the cursor codes and ``upstream_timeout`` are Zeitreiher's own.
+    """
+
+    INVALID_REQUEST = "invalid_request"
     UNAUTHORIZED = "unauthorized"
     FORBIDDEN = "forbidden"
+    NOT_FOUND = "not_found"
+    METHOD_NOT_ALLOWED = "method_not_allowed"
+    REQUEST_TOO_LARGE = "request_too_large"
+    UPSTREAM_UNREACHABLE = "upstream_unreachable"
+    INTERNAL = "internal"
     CURSOR_INVALID = "cursor_invalid"
     CURSOR_MISMATCH = "cursor_mismatch"
     CURSOR_EXPIRED = "cursor_expired"
     CURSOR_STALE = "cursor_stale"
-    UPSTREAM_UNAVAILABLE = "upstream_unavailable"
     UPSTREAM_TIMEOUT = "upstream_timeout"
 
 
