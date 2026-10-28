@@ -1563,7 +1563,7 @@
     }
   },
   "system_info/unit_not_string.json": {
-    "go": "system info: units: json: cannot unmarshal number into .0 of type string",
+    "go": "system info: units: json: cannot unmarshal number into",
     "python": {
       "loc": "units.0",
       "type": "string_type"

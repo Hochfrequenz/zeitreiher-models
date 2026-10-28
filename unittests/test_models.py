@@ -13,6 +13,7 @@ import pytest
 from pydantic import TypeAdapter, ValidationError
 from pydantic_core import PydanticSerializationError
 
+import zeitreiher_models
 from zeitreiher_models import (
     Assignment,
     CurrentVersion,
@@ -479,3 +480,8 @@ def test_assignment_built_in_python_may_leave_role_and_unit_out() -> None:
     assert assignment.role is None
     assert assignment.unit is None
     assert '"role":null' in assignment.model_dump_json()
+
+
+def test_package_version_is_a_non_empty_string() -> None:
+    assert isinstance(zeitreiher_models.__version__, str)
+    assert zeitreiher_models.__version__

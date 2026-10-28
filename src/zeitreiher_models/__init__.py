@@ -4,6 +4,7 @@ The contract is the JSON form of these models, pinned by the shared fixtures in 
 the Go and the Python models both round-trip. Nothing here is generated.
 """
 
+from zeitreiher_models._version import version as __version__
 from zeitreiher_models.errors import (
     ErrorDetail,
     ErrorEnvelope,
@@ -91,6 +92,7 @@ __all__ = [
     "VersionsRequest",
     "VersionsResponse",
     "VersionsResult",
+    "__version__",
     "dump_record",
     "iter_records",
     "parse_record",

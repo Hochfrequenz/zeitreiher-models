@@ -93,7 +93,7 @@ fragments = [{ path = "README.md" }]
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/_zeitreiher_models_version.py"
+version-file = "src/zeitreiher_models/_version.py"
 template = '''
 version = "{version}"
 '''
