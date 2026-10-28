@@ -15,6 +15,7 @@ from pydantic_core import PydanticSerializationError
 
 from zeitreiher_models import (
     Assignment,
+    Caps,
     CurrentVersion,
     CustomSelector,
     EndRecord,
@@ -479,3 +480,12 @@ def test_assignment_built_in_python_may_leave_role_and_unit_out() -> None:
     assert assignment.role is None
     assert assignment.unit is None
     assert '"role":null' in assignment.model_dump_json()
+
+
+@pytest.mark.parametrize("field", ["max_window_seconds", "max_values"])
+def test_caps_descriptions_name_values_calls_only(field: str) -> None:
+    """Both caps bound one internal SAP values call; versions and resolve are not split and have no value cap."""
+    description = Caps.model_fields[field].description
+    assert description is not None
+    assert "values call" in description
+    assert "versions" not in description
