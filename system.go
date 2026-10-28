@@ -6,20 +6,21 @@ import (
 	"fmt"
 )
 
-// Caps are the limits of one internal SAP call (spec section 3.1), reported so that clients know how the service
-// works.
-// The service splits query and versions windows into SAP calls under MaxWindowSeconds and MaxValues; a request
-// window longer than MaxResolveWindowSeconds is rejected with 400 invalid_request.
+// Caps are the limits of the service (spec section 3.1), reported so that clients know how it works.
+// MaxWindowSeconds and MaxValues bound one internal SAP values call; the service splits a query window
+// accordingly.
+// MaxResolveWindowSeconds is the longest request window the service accepts for query, resolve and versions;
+// longer windows are 400 invalid_request.
+// Versions and resolve are not split and have no value cap.
 // The internal window_too_large answer of SAP never reaches public clients.
 type Caps struct {
-	// MaxWindowSeconds is the longest window in seconds of one internal SAP values or versions call; the
-	// service splits longer request windows (at least 1).
+	// MaxWindowSeconds is the longest window in seconds of one internal SAP values call; the service splits
+	// longer query windows (at least 1).
 	MaxWindowSeconds int64
-	// MaxValues is the highest number of values of one internal SAP values or versions call; the service
-	// splits the window accordingly (at least 1).
+	// MaxValues is the highest number of values of one internal SAP values call (at least 1).
 	MaxValues int64
-	// MaxResolveWindowSeconds is the longest request window in seconds the service resolves; a longer window
-	// is a 400 invalid_request (at least 1).
+	// MaxResolveWindowSeconds is the longest request window in seconds the service accepts for query, resolve
+	// and versions; a longer window is a 400 invalid_request (at least 1).
 	MaxResolveWindowSeconds int64
 }
 

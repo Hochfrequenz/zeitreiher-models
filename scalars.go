@@ -112,7 +112,7 @@ func validateInterval(i string) error {
 const maxRawUnitLength = 30
 
 // validateUnitCode accepts a canonical unit: a UN/ECE Recommendation 20 code such as "KWH", "MWH" or
-// "KVR" — 2 or 3 upper-case ASCII letters or digits. Requests and series records use it; whether a
+// "K3" ("K3" = kvarh) — 2 or 3 upper-case ASCII letters or digits. Requests and series records use it; whether a
 // well-formed code is supported is the server's decision (an unknown code is a 400).
 func validateUnitCode(u string) error {
 	if err := validateText(u); err != nil {
