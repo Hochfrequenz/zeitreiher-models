@@ -1,0 +1,34 @@
+{
+  "blank_line.ndjson": {
+    "go": "line 2: blank line",
+    "python": "line 2: blank line"
+  },
+  "crlf.ndjson": {
+    "go": "carriage return in NDJSON line",
+    "python": "carriage return in NDJSON line"
+  },
+  "empty.ndjson": {
+    "go": "does not end with an end record",
+    "python": "does not end with an end record"
+  },
+  "end_not_last.ndjson": {
+    "go": "record after the end record",
+    "python": "record after the end record"
+  },
+  "invalid_record.ndjson": {
+    "go": "line 2: value record: value: must be a decimal string",
+    "python": "Input should be a valid string"
+  },
+  "missing_end.ndjson": {
+    "go": "does not end with an end record",
+    "python": "does not end with an end record"
+  },
+  "pretty_printed_record.ndjson": {
+    "go": "line 2: record: must be a JSON object",
+    "python": "Invalid JSON"
+  },
+  "two_ends.ndjson": {
+    "go": "record after the end record",
+    "python": "record after the end record"
+  }
+}

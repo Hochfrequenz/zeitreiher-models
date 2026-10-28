@@ -2,6 +2,7 @@
 
 import itertools
 import json
+import re
 from collections import Counter
 from collections.abc import Callable
 from datetime import timedelta
@@ -101,6 +102,7 @@ def test_serialized_bytes_match_golden() -> None:
 #: pydantic's own messages are not compared, so that a pydantic upgrade that rewords them does not break
 #: the fixtures.
 REASONS: dict[str, dict[str, Any]] = json.loads((TESTDATA / "invalid_reasons.json").read_bytes())
+STREAM_REASONS: dict[str, dict[str, str]] = json.loads((TESTDATA / "stream_reasons.json").read_bytes())
 
 #: Error types raised by the models' validators (``ValueError`` → ``value_error`` and custom error types).
 OWN_ERROR_TYPES = frozenset({"value_error", "instant", "unknown_key", "version_selector"})
@@ -180,8 +182,15 @@ def test_valid_stream(path: Path) -> None:
 
 @pytest.mark.parametrize("path", _files("streams", "invalid", ".ndjson"), ids=lambda p: p.name)
 def test_invalid_stream_is_rejected(path: Path) -> None:
-    with pytest.raises(ValueError):  # ValidationError and MissingEndError are ValueErrors
+    assert path.name in STREAM_REASONS, f"add {path.name} to testdata/stream_reasons.json"
+    reason = STREAM_REASONS[path.name]["python"]
+    # ValidationError and MissingEndError are ValueErrors
+    with pytest.raises(ValueError, match=re.escape(reason)):
         read_stream(path.read_bytes())
+
+
+def test_stream_reasons_cover_exactly_the_invalid_streams() -> None:
+    assert set(STREAM_REASONS) == {path.name for path in _files("streams", "invalid", ".ndjson")}
 
 
 def test_missing_end_is_reported_as_such() -> None:
