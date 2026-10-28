@@ -42,6 +42,13 @@
       "type": "string_too_short"
     }
   },
+  "query_request/custom_by_too_long.json": {
+    "go": "select: selector: by: \"contract_account_resolver_name_\" is longer than 30 characters",
+    "python": {
+      "loc": "select.0.custom.by",
+      "type": "string_too_long"
+    }
+  },
   "query_request/custom_by_uppercase.json": {
     "go": "select: selector: by: \"ContractAccount\" is not a selector kind (lower-case letters, digits, underscores)",
     "python": {
