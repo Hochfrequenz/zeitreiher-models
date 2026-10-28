@@ -17,7 +17,7 @@ build/
 .mypy_cache/
 htmlcov/
 .coverage
-src/_zeitreiher_models_version.py
+src/zeitreiher_models/_version.py
 
 # IDE
 .idea/

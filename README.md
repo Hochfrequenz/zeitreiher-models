@@ -49,7 +49,7 @@ so Go and Python agree on the contract by construction.
 
 Every public model and field is documented: Python fields carry `Field(description=...)` (so the descriptions land in the JSON schema from `model_json_schema()`), Go types, fields and constants carry godoc comments (revive enforces them on exported types, functions and constants; field docs are a convention kept by review), and the two languages are kept in step.
 
-The full design lives in the `zeitreiher-go` repository (`docs/superpowers/specs/2026-10-27-zeitreiher-design.md`).
+The client-relevant decisions are all in the table above, "The contract in short".
 
 ## Go
 
@@ -188,9 +188,11 @@ version. Additive changes (new optional fields, new error codes) stay in v1; bre
 
 The Go package `zeitreihermodels` lives at the **repository root** (import path
 `github.com/hochfrequenz/zeitreiher-models`); there is no `v1` sub-package. Its major version follows
-Go module versioning: v1 is released as tags `v1.x.y` of this module path, and a breaking v2 becomes
-the module `github.com/hochfrequenz/zeitreiher-models/v2` (tags `v2.x.y`). The Python package takes its
-version from the same tags.
+Go module versioning.
+While the major version is 0, minor releases may contain breaking changes (announced in the release notes); 1.0 freezes the v1 contract.
+From 1.0 on, releases are tags `v1.x.y` of this module path, and a breaking v2 becomes
+the module `github.com/hochfrequenz/zeitreiher-models/v2` (tags `v2.x.y`).
+The Python package takes its version from the same tags.
 
 ## Development
 
