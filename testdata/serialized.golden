@@ -26,7 +26,7 @@ query_request/offset_plus_0200.json	{"select":[{"by":"profile","profile":"500000
 query_request/offset_z.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-09-30T22:00:00Z","to":"2026-10-01T22:00:00Z"}
 query_request/profile_leading_zeros.json	{"select":[{"by":"profile","profile":"000050000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/three_selectors.json	{"select":[{"by":"malo","malo":"87253749908"},{"by":"profile","profile":"50000000000056"},{"by":"contract_account","params":{"account":"000012345678","role":"supplier"}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
-query_request/unit_kvr.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"KVR"}
+query_request/unit_kvr_reactive_power.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"KVR"}
 query_request/unit_kwh.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"KWH"}
 query_request/unit_two_chars.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"K3"}
 query_request/unit_with_digit.json	{"select":[{"by":"profile","profile":"50000000000056"}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z","unit":"C62"}

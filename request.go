@@ -111,7 +111,7 @@ type QueryRequest struct {
 	Version *VersionSelector
 	// Interval is optional, e.g. "PT15M"; empty means the profile's own interval.
 	Interval string
-	// Unit is optional, a canonical unit code (UN/ECE Rec. 20) such as "KWH", "MWH" or "KVR"; the server
+	// Unit is optional, a canonical unit code (UN/ECE Rec. 20) such as "KWH", "MWH" or "K3" ("K3" = kvarh); the server
 	// maps it to the customer's SAP unit. Empty means the profile's own unit.
 	Unit string
 	// Cursor continues a previous response (its end record's next); empty starts at the beginning.
