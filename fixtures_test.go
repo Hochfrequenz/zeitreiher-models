@@ -342,6 +342,20 @@ func TestErrorCodesMatchFixture(t *testing.T) {
 	assert.False(t, zrm.RecordErrorCode("some_future_code").IsKnown())
 }
 
+func TestIsUnitCodeMatchesFixture(t *testing.T) {
+	var cases struct {
+		Valid   []string `json:"valid"`
+		Invalid []string `json:"invalid"`
+	}
+	require.NoError(t, json.Unmarshal(read(t, filepath.Join(testdata, "unit_codes.json")), &cases))
+	for _, c := range cases.Valid {
+		assert.True(t, zrm.IsUnitCode(c), "%q", c)
+	}
+	for _, c := range cases.Invalid {
+		assert.False(t, zrm.IsUnitCode(c), "%q", c)
+	}
+}
+
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil

@@ -29,6 +29,7 @@ from zeitreiher_models import (
     VersionsRequest,
     VersionsResponse,
     dump_record,
+    is_unit_code,
     parse_record,
     read_stream,
     split_lines,
@@ -258,3 +259,11 @@ def test_error_codes_match_fixture() -> None:
         assert (TESTDATA / "error_envelope" / "valid" / f"{request_code.value}.json").exists()
     for record_code in RecordErrorCode:
         assert (TESTDATA / "records" / "valid" / f"error_{record_code.value}.json").exists()
+
+
+def test_is_unit_code_matches_fixture() -> None:
+    cases = json.loads((TESTDATA / "unit_codes.json").read_bytes())
+    for code in cases["valid"]:
+        assert is_unit_code(code), code
+    for code in cases["invalid"]:
+        assert not is_unit_code(code), code
