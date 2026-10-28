@@ -40,7 +40,7 @@ from zeitreiher_models.results import (
     VersionsResponse,
     VersionsResult,
 )
-from zeitreiher_models.scalars import DecimalString, to_decimal
+from zeitreiher_models.scalars import DecimalString, is_unit_code, to_decimal
 from zeitreiher_models.selectors import (
     CustomSelector,
     EchoedCustomSelector,
@@ -94,6 +94,7 @@ __all__ = [
     "VersionsResult",
     "__version__",
     "dump_record",
+    "is_unit_code",
     "iter_records",
     "parse_record",
     "read_stream",

@@ -90,6 +90,9 @@ class RecordErrorCode(DocumentedStrEnum):
     """
     BADI_FAILED = "badi_failed"
     """Used when any customer BAdI (spec section 3.2) raised an exception."""
+    UNIT_MISSING = "unit_missing"
+    """Used when the SAP unit key of the series is empty (or only control characters) and no canonical code exists,
+    so ``unit_raw`` cannot be filled."""
 
 
 def _known(enum: type[StrEnum]) -> Any:

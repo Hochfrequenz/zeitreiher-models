@@ -101,9 +101,17 @@ MAX_RAW_UNIT_LENGTH = 30
 _UNIT_CODE = re.compile(r"^[A-Z0-9]{2,3}$")
 
 
+def is_unit_code(value: str) -> bool:
+    """Whether ``value`` is a canonical unit code: a UN/ECE Rec. 20 code such as ``"KWH"``.
+
+    That is 2 or 3 upper-case ASCII letters or digits, strict (as in Go ``IsUnitCode``).
+    This is the rule the models apply to ``unit``; whether a well-formed code is supported is the server's decision.
+    """
+    return _UNIT_CODE.fullmatch(value) is not None
+
+
 def _check_unit_code(value: str) -> str:
-    """A UN/ECE Rec. 20 code: 2 or 3 upper-case ASCII letters or digits (as in Go)."""
-    if not _UNIT_CODE.fullmatch(value):
+    if not is_unit_code(value):
         raise ValueError(
             f"{value!r} is not a unit code (UN/ECE Rec. 20: 2 or 3 upper-case letters or digits, e.g. KWH)"
         )

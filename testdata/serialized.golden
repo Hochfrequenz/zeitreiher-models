@@ -51,6 +51,7 @@ records/error_no_assignment.json	{"type":"error","selector":0,"select":{"by":"ma
 records/error_profile_not_found.json	{"type":"error","selector":1,"select":{"by":"profile","profile":"50000000000099"},"profile":"50000000000099","code":"profile_not_found"}
 records/error_profile_time_zone_missing.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"profile_time_zone_missing"}
 records/error_selector_not_found.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"code":"selector_not_found"}
+records/error_unit_missing.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"unit_missing"}
 records/error_unknown_selector.json	{"type":"error","selector":0,"select":{"by":"street_address","params":{"city":"Grünwald"}},"code":"unknown_selector"}
 records/error_version_deleted.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"version_deleted"}
 records/error_version_not_found.json	{"type":"error","selector":0,"select":{"by":"malo","malo":"87253749908"},"profile":"50000000000056","code":"version_not_found"}

@@ -137,6 +137,9 @@ const (
 	RecordErrorAmbiguousLocalTime RecordErrorCode = "ambiguous_local_time"
 	// RecordErrorBadiFailed is used when any customer BAdI (spec section 3.2) raised an exception.
 	RecordErrorBadiFailed RecordErrorCode = "badi_failed"
+	// RecordErrorUnitMissing is used when the SAP unit key of the series is empty (or only control characters) and no
+	// canonical code exists, so unit_raw cannot be filled.
+	RecordErrorUnitMissing RecordErrorCode = "unit_missing"
 )
 
 var recordErrorCodes = []RecordErrorCode{
@@ -144,7 +147,7 @@ var recordErrorCodes = []RecordErrorCode{
 	RecordErrorAccessDenied, RecordErrorProfileNotFound, RecordErrorProfileTimeZoneMissing,
 	RecordErrorIntervalSizeUnsupported, RecordErrorWindowUnaligned, RecordErrorAssignmentUnaligned,
 	RecordErrorVersionNotFound, RecordErrorVersionDeleted, RecordErrorConversionNotAllowed, RecordErrorAmbiguousLocalTime,
-	RecordErrorBadiFailed,
+	RecordErrorBadiFailed, RecordErrorUnitMissing,
 }
 
 // AllRecordErrorCodes returns every record-level error code in specification order.

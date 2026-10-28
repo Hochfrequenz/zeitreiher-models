@@ -29,6 +29,7 @@
     "version_deleted",
     "conversion_not_allowed",
     "ambiguous_local_time",
-    "badi_failed"
+    "badi_failed",
+    "unit_missing"
   ]
 }
