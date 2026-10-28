@@ -205,12 +205,32 @@ func assertEndCounts(t *testing.T, records []zrm.Record) {
 	assert.Equal(t, counts[zrm.RecordTypeError], end.Errors, "end.errors")
 }
 
+// streamReasons maps every invalid stream fixture to why each language must reject it.
+func streamReasons(t *testing.T) map[string]invalidReason {
+	t.Helper()
+	var reasons map[string]invalidReason
+	require.NoError(t, json.Unmarshal(read(t, filepath.Join(testdata, "stream_reasons.json")), &reasons))
+	return reasons
+}
+
 func TestInvalidStreamsAreRejected(t *testing.T) {
+	reasons := streamReasons(t)
+	seen := map[string]bool{}
 	for _, path := range fixtureFiles(t, "streams", "invalid", ".ndjson") {
-		t.Run(filepath.Base(path), func(t *testing.T) {
+		name := filepath.Base(path)
+		seen[name] = true
+		t.Run(name, func(t *testing.T) {
 			_, err := zrm.ReadStream(bytes.NewReader(read(t, path)))
-			assert.Error(t, err)
+			require.Error(t, err)
+			reason, ok := reasons[name]
+			require.True(t, ok, "add %s to testdata/stream_reasons.json; the Go error is: %v", name, err)
+			require.NotEmpty(t, reason.Go)
+			require.NotEmpty(t, reason.Python)
+			assert.ErrorContains(t, err, reason.Go)
 		})
+	}
+	for name := range reasons {
+		assert.True(t, seen[name], "stream_reasons.json lists %s, which is not an invalid stream fixture", name)
 	}
 	_, err := zrm.ReadStream(bytes.NewReader(read(t, filepath.Join(testdata, "streams", "invalid", "missing_end.ndjson"))))
 	assert.True(t, errors.Is(err, zrm.ErrMissingEnd))
