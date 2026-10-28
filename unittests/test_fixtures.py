@@ -263,6 +263,8 @@ def test_error_codes_match_fixture() -> None:
 
 def test_is_unit_code_matches_fixture() -> None:
     cases = json.loads((TESTDATA / "unit_codes.json").read_bytes())
+    assert cases["valid"]
+    assert cases["invalid"]
     for code in cases["valid"]:
         assert is_unit_code(code), code
     for code in cases["invalid"]:

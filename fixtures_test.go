@@ -348,6 +348,8 @@ func TestIsUnitCodeMatchesFixture(t *testing.T) {
 		Invalid []string `json:"invalid"`
 	}
 	require.NoError(t, json.Unmarshal(read(t, filepath.Join(testdata, "unit_codes.json")), &cases))
+	require.NotEmpty(t, cases.Valid)
+	require.NotEmpty(t, cases.Invalid)
 	for _, c := range cases.Valid {
 		assert.True(t, zrm.IsUnitCode(c), "%q", c)
 	}

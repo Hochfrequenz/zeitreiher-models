@@ -1,4 +1,4 @@
 {
-  "valid": ["KWH", "MWH", "K3", "KVR", "A1", "Z99", "00", "123"],
-  "invalid": ["", "K", "KWHX", "kwh", "Kwh", "K H", " KWH", "KWH ", "KWH\n", "KÄH", "²²", "٣٣", "K-H", "%", "°C", "ＫＷＨ"]
+  "valid": ["KWH", "MWH", "K3", "KVR", "WH", "A1", "Z99", "00", "123"],
+  "invalid": ["", "K", "KWHX", "1234", "kwh", "Kwh", "K H", " KWH", "KWH ", "KWH\n", "KWH\r", "KW\u0000", "KÄH", "ſ", "İ", "²²", "٣٣", "K-H", "%", "°C", "ＫＷＨ"]
 }

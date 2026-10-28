@@ -119,6 +119,7 @@ const maxRawUnitLength = 30
 // "K3" ("K3" = kvarh), that is 2 or 3 upper-case ASCII letters or digits, strict.
 // It is the rule the models apply to unit in requests, series records and assignments, exported so that
 // consumers need not copy the pattern.
+// The Python counterpart is zeitreiher_models.is_unit_code.
 // Whether a well-formed code is supported is the server's decision (an unknown code is a 400).
 func IsUnitCode(s string) bool {
 	return unitCodePattern.MatchString(s)
