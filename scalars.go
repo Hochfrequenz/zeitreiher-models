@@ -108,6 +108,10 @@ func validateInterval(i string) error {
 	return nil
 }
 
+// maxCustomByLength bounds the name of a custom selector (by) in characters; the pattern allows ASCII only,
+// so bytes and characters coincide.
+const maxCustomByLength = 30
+
 // maxRawUnitLength bounds unit_raw, the SAP unit key of a series record, in characters (code points).
 const maxRawUnitLength = 30
 

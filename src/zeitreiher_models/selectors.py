@@ -11,8 +11,8 @@ from zeitreiher_models.scalars import CHECK_TEXT, MaLo, RequestProfile, Response
 KNOWN_SELECTOR_KINDS = frozenset({"profile", "malo"})
 """Selector kinds every installation knows; any other ``by`` is a custom (customer) resolver."""
 
-CustomKind = Annotated[StrictStr, StringConstraints(pattern=r"^[a-z][a-z0-9_]*$")]
-"""The name of a customer resolver (``by``): snake_case, starting with a lower-case letter."""
+CustomKind = Annotated[StrictStr, StringConstraints(pattern=r"^[a-z][a-z0-9_]*$", max_length=30)]
+"""The name of a customer resolver (``by``): snake_case, starting with a lower-case letter, 1 to 30 characters."""
 
 ParamKey = Annotated[StrictStr, StringConstraints(min_length=1), CHECK_TEXT]
 """The key of a custom selector parameter: a non-empty string."""
@@ -35,7 +35,7 @@ class MaLoSelector(RequestModel):
 class CustomSelector(RequestModel):
     """``{"by":"<name>","params":{"<key>":"<string>"}}`` — a customer resolver."""
 
-    by: CustomKind = Field(description="The resolver name in snake_case; not 'profile' or 'malo'.")
+    by: CustomKind = Field(description="The resolver name in snake_case, 1 to 30 characters; not 'profile' or 'malo'.")
     params: Annotated[Mapping[ParamKey, Text], AfterValidator(freeze_sorted)] = Field(
         description="String parameters of the resolver; keys are non-empty."
     )
@@ -80,7 +80,7 @@ class EchoedMaLoSelector(ResponseModel):
 class EchoedCustomSelector(ResponseModel):
     """A custom selector as echoed in a response."""
 
-    by: CustomKind = Field(description="The resolver name in snake_case; not 'profile' or 'malo'.")
+    by: CustomKind = Field(description="The resolver name in snake_case, 1 to 30 characters; not 'profile' or 'malo'.")
     params: Annotated[Mapping[ParamKey, Text], AfterValidator(freeze_sorted)] = Field(
         description="String parameters of the resolver; keys are non-empty."
     )

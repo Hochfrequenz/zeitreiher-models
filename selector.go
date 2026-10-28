@@ -24,7 +24,7 @@ const (
 // Build selectors with ProfileSelector, MaLoSelector or CustomSelector. Only the fields of the
 // variant named by By are used; the others must be empty.
 type Selector struct {
-	// By names the variant: "profile", "malo" or a snake_case customer resolver name.
+	// By names the variant: "profile", "malo" or a snake_case customer resolver name of 1 to 30 characters.
 	By string
 	// Profile is the profile number (By "profile"): 1 to 18 digits; leading zeros are allowed in requests.
 	Profile string
@@ -72,6 +72,9 @@ func (s Selector) validate(sd side) error {
 	default:
 		if !customByPattern.MatchString(s.By) {
 			return wrapField("by", fmt.Errorf("%q is not a selector kind (lower-case letters, digits, underscores)", s.By))
+		}
+		if len(s.By) > maxCustomByLength {
+			return wrapField("by", fmt.Errorf("%q is longer than %d characters", s.By, maxCustomByLength))
 		}
 		if s.Profile != "" || s.MaLo != "" {
 			return errors.New("a custom selector has only by and params")

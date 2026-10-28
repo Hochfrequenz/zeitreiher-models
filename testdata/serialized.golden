@@ -12,6 +12,7 @@ error_envelope/unauthorized.json	{"error":{"code":"unauthorized","message":"exam
 error_envelope/upstream_timeout.json	{"error":{"code":"upstream_timeout","message":"example message for upstream_timeout"}}
 error_envelope/upstream_unreachable.json	{"error":{"code":"upstream_unreachable","message":"example message for upstream_unreachable"}}
 error_envelope/with_request_id.json	{"error":{"code":"invalid_request","message":"from: \"2026-01-14T00:00:00\" has no offset","request_id":"7f3c1a9b2e4d5068"}}
+query_request/custom_by_30_chars.json	{"select":[{"by":"contract_account_resolver_name","params":{}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/custom_selector.json	{"select":[{"by":"contract_account","params":{"account":"000012345678","role":"supplier"}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/custom_selector_empty_params.json	{"select":[{"by":"pod","params":{}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
 query_request/custom_selector_params_key_order.json	{"select":[{"by":"contract_account","params":{"a":"\u2028","account":"000012345678","b":"\u003c\u0026\u003e","role":"supplier"}}],"from":"2026-01-14T00:00:00Z","to":"2026-01-15T00:00:00Z"}
