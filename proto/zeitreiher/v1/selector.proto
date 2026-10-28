@@ -7,8 +7,8 @@ package zeitreiher.v1;
 //
 //   {"by":"profile","profile":"50000000000056"}
 //   {"by":"malo","malo":"87253749908"}
-//   {"by":"<name>","params":{"<key>":"<string>"}}   custom resolver; `by` is snake_case and
-//                                                    neither "profile" nor "malo"
+//   {"by":"<name>","params":{"<key>":"<string>"}}   custom resolver; `by` is snake_case, 1 to 30
+//                                                    characters, and neither "profile" nor "malo"
 //
 // In requests, `profile` may carry leading zeros (1 to 18 digits). Selectors echoed in responses
 // carry the profile number without leading zeros.

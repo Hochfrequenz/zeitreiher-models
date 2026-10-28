@@ -1,6 +1,6 @@
 """Drift check: the hand-written proto messages carry the same field names as the hand-written models.
 
-The proto is the published gRPC contract; ``zeitreiher-go`` maps proto messages to the models by
+The proto is the published gRPC contract; the consuming service maps proto messages to the models by
 hand. This test makes sure that a field added to a model is also added to the proto (and vice versa).
 """
 

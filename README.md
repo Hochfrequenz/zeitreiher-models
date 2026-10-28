@@ -33,11 +33,11 @@ so Go and Python agree on the contract by construction.
 | Response timestamps | RFC 3339, whole seconds, always UTC (`Z`). Instants built in code must survive the round trip (no offsets with seconds, years 1900–9999). |
 | Values | Already-scaled decimal **strings** in their **shortest canonical form** (`"160"`, `"0.022"`, `"25.25"`, `"-3.5"`), never JSON numbers. No exponent, no plus sign, no leading zeros, no trailing zeros after the decimal point (`"160.0"` is rejected: after parsing it equals `"160"`), no negative zero. |
 | Profile numbers | In requests 1–18 digits, leading zeros allowed, not all zeros; in responses without leading zeros. |
-| Units | `unit` is a **canonical unit code**: a UN/ECE Recommendation 20 code such as `KWH`, `MWH` or `KVR` (2 or 3 upper-case ASCII letters or digits, strict). Requests send canonical codes; the server maps them to the customer's SAP unit (an unknown code is a 400; `GET /api/v1/system` lists the codes the system can map in `units`). In series records `unit` is always present and `null` when the SAP unit has no mapping; the series is delivered anyway. `unit_raw` (series records and resolve/versions assignments) is the SAP unit key (T006 `MSEHI`) as SAP delivers it, mapped or not, read leniently: any non-empty text of at most 30 characters (code points) without control characters (Unicode `Cc`). |
+| Units | `unit` is a **canonical unit code**: a UN/ECE Recommendation 20 code such as `KWH`, `MWH` or `K3` (`K3` = kvarh) (2 or 3 upper-case ASCII letters or digits, strict). Requests send canonical codes; the server maps them to the customer's SAP unit (an unknown code is a 400; `GET /api/v1/system` lists the codes the system can map in `units`). In series records `unit` is always present and `null` when the SAP unit has no mapping; the series is delivered anyway. `unit_raw` (series records and resolve/versions assignments) is the SAP unit key (T006 `MSEHI`) as SAP delivers it, mapped or not, read leniently: any non-empty text of at most 30 characters (code points) without control characters (Unicode `Cc`). |
 | Series role | Every `series` record and every resolve/versions assignment without `error` carries `role`, the role of its profile assignment (SAP `EPROFASS` role, e.g. `"0001"`; any non-empty text), or `null` when the series was not resolved through a role (e.g. `by: profile`). For `by: malo` the roles to deliver are configurable (default: all). |
 | Assignments | Resolve and versions assignments describe their profile like the series record: `role` and `unit` are always written (`null` when unset) and `unit_raw` is required, with the same shapes as in `series`. An assignment with `error` may omit all three. |
-| System info | `GET /api/v1/system` reports `units` (the canonical unit codes the system can map) and `caps` (limits of one internal SAP call, all at least 1: the service splits query and versions windows under `max_window_seconds` and `max_values`, and a request window longer than `max_resolve_window_seconds` is a 400 `invalid_request`; `window_too_large` never reaches public clients). |
-| Selectors | `{"by":"profile","profile":"…"}`, `{"by":"malo","malo":"<11 digits>"}`, or a customer resolver `{"by":"<snake_case name>","params":{"<key>":"<string>"}}`. |
+| System info | `GET /api/v1/system` reports `units` (the canonical unit codes the system can map) and `caps` (limits, all at least 1: `max_window_seconds` and `max_values` bound one internal SAP values call and the service splits a query window accordingly; `max_resolve_window_seconds` is the longest request window the service accepts for query, resolve and versions, a longer window is a 400 `invalid_request`; versions and resolve are not split and have no value cap; `window_too_large` never reaches public clients). |
+| Selectors | `{"by":"profile","profile":"…"}`, `{"by":"malo","malo":"<11 digits>"}`, or a customer resolver `{"by":"<snake_case name>","params":{"<key>":"<string>"}}` (`by` is 1 to 30 characters). |
 | Version selector | Exactly one of `{"current":{}}` (default) or `{"number":N}`; no `null` members. v1 has no as-of selector: `{"as_of":…}` is rejected. `{"number":N}` returns the current values overlaid with the stored values of versions ≥ N (the lowest wins), only inside N's covered range (gaps outside). Each value record says its source: `"version":<n>` for a stored version row, `"version":null` for a current value. |
 | Intervals (`interval`) | Sub-daily ISO 8601 durations in minutes: `PT15M`, `PT60M`, … Hours are written in minutes: `PT60M`, never `PT1H` (rejected, so that every interval has one spelling). |
 | Text | Every string is valid Unicode and is written unchanged. Parsers reject invalid UTF-8 and unpaired `\uD800`–`\uDFFF` escapes. Go refuses to marshal a string that is not valid UTF-8 (instead of writing U+FFFD); Python rejects a string with a lone surrogate when the model is built (`ValidationError`). |
@@ -49,7 +49,7 @@ so Go and Python agree on the contract by construction.
 
 Every public model and field is documented: Python fields carry `Field(description=...)` (so the descriptions land in the JSON schema from `model_json_schema()`), Go types, fields and constants carry godoc comments (revive enforces them on exported types, functions and constants; field docs are a convention kept by review), and the two languages are kept in step.
 
-The full design lives in the `zeitreiher-go` repository (`docs/superpowers/specs/2026-10-27-zeitreiher-design.md`).
+The client-relevant decisions are all in the table above, "The contract in short".
 
 ## Go
 
@@ -188,9 +188,11 @@ version. Additive changes (new optional fields, new error codes) stay in v1; bre
 
 The Go package `zeitreihermodels` lives at the **repository root** (import path
 `github.com/hochfrequenz/zeitreiher-models`); there is no `v1` sub-package. Its major version follows
-Go module versioning: v1 is released as tags `v1.x.y` of this module path, and a breaking v2 becomes
-the module `github.com/hochfrequenz/zeitreiher-models/v2` (tags `v2.x.y`). The Python package takes its
-version from the same tags.
+Go module versioning.
+While the major version is 0, minor releases may contain breaking changes (announced in the release notes); 1.0 freezes the v1 contract.
+From 1.0 on, releases are tags `v1.x.y` of this module path, and a breaking v2 becomes
+the module `github.com/hochfrequenz/zeitreiher-models/v2` (tags `v2.x.y`).
+The Python package takes its version from the same tags.
 
 ## Development
 

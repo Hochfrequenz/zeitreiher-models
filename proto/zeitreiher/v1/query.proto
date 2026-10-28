@@ -27,8 +27,8 @@ message QueryRequest {
   VersionSelector version = 4;
   // Optional sub-daily ISO 8601 duration in minutes, e.g. "PT15M".
   optional string interval = 5;
-  // Optional canonical unit code (UN/ECE Rec. 20, e.g. "KWH", "MWH", "KVR": 2 or 3 upper-case letters
-  // or digits); the server maps it to the customer's SAP unit. An unknown code is INVALID_ARGUMENT.
+  // Optional canonical unit code (UN/ECE Rec. 20, e.g. "KWH", "MWH", "K3" = kvarh: 2 or 3 upper-case
+  // letters or digits); the server maps it to the customer's SAP unit. An unknown code is INVALID_ARGUMENT.
   optional string unit = 6;
   // Optional cursor from the previous response's end record.
   optional string cursor = 7;

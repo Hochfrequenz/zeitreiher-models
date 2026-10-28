@@ -1,6 +1,6 @@
 module github.com/hochfrequenz/zeitreiher-models
 
-go 1.27.0
+go 1.23
 
 require github.com/stretchr/testify v1.12.1
 
