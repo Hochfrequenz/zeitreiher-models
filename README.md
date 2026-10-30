@@ -218,6 +218,10 @@ The Go tests (`fixtures_test.go`) and the Python tests (`unittests/test_fixtures
 table of fixture kinds; a new fixture directory must be added to both. `unittests/test_proto_contract.py`
 fails when a model and its proto message disagree on field names.
 
+## Related
+
+- [`Hochfrequenz/mdq-models`](https://github.com/Hochfrequenz/mdq-models) (public, MIT) holds the canonical schema of the Messdatenqualitätsagent (MQA), written by hand in the same way as this repository.
+
 ## License
 
 MIT
