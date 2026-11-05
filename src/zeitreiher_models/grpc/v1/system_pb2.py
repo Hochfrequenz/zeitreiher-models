@@ -28,7 +28,7 @@ DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1azeitreiher/v1/
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
-_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'zeitreiher.v1.system_pb2', _globals)
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'zeitreiher_models.grpc.v1.system_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_SYSTEMREQUEST']._serialized_start=45

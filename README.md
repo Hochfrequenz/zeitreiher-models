@@ -203,8 +203,6 @@ pydantic-only and never imports grpc or protobuf. Request timestamps stay RFC 33
 timestamps become aware UTC `datetime`, decimal values stay strings.
 
 ```python
-from datetime import datetime
-
 import grpc
 
 from zeitreiher_models import EndRecord, ErrorRecord, QueryRequest, SeriesRecord, ValueRecord
@@ -221,7 +219,7 @@ request = QueryRequest.model_validate(
         "to": "2026-01-15T00:00:00+01:00",
     }
 )
-metadata = [("authorization", "Bearer " + token)]  # the token is yours to obtain
+metadata = (("authorization", "Bearer " + token),)  # the token is yours to obtain
 complete = False
 try:
     for message in stub.Query(query_request_to_proto(request), metadata=metadata):

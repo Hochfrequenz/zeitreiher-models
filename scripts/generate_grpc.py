@@ -20,10 +20,14 @@ ROOT = Path(__file__).resolve().parent.parent
 PROTO_DIR = ROOT / "proto"
 OUT_DIR = ROOT / "src" / "zeitreiher_models" / "grpc" / "v1"
 SERVICE_PROTO = "zeitreiher/v1/series_service.proto"
-# .py: only the import lines (the serialized descriptors and the method paths keep `zeitreiher.v1`).
+# .py: the import lines and the builder's module name (the serialized descriptors and the method paths keep
+# `zeitreiher.v1`).
 IMPORT = re.compile(r"^(from|import) zeitreiher\.v1\b", re.MULTILINE)
 # .pyi (mypy-protobuf): also the qualified type references, e.g. `zeitreiher.v1.query_pb2.Record`.
 QUALIFIED = re.compile(r"(?<![\w.])zeitreiher\.v1\b")
+# .py: the quoted module name given to the builder (`'zeitreiher.v1.query_pb2'`), so that `__module__` of the
+# message classes is importable and the messages pickle.
+MODULE_NAME = re.compile(r"'zeitreiher\.v1\.(\w+_pb2)'")
 PACKAGE = "zeitreiher_models.grpc.v1"
 # Reproducibility: the output depends on these exact versions. They must equal the pins of the `codegen` group
 # in pyproject.toml (unittests/test_grpc_generator_pins.py checks that).
@@ -79,7 +83,11 @@ def main() -> None:
         OUT_DIR.mkdir(parents=True)
         for src in sorted(generated.iterdir()):
             text = src.read_text(encoding="utf-8")
-            text = QUALIFIED.sub(PACKAGE, text) if src.suffix == ".pyi" else IMPORT.sub(rf"\1 {PACKAGE}", text)
+            if src.suffix == ".pyi":
+                text = QUALIFIED.sub(PACKAGE, text)
+            else:
+                text = IMPORT.sub(rf"\1 {PACKAGE}", text)
+                text = MODULE_NAME.sub(rf"'{PACKAGE}.\1'", text)
             (OUT_DIR / src.name).write_text(text, encoding="utf-8", newline="\n")
         (OUT_DIR / "__init__.py").write_text(INIT, encoding="utf-8", newline="\n")
     print(f"generated {len(os.listdir(OUT_DIR))} files in {OUT_DIR.relative_to(ROOT)}")
