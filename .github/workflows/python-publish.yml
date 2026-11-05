@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.15"
       - name: Install dependencies
-        run: uv sync --group tests --group linting --group coverage --group type_check
+        run: uv sync --group tests --group linting --group coverage --group type_check --extra grpc
       - name: Run tests
         run: uv run pytest unittests
       - name: Run linting
