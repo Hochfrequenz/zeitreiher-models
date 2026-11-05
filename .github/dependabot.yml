@@ -8,6 +8,12 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # The generated stubs (src/zeitreiher_models/grpc/v1) depend on the exact generator versions, and the
+      # gencode version is tied to the floors of the grpc extra (protobuf, grpcio). Bump these two by hand,
+      # together with scripts/generate_grpc.py, the extra's floors and a regeneration.
+      - dependency-name: "grpcio-tools"
+      - dependency-name: "mypy-protobuf"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

@@ -56,6 +56,11 @@ convention = "google"
 disable_error_code = []
 plugins = ["pydantic.mypy"]
 
+[[tool.mypy.overrides]]
+# googleapis-common-protos ships no type information (google.rpc.Status / ErrorInfo)
+module = ["google.rpc", "google.rpc.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["unittests"]
 

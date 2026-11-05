@@ -14,7 +14,7 @@ jobs:
         include:
           - linter-env: linting
             commands: |
-              uv run ruff check src/zeitreiher_models unittests
+              uv run ruff check src/zeitreiher_models unittests scripts
           - linter-env: type_check
             commands: |
               uv run mypy --show-error-codes src/zeitreiher_models --strict
@@ -30,6 +30,7 @@ jobs:
         with:
           python-version: "3.15"
       - name: Install Dependencies
-        run: uv sync --group ${{ matrix.linter-env }}
+        # mypy needs grpc, protobuf and their stubs: the grpc extra
+        run: uv sync --group ${{ matrix.linter-env }} --extra grpc
       - name: Run ${{ matrix.linter-env }}
         run: ${{ matrix.commands }}

@@ -31,3 +31,24 @@ jobs:
           uv pip install --python "$RUNNER_TEMP/wheel-venv" dist/*.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/wheel-venv/bin/python" -c "import zeitreiher_models as m; assert m.__version__; print(m.__version__)"
+      - name: The base install does not import grpc or protobuf, and zeitreiher_models.grpc needs the extra
+        run: |
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/wheel-venv/bin/python" - <<'PY'
+          import sys
+          import zeitreiher_models
+          leaked = [m for m in sys.modules if m == "grpc" or m == "google.protobuf" or m.startswith(("grpc.", "google.protobuf."))]
+          assert not leaked, leaked
+          try:
+              import zeitreiher_models.grpc
+          except ImportError as exc:
+              assert "zeitreiher-models[grpc]" in str(exc), exc
+          else:
+              raise SystemExit("zeitreiher_models.grpc imported without the grpc extra")
+          PY
+      - name: Install the wheel with the grpc extra and import the stubs
+        run: |
+          uv venv "$RUNNER_TEMP/grpc-venv"
+          uv pip install --python "$RUNNER_TEMP/grpc-venv" "$(ls "$PWD"/dist/*.whl)[grpc]"
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/grpc-venv/bin/python" -c "import zeitreiher_models.grpc.v1.series_service_pb2_grpc, zeitreiher_models.grpc as g; print(g.ERROR_DOMAIN)"

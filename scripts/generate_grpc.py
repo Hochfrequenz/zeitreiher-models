@@ -10,6 +10,7 @@ import re
 import shutil
 import sys
 import tempfile
+from importlib import metadata
 from pathlib import Path
 
 import grpc_tools
@@ -24,6 +25,10 @@ IMPORT = re.compile(r"^(from|import) zeitreiher\.v1\b", re.MULTILINE)
 # .pyi (mypy-protobuf): also the qualified type references, e.g. `zeitreiher.v1.query_pb2.Record`.
 QUALIFIED = re.compile(r"(?<![\w.])zeitreiher\.v1\b")
 PACKAGE = "zeitreiher_models.grpc.v1"
+# Reproducibility: the output depends on these exact versions. They must equal the pins of the `codegen` group
+# in pyproject.toml (unittests/test_grpc_generator_pins.py checks that).
+EXPECTED_VERSIONS = {"grpcio-tools": "1.70.0", "mypy-protobuf": "3.6.0"}
+EXPECTED_PYTHON = (3, 12)
 INIT = '"""Generated protobuf and gRPC stubs for zeitreiher.v1 (scripts/generate_grpc.py). Do not edit."""\n'
 
 
@@ -33,8 +38,25 @@ def _protoc(args: list[str]) -> None:
         sys.exit(f"protoc failed: {args}")
 
 
+def check_toolchain() -> None:
+    """Exit unless the generator versions and the Python minor version are exactly the expected ones."""
+    problems = []
+    if sys.version_info[:2] != EXPECTED_PYTHON:
+        problems.append(f"Python {'.'.join(map(str, EXPECTED_PYTHON))} required, running {sys.version_info[:2]}")
+    for name, expected in EXPECTED_VERSIONS.items():
+        try:
+            installed = metadata.version(name)
+        except metadata.PackageNotFoundError:
+            installed = "not installed"
+        if installed != expected:
+            problems.append(f"{name}=={expected} required, found {installed}")
+    if problems:
+        sys.exit("cannot generate reproducibly: " + "; ".join(problems) + " (uv sync --locked --group codegen)")
+
+
 def main() -> None:
     """Generate, rewrite the imports and replace OUT_DIR."""
+    check_toolchain()
     protos = sorted(str(p.relative_to(PROTO_DIR)) for p in (PROTO_DIR / "zeitreiher" / "v1").glob("*.proto"))
     mypy = shutil.which("protoc-gen-mypy")
     mypy_grpc = shutil.which("protoc-gen-mypy_grpc")
