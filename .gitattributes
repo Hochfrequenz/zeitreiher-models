@@ -7,3 +7,4 @@
 *.md	text eol=lf
 *.yml	text eol=lf
 testdata/streams/invalid/crlf.ndjson -text
+src/zeitreiher_models/grpc/v1/** linguist-generated=true

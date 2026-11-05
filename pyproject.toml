@@ -24,6 +24,15 @@ dependencies = [
 ]
 dynamic = ["readme", "version"]
 
+[project.optional-dependencies]
+# Stubs for zeitreiher.v1 and proto <-> model converters (zeitreiher_models.grpc). The floors equal the
+# versions the stubs are generated with (codegen group below): generated code refuses older runtimes.
+grpc = [
+    "grpcio>=1.70,<2",
+    "protobuf>=5.29,<8",  # 7.x runs the 5.29 gencode too (checked with 7.36.2)
+    "googleapis-common-protos>=1.66,<2",  # google.rpc.Status / ErrorInfo for error_reason()
+]
+
 [project.urls]
 Changelog = "https://github.com/Hochfrequenz/zeitreiher-models/releases"
 Homepage = "https://github.com/Hochfrequenz/zeitreiher-models"
@@ -31,7 +40,7 @@ Homepage = "https://github.com/Hochfrequenz/zeitreiher-models"
 [tool.ruff]
 line-length = 120
 target-version = "py311"
-extend-exclude = ["*.md"]
+extend-exclude = ["*.md", "src/zeitreiher_models/grpc/v1"]  # generated (scripts/generate_grpc.py)
 
 [tool.ruff.lint]
 select = ["D", "E", "W", "F", "I", "UP", "B", "N", "PL", "RUF"]
@@ -47,6 +56,11 @@ convention = "google"
 disable_error_code = []
 plugins = ["pydantic.mypy"]
 
+[[tool.mypy.overrides]]
+# googleapis-common-protos ships no type information (google.rpc.Status / ErrorInfo)
+module = ["google.rpc", "google.rpc.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["unittests"]
 
@@ -61,6 +75,8 @@ linting = [
 ]
 type_check = [
     "mypy==2.4.1",
+    "types-grpcio",  # zeitreiher_models.grpc
+    "types-protobuf",
     {include-group = "tests"},
 ]
 spell_check = [
@@ -69,6 +85,12 @@ spell_check = [
 coverage = [
     "coverage==7.17.0",
     {include-group = "tests"},
+]
+# Regenerates src/zeitreiher_models/grpc/v1 (scripts/generate_grpc.py). Pinned on purpose and kept in
+# step with the floors of the grpc extra; Dependabot ignores both (see .github/dependabot.yml).
+codegen = [
+    "grpcio-tools==1.70.0",
+    "mypy-protobuf==3.6.0",
 ]
 dev = [
     {include-group = "tests"},

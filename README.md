@@ -181,13 +181,69 @@ being rejected for the wrong reason:
 `Resolve`, `ListVersions`, `System`) is the published gRPC contract. Field names equal the JSON keys.
 Request timestamps are RFC 3339 strings (so the explicit-offset rule holds for gRPC too); response
 timestamps are `google.protobuf.Timestamp`. Conformance with the JSON contract is defined through
-the hand-written models (fixture → model → proto → model → JSON), not through protojson. Generate
-code in the consuming project, e.g. with buf managed mode.
+the hand-written models (fixture → model → proto → model → JSON), not through protojson. Go and
+other languages generate code in the consuming project, e.g. with buf managed mode; Python consumers
+use the `grpc` extra (see below) instead.
 
 A failed call (and a `Query` stream cut off before its `EndRecord`) ends with a gRPC status that
 carries a `google.rpc.ErrorInfo` detail with `reason` = the public request-level code and
 `domain` = `"zeitreiher.hochfrequenz.de"`; `series_service.proto` lists the status code for each
 code. Clients switch on `reason`.
+
+### gRPC from Python
+
+```bash
+pip install "zeitreiher-models[grpc]"
+```
+
+The extra ships the generated stubs (`zeitreiher_models.grpc.v1`) and converters between the proto
+messages and the models (`zeitreiher_models.grpc`: `query_request_to_proto`, `record_from_proto`,
+`resolve_response_from_proto`, ... in both directions, and `error_reason`). The base install stays
+pydantic-only and never imports grpc or protobuf. Request timestamps stay RFC 3339 strings, response
+timestamps become aware UTC `datetime`, decimal values stay strings.
+
+```python
+import grpc
+
+from zeitreiher_models import EndRecord, ErrorRecord, QueryRequest, SeriesRecord, ValueRecord
+from zeitreiher_models.grpc import error_reason, query_request_to_proto, record_from_proto
+from zeitreiher_models.grpc.v1 import series_service_pb2_grpc
+
+# h2c without TLS (e.g. in a test); for the BTP use grpc.secure_channel(host, grpc.ssl_channel_credentials())
+channel = grpc.insecure_channel("localhost:8080")
+stub = series_service_pb2_grpc.SeriesServiceStub(channel)
+request = QueryRequest.model_validate(
+    {
+        "select": [{"by": "profile", "profile": "50000000000056"}],
+        "from": "2026-01-14T00:00:00+01:00",
+        "to": "2026-01-15T00:00:00+01:00",
+    }
+)
+metadata = (("authorization", "Bearer " + token),)  # the token is yours to obtain
+complete = False
+try:
+    for message in stub.Query(query_request_to_proto(request), metadata=metadata):
+        record = record_from_proto(message)
+        if isinstance(record, EndRecord):
+            complete = True  # record.next is the cursor of the next page, or None
+        elif isinstance(record, SeriesRecord | ValueRecord | ErrorRecord):
+            ...  # collect
+except grpc.RpcError as err:
+    print(err.code(), error_reason(err))  # e.g. cursor_stale; None if the status carries no ErrorInfo
+    raise
+if not complete:
+    raise RuntimeError("the stream ended without an EndRecord: treat the response as failed")
+```
+
+`error_reason` reads the `google.rpc.ErrorInfo` (`domain` `zeitreiher.hochfrequenz.de`) of the
+`grpc-status-details-bin` trailer and returns its `reason`; it returns `None` when there is none (a
+cancelled call, a client deadline, a transport error). Converting a request from proto
+(`query_request_from_proto`) raises the models' `pydantic.ValidationError` for an invalid message.
+Token handling, paging and retries stay with the consumer.
+
+The stubs are generated and committed; regenerate them after a proto change with
+`uv sync --locked --group codegen --extra grpc && uv run --no-sync python scripts/generate_grpc.py`
+(Python 3.12 and the exact generator versions are required; the script refuses anything else).
 
 ## Versioning
 
@@ -207,16 +263,22 @@ The Python package takes its version from the same tags.
 ```bash
 go test ./...                      # Go
 golangci-lint run && golangci-lint fmt --diff
-uv sync --group dev                # Python
+uv sync --group dev --extra grpc  # Python
 uv run pytest unittests
 uv run ruff check src unittests && uv run ruff format --check .
 uv run mypy --strict src/zeitreiher_models unittests
+uv sync --locked --group codegen --extra grpc && uv run --no-sync python scripts/generate_grpc.py  # regenerate the gRPC stubs
 buf lint && buf build && buf format --diff --exit-code   # buf v1.75.0
 ```
 
 The Go tests (`fixtures_test.go`) and the Python tests (`unittests/test_fixtures.py`) use the same
 table of fixture kinds; a new fixture directory must be added to both. `unittests/test_proto_contract.py`
 fails when a model and its proto message disagree on field names.
+
+Regenerating the stubs (`scripts/generate_grpc.py`) requires the `codegen` dependency group from the
+lockfile (`--locked`) and Python 3.12; the script checks the exact versions of `grpcio-tools` and
+`mypy-protobuf`. CI regenerates and fails on any diff in `src/zeitreiher_models/grpc/v1`.
+`unittests/test_grpc_conformance.py` ports the Go conformance test of the proto mapping.
 
 ## Related
 

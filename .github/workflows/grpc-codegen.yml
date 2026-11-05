@@ -1,0 +1,30 @@
+name: "gRPC Codegen"
+
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    name: "Generated stubs are up to date"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.12"
+      - name: Install the generator from the lockfile
+        run: uv sync --locked --group codegen --extra grpc
+      - name: Check that the script pins equal pyproject.toml
+        run: uv run --no-sync pytest unittests/test_grpc_generator_pins.py
+      - name: Regenerate
+        run: uv run --no-sync python scripts/generate_grpc.py
+      - name: Fail on any diff
+        run: git diff --exit-code -- src/zeitreiher_models/grpc/v1
+      - name: Fail on new files
+        run: test -z "$(git status --porcelain -- src/zeitreiher_models/grpc/v1)"
