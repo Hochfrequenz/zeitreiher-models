@@ -29,7 +29,7 @@ dynamic = ["readme", "version"]
 # versions the stubs are generated with (codegen group below): generated code refuses older runtimes.
 grpc = [
     "grpcio>=1.70,<2",
-    "protobuf>=5.29,<7",
+    "protobuf>=5.29,<8",  # 7.x runs the 5.29 gencode too (checked with 7.36.2)
     "googleapis-common-protos>=1.66,<2",  # google.rpc.Status / ErrorInfo for error_reason()
 ]
 

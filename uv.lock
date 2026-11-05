@@ -902,7 +902,7 @@ type-check = [
 requires-dist = [
     { name = "googleapis-common-protos", marker = "extra == 'grpc'", specifier = ">=1.66,<2" },
     { name = "grpcio", marker = "extra == 'grpc'", specifier = ">=1.70,<2" },
-    { name = "protobuf", marker = "extra == 'grpc'", specifier = ">=5.29,<7" },
+    { name = "protobuf", marker = "extra == 'grpc'", specifier = ">=5.29,<8" },
     { name = "pydantic", specifier = ">=2.11" },
 ]
 provides-extras = ["grpc"]
