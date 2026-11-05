@@ -72,6 +72,11 @@ def _profile_and_malo(r: query_pb2.QueryRequest) -> None:
     r.select[0].malo = "87253749908"
 
 
+def _malo_with_profile(r: query_pb2.QueryRequest) -> None:
+    r.select[0].by = "malo"
+    r.select[0].malo = "87253749908"  # profile from _valid() stays set
+
+
 def _params_on_malo(r: query_pb2.QueryRequest) -> None:
     r.select[0].by = "malo"
     r.select[0].profile = ""
@@ -92,6 +97,7 @@ def _params_on_malo(r: query_pb2.QueryRequest) -> None:
         _params_on_a_profile,
         _version_number_zero,
         _profile_and_malo,
+        _malo_with_profile,
         _params_on_malo,
     ],
 )
