@@ -25,12 +25,12 @@ class SeriesServiceStub:
 
     Errors. A call that fails as a whole (the JSON API's error envelope), and a Query stream that is
     cut off mid-way (no EndRecord), ends with a gRPC status whose details carry exactly one
-    google.rpc.ErrorInfo:
+    google.rpc.ErrorInfo (exceptions below):
 
       reason = <public request-level code>, the `code` of the JSON error envelope
       domain = "zeitreiher.hochfrequenz.de"
 
-    Clients switch on ErrorInfo.reason, never on the status code or the message. The status code is
+    Clients switch on ErrorInfo.reason when it is present, never on the message. The status code is
     the matching gRPC code (spec §4.3):
 
       invalid_request, cursor_invalid, cursor_mismatch, cursor_expired   INVALID_ARGUMENT
@@ -43,6 +43,17 @@ class SeriesServiceStub:
       upstream_unreachable                                               UNAVAILABLE
       upstream_timeout                                                   DEADLINE_EXCEEDED
       internal                                                           INTERNAL
+
+    Some errors carry no ErrorInfo. Clients switch on the status code for these:
+
+      - Errors of the RPC framework itself, raised before any service code runs: a malformed request
+        message (INVALID_ARGUMENT); a request body over the read limit that arrives without a
+        Content-Length (chunked, HTTP/2) or grows past the limit after decompression
+        (RESOURCE_EXHAUSTED); an unknown method (UNIMPLEMENTED; a plain HTTP 404 for the Connect
+        protocol).
+      - Errors caused by the client ending the call: CANCELED (the client went away) and
+        DEADLINE_EXCEEDED when the client set the deadline itself. This is not the public code
+        upstream_timeout, which means the upstream system was slow and does carry an ErrorInfo.
 
     Per-selector and per-assignment problems are not gRPC errors: they are ErrorRecord messages in the
     Query stream and ResultError objects in Resolve/ListVersions results, and the call continues.
@@ -79,12 +90,12 @@ class SeriesServiceAsyncStub:
 
     Errors. A call that fails as a whole (the JSON API's error envelope), and a Query stream that is
     cut off mid-way (no EndRecord), ends with a gRPC status whose details carry exactly one
-    google.rpc.ErrorInfo:
+    google.rpc.ErrorInfo (exceptions below):
 
       reason = <public request-level code>, the `code` of the JSON error envelope
       domain = "zeitreiher.hochfrequenz.de"
 
-    Clients switch on ErrorInfo.reason, never on the status code or the message. The status code is
+    Clients switch on ErrorInfo.reason when it is present, never on the message. The status code is
     the matching gRPC code (spec §4.3):
 
       invalid_request, cursor_invalid, cursor_mismatch, cursor_expired   INVALID_ARGUMENT
@@ -97,6 +108,17 @@ class SeriesServiceAsyncStub:
       upstream_unreachable                                               UNAVAILABLE
       upstream_timeout                                                   DEADLINE_EXCEEDED
       internal                                                           INTERNAL
+
+    Some errors carry no ErrorInfo. Clients switch on the status code for these:
+
+      - Errors of the RPC framework itself, raised before any service code runs: a malformed request
+        message (INVALID_ARGUMENT); a request body over the read limit that arrives without a
+        Content-Length (chunked, HTTP/2) or grows past the limit after decompression
+        (RESOURCE_EXHAUSTED); an unknown method (UNIMPLEMENTED; a plain HTTP 404 for the Connect
+        protocol).
+      - Errors caused by the client ending the call: CANCELED (the client went away) and
+        DEADLINE_EXCEEDED when the client set the deadline itself. This is not the public code
+        upstream_timeout, which means the upstream system was slow and does carry an ErrorInfo.
 
     Per-selector and per-assignment problems are not gRPC errors: they are ErrorRecord messages in the
     Query stream and ResultError objects in Resolve/ListVersions results, and the call continues.
@@ -132,12 +154,12 @@ class SeriesServiceServicer(metaclass=abc.ABCMeta):
 
     Errors. A call that fails as a whole (the JSON API's error envelope), and a Query stream that is
     cut off mid-way (no EndRecord), ends with a gRPC status whose details carry exactly one
-    google.rpc.ErrorInfo:
+    google.rpc.ErrorInfo (exceptions below):
 
       reason = <public request-level code>, the `code` of the JSON error envelope
       domain = "zeitreiher.hochfrequenz.de"
 
-    Clients switch on ErrorInfo.reason, never on the status code or the message. The status code is
+    Clients switch on ErrorInfo.reason when it is present, never on the message. The status code is
     the matching gRPC code (spec §4.3):
 
       invalid_request, cursor_invalid, cursor_mismatch, cursor_expired   INVALID_ARGUMENT
@@ -150,6 +172,17 @@ class SeriesServiceServicer(metaclass=abc.ABCMeta):
       upstream_unreachable                                               UNAVAILABLE
       upstream_timeout                                                   DEADLINE_EXCEEDED
       internal                                                           INTERNAL
+
+    Some errors carry no ErrorInfo. Clients switch on the status code for these:
+
+      - Errors of the RPC framework itself, raised before any service code runs: a malformed request
+        message (INVALID_ARGUMENT); a request body over the read limit that arrives without a
+        Content-Length (chunked, HTTP/2) or grows past the limit after decompression
+        (RESOURCE_EXHAUSTED); an unknown method (UNIMPLEMENTED; a plain HTTP 404 for the Connect
+        protocol).
+      - Errors caused by the client ending the call: CANCELED (the client went away) and
+        DEADLINE_EXCEEDED when the client set the deadline itself. This is not the public code
+        upstream_timeout, which means the upstream system was slow and does carry an ErrorInfo.
 
     Per-selector and per-assignment problems are not gRPC errors: they are ErrorRecord messages in the
     Query stream and ResultError objects in Resolve/ListVersions results, and the call continues.
