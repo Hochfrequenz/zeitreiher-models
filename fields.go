@@ -68,8 +68,15 @@ func checkObject(b []byte, r rules, unknown unknownKeys) (map[string]json.RawMes
 			return nil, fmt.Errorf("unknown key(s) %q", extra)
 		}
 	}
+	// Check the keys in sorted order so that the reported problem does not depend on map iteration.
+	keys := make([]string, 0, len(r))
+	for key := range r {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
 	out := make(map[string]json.RawMessage, len(r))
-	for key, p := range r {
+	for _, key := range keys {
+		p := r[key]
 		raw, ok := m[key]
 		switch {
 		case !ok && p != optional:
