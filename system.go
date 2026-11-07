@@ -32,10 +32,10 @@ type capsWire struct {
 
 // Validate checks that every cap is positive.
 func (c Caps) Validate() error {
-	for name, v := range map[string]int64{
+	for name, v := range sortedItems(map[string]int64{
 		"max_window_seconds": c.MaxWindowSeconds, "max_values": c.MaxValues,
 		"max_resolve_window_seconds": c.MaxResolveWindowSeconds,
-	} {
+	}) {
 		if v < 1 {
 			return fieldError(name, errors.New("must be at least 1"))
 		}
@@ -60,10 +60,10 @@ func (c *Caps) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	var out Caps
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"max_window_seconds": &out.MaxWindowSeconds, "max_values": &out.MaxValues,
 		"max_resolve_window_seconds": &out.MaxResolveWindowSeconds,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return err
 		}
@@ -100,10 +100,10 @@ type SystemInfo struct {
 
 // Validate checks the system info.
 func (s SystemInfo) Validate() error {
-	for name, v := range map[string]string{
+	for name, v := range sortedItems(map[string]string{
 		"service_version": s.ServiceVersion, "abap_package_version": s.AbapPackageVersion, "sid": s.SID,
 		"client": s.Client, "release": s.Release, "business_time_zone": s.BusinessTimeZone,
-	} {
+	}) {
 		if v == "" {
 			return fieldError(name, errors.New("must not be empty"))
 		}
@@ -164,11 +164,11 @@ func (s *SystemInfo) UnmarshalJSON(b []byte) error {
 		return fmt.Errorf("system info: %w", err)
 	}
 	var out SystemInfo
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"service_version": &out.ServiceVersion, "abap_package_version": &out.AbapPackageVersion, "sid": &out.SID,
 		"client": &out.Client, "release": &out.Release, "business_time_zone": &out.BusinessTimeZone,
 		"intervals": &out.Intervals, "caps": &out.Caps,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("system info: %w", err)
 		}

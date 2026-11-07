@@ -53,3 +53,21 @@ func TestCheckText(t *testing.T) {
 		assert.Error(t, checkText([]byte(bad)), bad)
 	}
 }
+
+func TestCheckObjectReportsFirstProblemInKeyOrder(t *testing.T) {
+	r := rules{"from": required, "to": required, "mid": requiredNullable}
+
+	for range 50 {
+		_, err := checkObject([]byte(`{}`), r, rejectUnknown)
+		require.Error(t, err)
+		assert.EqualError(t, err, "from: is required")
+
+		_, err = checkObject([]byte(`{"from":null,"to":null}`), r, rejectUnknown)
+		require.Error(t, err)
+		assert.EqualError(t, err, "from: must not be null")
+
+		_, err = checkObject([]byte(`{"from":1}`), r, rejectUnknown)
+		require.Error(t, err)
+		assert.EqualError(t, err, "mid: is required", "sorted: mid before to")
+	}
+}

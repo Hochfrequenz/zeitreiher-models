@@ -185,14 +185,14 @@ func (q *QueryRequest) UnmarshalJSON(b []byte) error {
 	if _, ok := m["version"]; ok {
 		out.Version = new(VersionSelector)
 	}
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"version": out.Version, "interval": &out.Interval, "unit": &out.Unit, "cursor": &out.Cursor,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("query request: %w", err)
 		}
 	}
-	for key, present := range map[string]bool{"interval": out.Interval != "", "unit": out.Unit != "", "cursor": out.Cursor != ""} {
+	for key, present := range sortedItems(map[string]bool{"interval": out.Interval != "", "unit": out.Unit != "", "cursor": out.Cursor != ""}) {
 		if _, ok := m[key]; ok && !present {
 			return fmt.Errorf("query request: %s: must not be empty", key)
 		}

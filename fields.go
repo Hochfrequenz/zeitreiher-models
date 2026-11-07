@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"iter"
+	"maps"
+	"slices"
 	"sort"
 	"strconv"
 	"time"
@@ -68,8 +71,10 @@ func checkObject(b []byte, r rules, unknown unknownKeys) (map[string]json.RawMes
 			return nil, fmt.Errorf("unknown key(s) %q", extra)
 		}
 	}
+	// Check the keys in sorted order so that the reported problem does not depend on map iteration.
 	out := make(map[string]json.RawMessage, len(r))
-	for key, p := range r {
+	for _, key := range slices.Sorted(maps.Keys(r)) {
+		p := r[key]
 		raw, ok := m[key]
 		switch {
 		case !ok && p != optional:
@@ -122,7 +127,7 @@ func decodeStringMap(raw json.RawMessage, dst *map[string]string) error {
 		return err
 	}
 	out := make(map[string]string, len(members))
-	for k, member := range members {
+	for k, member := range sortedItems(members) {
 		if isNull(member) {
 			return fieldError(k, errors.New("must be a string, not null"))
 		}
@@ -211,4 +216,16 @@ func hex4(h []byte) int {
 		return -1
 	}
 	return int(v)
+}
+
+// sortedItems iterates m in key order, so that the first error a loop returns does not depend on
+// map iteration order.
+func sortedItems[V any](m map[string]V) iter.Seq2[string, V] {
+	return func(yield func(string, V) bool) {
+		for _, k := range slices.Sorted(maps.Keys(m)) {
+			if !yield(k, m[k]) {
+				return
+			}
+		}
+	}
 }
