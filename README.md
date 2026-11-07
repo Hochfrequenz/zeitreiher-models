@@ -188,7 +188,10 @@ use the `grpc` extra (see below) instead.
 A failed call (and a `Query` stream cut off before its `EndRecord`) ends with a gRPC status that
 carries a `google.rpc.ErrorInfo` detail with `reason` = the public request-level code and
 `domain` = `"zeitreiher.hochfrequenz.de"`; `series_service.proto` lists the status code for each
-code. Clients switch on `reason`.
+code. Clients switch on `reason` when it is present. Errors of the RPC framework itself (malformed
+message `INVALID_ARGUMENT`, oversized body `RESOURCE_EXHAUSTED`, unknown method `UNIMPLEMENTED`) and
+calls ended by the client (`CANCELED`, a client-set `DEADLINE_EXCEEDED`) carry no `ErrorInfo`; clients
+switch on the status code for those.
 
 ### gRPC from Python
 
