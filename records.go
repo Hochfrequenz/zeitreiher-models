@@ -118,10 +118,10 @@ func (v *Version) UnmarshalJSON(b []byte) error {
 	if out.CreatedAt, err = decodeInstant(m, "created_at", responseSide); err != nil {
 		return fmt.Errorf("version: %w", err)
 	}
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"number": &out.Number, "created_at_unknown": &out.CreatedAtUnknown, "reason": &out.Reason,
 		"description": &out.Description, "deleted": &out.Deleted,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("version: %w", err)
 		}
@@ -262,11 +262,11 @@ func (r *SeriesRecord) UnmarshalJSON(b []byte) error {
 	if !isNull(m["unit"]) {
 		out.Unit = new(string)
 	}
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"series": &out.Series, "selector": &out.Selector, "select": &sel, "profile": &out.Profile,
 		"role": out.Role, "unit": out.Unit, "unit_raw": &out.UnitRaw, "interval": &out.Interval, "attributes": &out.Attributes,
 		"versions": &out.Versions,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("series record: %w", err)
 		}
@@ -362,9 +362,9 @@ func (r *ValueRecord) UnmarshalJSON(b []byte) error {
 	if !isNull(m["version"]) {
 		out.Version = new(int)
 	}
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"series": &out.Series, "value": &out.Value, "status": &out.Status, "version": out.Version,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("value record: %w", err)
 		}
@@ -438,9 +438,9 @@ func (r *ErrorRecord) UnmarshalJSON(b []byte) error {
 	}
 	var out ErrorRecord
 	var sel echoedSelector
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"selector": &out.Selector, "select": &sel, "profile": &out.Profile, "code": &out.Code,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("error record: %w", err)
 		}
@@ -472,7 +472,7 @@ func (*EndRecord) isRecord()          {}
 
 // Validate checks the record.
 func (r *EndRecord) Validate() error {
-	for name, v := range map[string]int{"series": r.Series, "values": r.Values, "errors": r.Errors} {
+	for name, v := range sortedItems(map[string]int{"series": r.Series, "values": r.Values, "errors": r.Errors}) {
 		if err := validateMin(name, v, 0); err != nil {
 			return err
 		}
@@ -509,9 +509,9 @@ func (r *EndRecord) UnmarshalJSON(b []byte) error {
 	if !isNull(m["next"]) {
 		out.Next = new(string)
 	}
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"series": &out.Series, "values": &out.Values, "errors": &out.Errors, "next": out.Next,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("end record: %w", err)
 		}

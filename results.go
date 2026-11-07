@@ -174,7 +174,7 @@ func decodeAssignment(m map[string]json.RawMessage) (Assignment, error) {
 	if raw, ok := m["unit"]; ok && !isNull(raw) {
 		a.Unit = new(string)
 	}
-	for key, dst := range map[string]any{"role": a.Role, "unit": a.Unit, "unit_raw": &a.UnitRaw} {
+	for key, dst := range sortedItems(map[string]any{"role": a.Role, "unit": a.Unit, "unit_raw": &a.UnitRaw}) {
 		if err = decodeField(m, key, dst); err != nil {
 			return a, err
 		}
@@ -329,9 +329,9 @@ func unmarshalResult[A any](b []byte) (resultWire[A], error) {
 	} else {
 		w.Error = new(ResultError)
 	}
-	for key, dst := range map[string]any{
+	for key, dst := range sortedItems(map[string]any{
 		"selector": &w.Selector, "select": &w.Select, "assignments": w.Assignments, "error": w.Error,
-	} {
+	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return w, fmt.Errorf("result: %w", err)
 		}

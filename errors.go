@@ -236,7 +236,7 @@ func (d *ErrorDetail) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	var out ErrorDetail
-	for key, dst := range map[string]any{"code": &out.Code, "message": &out.Message, "request_id": &out.RequestID} {
+	for key, dst := range sortedItems(map[string]any{"code": &out.Code, "message": &out.Message, "request_id": &out.RequestID}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return err
 		}
