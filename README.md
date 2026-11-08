@@ -246,7 +246,7 @@ Token handling, paging and retries stay with the consumer.
 
 The stubs are generated and committed; regenerate them after a proto change with
 `uv sync --locked --group codegen --extra grpc && uv run --no-sync python scripts/generate_grpc.py`
-(Python 3.12 and the exact generator versions are required; the script refuses anything else).
+(the Python version and the exact generator versions pinned in the repo are required; the script refuses anything else).
 
 ## Versioning
 
@@ -271,7 +271,7 @@ uv run pytest unittests
 uv run ruff check src unittests && uv run ruff format --check .
 uv run mypy --strict src/zeitreiher_models unittests
 uv sync --locked --group codegen --extra grpc && uv run --no-sync python scripts/generate_grpc.py  # regenerate the gRPC stubs
-buf lint && buf build && buf format --diff --exit-code   # buf v1.75.0
+buf lint && buf build && buf format --diff --exit-code   # buf version as in CI
 ```
 
 The Go tests (`fixtures_test.go`) and the Python tests (`unittests/test_fixtures.py`) use the same
@@ -279,7 +279,7 @@ table of fixture kinds; a new fixture directory must be added to both. `unittest
 fails when a model and its proto message disagree on field names.
 
 Regenerating the stubs (`scripts/generate_grpc.py`) requires the `codegen` dependency group from the
-lockfile (`--locked`) and Python 3.12; the script checks the exact versions of `grpcio-tools` and
+lockfile (`--locked`) and the pinned Python version; the script checks the exact versions of `grpcio-tools` and
 `mypy-protobuf`. CI regenerates and fails on any diff in `src/zeitreiher_models/grpc/v1`.
 `unittests/test_grpc_conformance.py` ports the Go conformance test of the proto mapping.
 
