@@ -40,7 +40,7 @@ from zeitreiher_models.selectors import (
     ProfileSelector,
     Selector,
 )
-from zeitreiher_models.system import Caps, SystemInfo
+from zeitreiher_models.system import Caps, InactiveObjects, SystemInfo
 from zeitreiher_models.timestamps import _format
 
 _EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
@@ -454,7 +454,7 @@ def versions_response_from_proto(message: results_pb2.ListVersionsResponse) -> V
 
 def system_info_to_proto(info: SystemInfo) -> system_pb2.SystemResponse:
     """The proto message of the system info."""
-    return system_pb2.SystemResponse(
+    message = system_pb2.SystemResponse(
         service_version=info.service_version,
         abap_package_version=info.abap_package_version,
         sid=info.sid,
@@ -468,7 +468,20 @@ def system_info_to_proto(info: SystemInfo) -> system_pb2.SystemResponse:
             max_values=info.caps.max_values,
             max_resolve_window_seconds=info.caps.max_resolve_window_seconds,
         ),
+        abap_source_fingerprint=info.abap_source_fingerprint,
     )
+    _set_instant(message, "abap_last_source_change_utc", info.abap_last_source_change_utc)
+    if info.abap_inactive_objects is not None:
+        inactive = info.abap_inactive_objects
+        message.abap_inactive_objects.CopyFrom(
+            system_pb2.InactiveObjects(
+                available=inactive.available,
+                count=inactive.count,
+                names=inactive.names,
+                reason=inactive.reason,
+            )
+        )
+    return message
 
 
 def system_info_from_proto(message: system_pb2.SystemResponse) -> SystemInfo:
@@ -487,4 +500,20 @@ def system_info_from_proto(message: system_pb2.SystemResponse) -> SystemInfo:
             max_values=message.caps.max_values,
             max_resolve_window_seconds=message.caps.max_resolve_window_seconds,
         ),
+        abap_last_source_change_utc=_optional_instant_from_proto(message, "abap_last_source_change_utc"),
+        abap_inactive_objects=_inactive_objects_from_proto(message.abap_inactive_objects)
+        if message.HasField("abap_inactive_objects")
+        else None,
+        abap_source_fingerprint=(
+            message.abap_source_fingerprint if message.HasField("abap_source_fingerprint") else None
+        ),
+    )
+
+
+def _inactive_objects_from_proto(message: system_pb2.InactiveObjects) -> InactiveObjects:
+    return InactiveObjects(
+        available=message.available,
+        count=message.count if message.HasField("count") else None,
+        names=tuple(message.names) if message.available else None,
+        reason=message.reason if message.HasField("reason") else None,
     )

@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package zeitreiher.v1;
 
+import "google/protobuf/timestamp.proto";
+
 // SystemRequest is the (empty) request of SeriesService.System (JSON: GET /api/v1/system).
 message SystemRequest {}
 
@@ -20,6 +22,25 @@ message SystemResponse {
   repeated string units = 8;
   // Limits of the service (see Caps).
   Caps caps = 9;
+  // Instant of the last source change of the ABAP package (whole seconds, UTC); unset when unknown.
+  google.protobuf.Timestamp abap_last_source_change_utc = 10;
+  // The inactive objects of the ABAP package, or why that is unknown; unset when the backend does not say.
+  InactiveObjects abap_inactive_objects = 11;
+  // Aggregate SHA-256 of the ABAP sources (64 lower-case hex characters); unset when unknown.
+  optional string abap_source_fingerprint = 12;
+}
+
+// InactiveObjects reports the inactive ABAP objects of the package, or why that is unknown.
+// available true: count equals the number of names and reason is unset.
+// available false: reason is set (non-empty) and count and names are not.
+message InactiveObjects {
+  bool available = 1;
+  // Number of inactive objects; set exactly when available.
+  optional int64 count = 2;
+  // Names of the inactive objects; empty when not available.
+  repeated string names = 3;
+  // Why the inactive objects are unknown; set exactly when not available.
+  optional string reason = 4;
 }
 
 // Caps are the limits of the service (spec section 3.1), reported so that clients know how it works.

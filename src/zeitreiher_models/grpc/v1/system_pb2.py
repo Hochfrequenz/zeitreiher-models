@@ -22,19 +22,22 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1azeitreiher/v1/system.proto\x12\rzeitreiher.v1\"\x0f\n\rSystemRequest\"\xd6\x01\n\x0eSystemResponse\x12\x17\n\x0fservice_version\x18\x01 \x01(\t\x12\x1c\n\x14\x61\x62\x61p_package_version\x18\x02 \x01(\t\x12\x0b\n\x03sid\x18\x03 \x01(\t\x12\x0e\n\x06\x63lient\x18\x04 \x01(\t\x12\x0f\n\x07release\x18\x05 \x01(\t\x12\x1a\n\x12\x62usiness_time_zone\x18\x06 \x01(\t\x12\x11\n\tintervals\x18\x07 \x03(\t\x12\r\n\x05units\x18\x08 \x03(\t\x12!\n\x04\x63\x61ps\x18\t \x01(\x0b\x32\x13.zeitreiher.v1.Caps\"Z\n\x04\x43\x61ps\x12\x1a\n\x12max_window_seconds\x18\x01 \x01(\x03\x12\x12\n\nmax_values\x18\x02 \x01(\x03\x12\"\n\x1amax_resolve_window_seconds\x18\x03 \x01(\x03\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1azeitreiher/v1/system.proto\x12\rzeitreiher.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x0f\n\rSystemRequest\"\x98\x03\n\x0eSystemResponse\x12\x17\n\x0fservice_version\x18\x01 \x01(\t\x12\x1c\n\x14\x61\x62\x61p_package_version\x18\x02 \x01(\t\x12\x0b\n\x03sid\x18\x03 \x01(\t\x12\x0e\n\x06\x63lient\x18\x04 \x01(\t\x12\x0f\n\x07release\x18\x05 \x01(\t\x12\x1a\n\x12\x62usiness_time_zone\x18\x06 \x01(\t\x12\x11\n\tintervals\x18\x07 \x03(\t\x12\r\n\x05units\x18\x08 \x03(\t\x12!\n\x04\x63\x61ps\x18\t \x01(\x0b\x32\x13.zeitreiher.v1.Caps\x12?\n\x1b\x61\x62\x61p_last_source_change_utc\x18\n \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12=\n\x15\x61\x62\x61p_inactive_objects\x18\x0b \x01(\x0b\x32\x1e.zeitreiher.v1.InactiveObjects\x12$\n\x17\x61\x62\x61p_source_fingerprint\x18\x0c \x01(\tH\x00\x88\x01\x01\x42\x1a\n\x18_abap_source_fingerprint\"q\n\x0fInactiveObjects\x12\x11\n\tavailable\x18\x01 \x01(\x08\x12\x12\n\x05\x63ount\x18\x02 \x01(\x03H\x00\x88\x01\x01\x12\r\n\x05names\x18\x03 \x03(\t\x12\x13\n\x06reason\x18\x04 \x01(\tH\x01\x88\x01\x01\x42\x08\n\x06_countB\t\n\x07_reason\"Z\n\x04\x43\x61ps\x12\x1a\n\x12max_window_seconds\x18\x01 \x01(\x03\x12\x12\n\nmax_values\x18\x02 \x01(\x03\x12\"\n\x1amax_resolve_window_seconds\x18\x03 \x01(\x03\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'zeitreiher_models.grpc.v1.system_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_SYSTEMREQUEST']._serialized_start=45
-  _globals['_SYSTEMREQUEST']._serialized_end=60
-  _globals['_SYSTEMRESPONSE']._serialized_start=63
-  _globals['_SYSTEMRESPONSE']._serialized_end=277
-  _globals['_CAPS']._serialized_start=279
-  _globals['_CAPS']._serialized_end=369
+  _globals['_SYSTEMREQUEST']._serialized_start=78
+  _globals['_SYSTEMREQUEST']._serialized_end=93
+  _globals['_SYSTEMRESPONSE']._serialized_start=96
+  _globals['_SYSTEMRESPONSE']._serialized_end=504
+  _globals['_INACTIVEOBJECTS']._serialized_start=506
+  _globals['_INACTIVEOBJECTS']._serialized_end=619
+  _globals['_CAPS']._serialized_start=621
+  _globals['_CAPS']._serialized_end=711
 # @@protoc_insertion_point(module_scope)

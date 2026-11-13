@@ -51,7 +51,7 @@ from zeitreiher_models.selectors import (
     ProfileSelector,
     Selector,
 )
-from zeitreiher_models.system import Caps, SystemInfo
+from zeitreiher_models.system import Caps, InactiveObjects, SystemInfo
 
 __all__ = [
     "RECORD_ADAPTER",
@@ -68,6 +68,7 @@ __all__ = [
     "ErrorDetail",
     "ErrorEnvelope",
     "ErrorRecord",
+    "InactiveObjects",
     "MaLoSelector",
     "MissingEndError",
     "ProfileSelector",

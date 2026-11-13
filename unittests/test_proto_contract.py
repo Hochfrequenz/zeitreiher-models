@@ -18,6 +18,7 @@ from zeitreiher_models import (
     CustomSelector,
     EndRecord,
     ErrorRecord,
+    InactiveObjects,
     MaLoSelector,
     ProfileSelector,
     QueryRequest,
@@ -118,6 +119,7 @@ TABLE: dict[str, tuple[type[BaseModel], ...]] = {
     "Assignment": (Assignment, VersionedAssignment),
     "ResultError": (ResultError,),
     "SystemResponse": (SystemInfo,),
+    "InactiveObjects": (InactiveObjects,),
     "Caps": (Caps,),
 }
 

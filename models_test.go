@@ -341,3 +341,24 @@ func TestSeriesRole(t *testing.T) {
 	_, err = zrm.MarshalRecord(series(ptr("")))
 	assert.ErrorContains(t, err, "role: must not be empty")
 }
+
+func TestSystemInfoAbapMembersAreOmittedWhenUnsetAndWrittenInUTC(t *testing.T) {
+	info := zrm.SystemInfo{
+		ServiceVersion: "1", AbapPackageVersion: "1", SID: "HF1", Client: "100", Release: "758", BusinessTimeZone: "CET",
+		Caps: zrm.Caps{MaxWindowSeconds: 1, MaxValues: 1, MaxResolveWindowSeconds: 1},
+	}
+	out, err := json.Marshal(info)
+	require.NoError(t, err)
+	assert.NotContains(t, string(out), "abap_last_source_change_utc")
+	assert.NotContains(t, string(out), "abap_inactive_objects")
+	assert.NotContains(t, string(out), "abap_source_fingerprint")
+
+	changed := time.Date(2026, 11, 12, 9, 15, 30, 0, cet)
+	count := int64(0)
+	info.AbapLastSourceChangeUTC = &changed
+	info.AbapInactiveObjects = &zrm.InactiveObjects{Available: true, Count: &count}
+	out, err = json.Marshal(info)
+	require.NoError(t, err)
+	assert.Contains(t, string(out), `"abap_last_source_change_utc":"2026-11-12T08:15:30Z"`)
+	assert.Contains(t, string(out), `"abap_inactive_objects":{"available":true,"count":0,"names":[]}`)
+}
