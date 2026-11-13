@@ -1483,6 +1483,13 @@
       "type": "greater_than_equal"
     }
   },
+  "system_info/abap_inactive_objects_available_with_empty_reason.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: reason: must be unset when available",
+    "python": {
+      "loc": "abap_inactive_objects.reason",
+      "type": "string_too_short"
+    }
+  },
   "system_info/abap_inactive_objects_count_mismatch.json": {
     "go": "system info: abap_inactive_objects: inactive objects: count: 3 does not equal the number of names (2)",
     "python": {
@@ -1511,6 +1518,22 @@
       "loc": "abap_inactive_objects",
       "type": "value_error",
       "msg": "count is required when available"
+    }
+  },
+  "system_info/abap_inactive_objects_missing_names.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: names: is required when available",
+    "python": {
+      "loc": "abap_inactive_objects",
+      "type": "value_error",
+      "msg": "names is required when available"
+    }
+  },
+  "system_info/abap_inactive_objects_names_null.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: names: is required when available",
+    "python": {
+      "loc": "abap_inactive_objects",
+      "type": "value_error",
+      "msg": "names is required when available"
     }
   },
   "system_info/abap_inactive_objects_negative_count.json": {
@@ -1583,6 +1606,13 @@
     }
   },
   "system_info/abap_source_fingerprint_short.json": {
+    "go": "system info: abap_source_fingerprint: must be 64 lower-case hex characters (SHA-256)",
+    "python": {
+      "loc": "abap_source_fingerprint",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "system_info/abap_source_fingerprint_trailing_newline.json": {
     "go": "system info: abap_source_fingerprint: must be 64 lower-case hex characters (SHA-256)",
     "python": {
       "loc": "abap_source_fingerprint",

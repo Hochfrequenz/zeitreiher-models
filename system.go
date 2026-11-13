@@ -119,6 +119,13 @@ func (o *InactiveObjects) UnmarshalJSON(b []byte) error {
 			out.Names[i] = *n
 		}
 	}
+	// Validate cannot tell an empty reason or missing names from an unset one; the keys can.
+	if raw, ok := m["reason"]; ok && !isNull(raw) && out.Available {
+		return fmt.Errorf("inactive objects: %w", fieldError("reason", errors.New("must be unset when available")))
+	}
+	if raw, ok := m["names"]; out.Available && (!ok || isNull(raw)) {
+		return fmt.Errorf("inactive objects: %w", fieldError("names", errors.New("is required when available")))
+	}
 	if err := out.Validate(); err != nil {
 		return fmt.Errorf("inactive objects: %w", err)
 	}
