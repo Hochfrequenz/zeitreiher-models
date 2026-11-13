@@ -56,7 +56,7 @@ The shared cases are in [`testdata/unit_codes.json`](testdata/unit_codes.json).
 
 System info, the ABAP version state:
 The three `abap_*` members pass the version state of the ABAP backend through.
-All three are optional: older services and backends omit them, unknown members stay ignored, and an unset member is omitted when writing.
+All three are optional: older services and backends omit them (an explicit `null` counts as absent), unknown members stay ignored, and an unset member is omitted when writing.
 `abap_last_source_change_utc` is an instant (RFC 3339 with `Z`, whole seconds, like every response instant); absent and `null` both mean unknown.
 `abap_inactive_objects` is `{"available": true, "count": n, "names": [...]}` (`count` at least 0 and equal to the number of names) or `{"available": false, "reason": "..."}` (non-empty reason, no `count` or `names`).
 `abap_source_fingerprint` is the aggregate SHA-256 of the ABAP sources: exactly 64 lower-case hex characters.
