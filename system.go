@@ -4,7 +4,127 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"regexp"
+	"time"
 )
+
+// fingerprintPattern is the spelling of the aggregate source fingerprint: a SHA-256 as 64 lower-case hex
+// characters. The Python models use the same expression.
+var fingerprintPattern = regexp.MustCompile(`^[0-9a-f]{64}$`)
+
+// InactiveObjects reports the inactive ABAP objects of the package, or why that is unknown.
+// Available true: Count and Names are set (Count equals len(Names)) and Reason is empty.
+// Available false: Reason is set and Count and Names are not.
+type InactiveObjects struct {
+	// Available says whether the ABAP backend could determine the inactive objects.
+	Available bool
+	// Count is the number of inactive objects; set exactly when Available (equals len(Names)).
+	Count *int64
+	// Names are the inactive object names; nil or empty is written as [] when Available, and must be nil
+	// otherwise.
+	Names []string
+	// Reason says why the inactive objects are unknown; set exactly when not Available (non-empty text).
+	Reason string
+}
+
+type inactiveObjectsWire struct {
+	Available bool      `json:"available"`
+	Count     *int64    `json:"count,omitempty"`
+	Names     *[]string `json:"names,omitempty"`
+	Reason    string    `json:"reason,omitempty"`
+}
+
+// Validate checks the inactive-objects report.
+func (o InactiveObjects) Validate() error {
+	if o.Available {
+		if o.Reason != "" {
+			return fieldError("reason", errors.New("must be unset when available"))
+		}
+		if o.Count == nil {
+			return fieldError("count", errors.New("is required when available"))
+		}
+		if *o.Count < 0 {
+			return fieldError("count", errors.New("must not be negative"))
+		}
+		if *o.Count != int64(len(o.Names)) {
+			return fieldError("count", fmt.Errorf("%d does not equal the number of names (%d)", *o.Count, len(o.Names)))
+		}
+		for i, n := range o.Names {
+			if n == "" {
+				return fmt.Errorf("names[%d]: must not be empty", i)
+			}
+			if err := validateText(n); err != nil {
+				return fmt.Errorf("names[%d]: %w", i, err)
+			}
+		}
+		return nil
+	}
+	if o.Count != nil {
+		return fieldError("count", errors.New("must be unset when not available"))
+	}
+	if o.Names != nil {
+		return fieldError("names", errors.New("must be unset when not available"))
+	}
+	if o.Reason == "" {
+		return fieldError("reason", errors.New("is required when not available"))
+	}
+	if err := validateText(o.Reason); err != nil {
+		return fieldError("reason", err)
+	}
+	return nil
+}
+
+// MarshalJSON validates and writes the report.
+func (o InactiveObjects) MarshalJSON() ([]byte, error) {
+	if err := o.Validate(); err != nil {
+		return nil, fmt.Errorf("inactive objects: %w", err)
+	}
+	w := inactiveObjectsWire{Available: o.Available, Count: o.Count, Reason: o.Reason}
+	if o.Available {
+		names := o.Names
+		if names == nil {
+			names = []string{}
+		}
+		w.Names = &names
+	}
+	return json.Marshal(w)
+}
+
+// UnmarshalJSON parses and validates the report; unknown keys are ignored.
+func (o *InactiveObjects) UnmarshalJSON(b []byte) error {
+	m, err := checkObject(b, rules{
+		"available": required, "count": optional, "names": optional, "reason": optional,
+	}, ignoreUnknown)
+	if err != nil {
+		return fmt.Errorf("inactive objects: %w", err)
+	}
+	var out InactiveObjects
+	for key, dst := range sortedItems(map[string]any{
+		"available": &out.Available, "count": &out.Count, "reason": &out.Reason,
+	}) {
+		if err := decodeField(m, key, dst); err != nil {
+			return fmt.Errorf("inactive objects: %w", err)
+		}
+	}
+	var names []*string // pointers, so that a null entry is reported as such
+	if err := decodeField(m, "names", &names); err != nil {
+		return fmt.Errorf("inactive objects: %w", err)
+	}
+	if raw, ok := m["names"]; ok && !isNull(raw) {
+		out.Names = make([]string, len(names))
+		for i, n := range names {
+			if n == nil {
+				return fmt.Errorf("inactive objects: names[%d]: must not be null", i)
+			}
+			out.Names[i] = *n
+		}
+	}
+	if err := out.Validate(); err != nil {
+		return fmt.Errorf("inactive objects: %w", err)
+	}
+	*o = out
+	return nil
+}
 
 // Caps are the limits of the service (spec section 3.1), reported so that clients know how it works.
 // MaxWindowSeconds and MaxValues bound one internal SAP values call; the service splits a query window
@@ -96,6 +216,15 @@ type SystemInfo struct {
 	Units []string
 	// Caps are the per-call self-protection caps.
 	Caps Caps
+	// AbapLastSourceChangeUTC is the instant of the last source change of the ABAP package (whole seconds,
+	// written in UTC "Z"); nil when unknown, then the key is omitted. Absent and null both mean unknown.
+	AbapLastSourceChangeUTC *time.Time
+	// AbapInactiveObjects reports the inactive objects of the ABAP package; nil when the backend does not
+	// say, then the key is omitted.
+	AbapInactiveObjects *InactiveObjects
+	// AbapSourceFingerprint is the aggregate SHA-256 of the ABAP sources, exactly 64 lower-case hex
+	// characters; nil when unknown, then the key is omitted.
+	AbapSourceFingerprint *string
 }
 
 // Validate checks the system info.
@@ -113,6 +242,19 @@ func (s SystemInfo) Validate() error {
 	}
 	if err := s.Caps.Validate(); err != nil {
 		return fieldError("caps", err)
+	}
+	if s.AbapLastSourceChangeUTC != nil {
+		if err := validateInstant(*s.AbapLastSourceChangeUTC, responseSide); err != nil {
+			return fieldError("abap_last_source_change_utc", err)
+		}
+	}
+	if s.AbapInactiveObjects != nil {
+		if err := s.AbapInactiveObjects.Validate(); err != nil {
+			return fieldError("abap_inactive_objects", err)
+		}
+	}
+	if s.AbapSourceFingerprint != nil && !fingerprintPattern.MatchString(*s.AbapSourceFingerprint) {
+		return fieldError("abap_source_fingerprint", errors.New("must be 64 lower-case hex characters (SHA-256)"))
 	}
 	for i, u := range s.Units {
 		if err := validateUnitCode(u); err != nil {
@@ -137,6 +279,10 @@ type systemInfoWire struct {
 	Intervals          []string `json:"intervals"`
 	Units              []string `json:"units"`
 	Caps               Caps     `json:"caps"`
+
+	AbapLastSourceChangeUTC *string          `json:"abap_last_source_change_utc,omitempty"`
+	AbapInactiveObjects     *InactiveObjects `json:"abap_inactive_objects,omitempty"`
+	AbapSourceFingerprint   *string          `json:"abap_source_fingerprint,omitempty"`
 }
 
 // MarshalJSON validates and writes the system info.
@@ -144,7 +290,12 @@ func (s SystemInfo) MarshalJSON() ([]byte, error) {
 	if err := s.Validate(); err != nil {
 		return nil, fmt.Errorf("system info: %w", err)
 	}
-	w := systemInfoWire(s)
+	w := systemInfoWire{
+		ServiceVersion: s.ServiceVersion, AbapPackageVersion: s.AbapPackageVersion, SID: s.SID, Client: s.Client,
+		Release: s.Release, BusinessTimeZone: s.BusinessTimeZone, Intervals: s.Intervals, Units: s.Units, Caps: s.Caps,
+		AbapLastSourceChangeUTC: instantPtr(s.AbapLastSourceChangeUTC, responseSide),
+		AbapInactiveObjects:     s.AbapInactiveObjects, AbapSourceFingerprint: s.AbapSourceFingerprint,
+	}
 	if w.Intervals == nil {
 		w.Intervals = []string{}
 	}
@@ -159,6 +310,7 @@ func (s *SystemInfo) UnmarshalJSON(b []byte) error {
 	m, err := checkObject(b, rules{
 		"service_version": required, "abap_package_version": required, "sid": required, "client": required,
 		"release": required, "business_time_zone": required, "intervals": required, "units": required, "caps": required,
+		"abap_last_source_change_utc": optional, "abap_inactive_objects": optional, "abap_source_fingerprint": optional,
 	}, ignoreUnknown)
 	if err != nil {
 		return fmt.Errorf("system info: %w", err)
@@ -168,10 +320,18 @@ func (s *SystemInfo) UnmarshalJSON(b []byte) error {
 		"service_version": &out.ServiceVersion, "abap_package_version": &out.AbapPackageVersion, "sid": &out.SID,
 		"client": &out.Client, "release": &out.Release, "business_time_zone": &out.BusinessTimeZone,
 		"intervals": &out.Intervals, "caps": &out.Caps,
+		"abap_inactive_objects": &out.AbapInactiveObjects, "abap_source_fingerprint": &out.AbapSourceFingerprint,
 	}) {
 		if err := decodeField(m, key, dst); err != nil {
 			return fmt.Errorf("system info: %w", err)
 		}
+	}
+	if raw, ok := m["abap_last_source_change_utc"]; ok && !isNull(raw) {
+		t, err := parseInstant(raw, responseSide)
+		if err != nil {
+			return fmt.Errorf("system info: %w", fieldError("abap_last_source_change_utc", err))
+		}
+		out.AbapLastSourceChangeUTC = &t
 	}
 	var units []*string // pointers, so that a null entry is reported as such
 	if err := decodeField(m, "units", &units); err != nil {

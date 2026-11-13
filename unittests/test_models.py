@@ -495,3 +495,10 @@ def test_caps_descriptions_name_values_calls_only(field: str) -> None:
     assert description is not None
     assert "values call" in description
     assert "versions" not in description
+
+
+def test_system_info_abap_members_are_omitted_when_unset() -> None:
+    caps = {"max_window_seconds": 1, "max_values": 1, "max_resolve_window_seconds": 1}
+    info = SystemInfo.model_validate({**_SYSTEM, "units": [], "caps": caps})
+    dumped = json.loads(info.model_dump_json(by_alias=True))
+    assert not {"abap_last_source_change_utc", "abap_inactive_objects", "abap_source_fingerprint"} & set(dumped)

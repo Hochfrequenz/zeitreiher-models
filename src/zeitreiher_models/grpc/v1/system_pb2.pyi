@@ -8,6 +8,7 @@ import collections.abc
 import google.protobuf.descriptor
 import google.protobuf.internal.containers
 import google.protobuf.message
+import google.protobuf.timestamp_pb2
 import typing
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
@@ -39,6 +40,9 @@ class SystemResponse(google.protobuf.message.Message):
     INTERVALS_FIELD_NUMBER: builtins.int
     UNITS_FIELD_NUMBER: builtins.int
     CAPS_FIELD_NUMBER: builtins.int
+    ABAP_LAST_SOURCE_CHANGE_UTC_FIELD_NUMBER: builtins.int
+    ABAP_INACTIVE_OBJECTS_FIELD_NUMBER: builtins.int
+    ABAP_SOURCE_FINGERPRINT_FIELD_NUMBER: builtins.int
     service_version: builtins.str
     abap_package_version: builtins.str
     sid: builtins.str
@@ -46,6 +50,8 @@ class SystemResponse(google.protobuf.message.Message):
     release: builtins.str
     business_time_zone: builtins.str
     """SAP time zone code, e.g. "CET"."""
+    abap_source_fingerprint: builtins.str
+    """Aggregate SHA-256 of the ABAP sources (64 lower-case hex characters); unset when unknown."""
     @property
     def intervals(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """Supported request intervals, e.g. ["PT15M", "PT60M"]."""
@@ -57,6 +63,14 @@ class SystemResponse(google.protobuf.message.Message):
     @property
     def caps(self) -> global___Caps:
         """Limits of the service (see Caps)."""
+
+    @property
+    def abap_last_source_change_utc(self) -> google.protobuf.timestamp_pb2.Timestamp:
+        """Instant of the last source change of the ABAP package (whole seconds, UTC); unset when unknown."""
+
+    @property
+    def abap_inactive_objects(self) -> global___InactiveObjects:
+        """The inactive objects of the ABAP package, or why that is unknown; unset when the backend does not say."""
 
     def __init__(
         self,
@@ -70,11 +84,54 @@ class SystemResponse(google.protobuf.message.Message):
         intervals: collections.abc.Iterable[builtins.str] | None = ...,
         units: collections.abc.Iterable[builtins.str] | None = ...,
         caps: global___Caps | None = ...,
+        abap_last_source_change_utc: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        abap_inactive_objects: global___InactiveObjects | None = ...,
+        abap_source_fingerprint: builtins.str | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["caps", b"caps"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["abap_package_version", b"abap_package_version", "business_time_zone", b"business_time_zone", "caps", b"caps", "client", b"client", "intervals", b"intervals", "release", b"release", "service_version", b"service_version", "sid", b"sid", "units", b"units"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["_abap_source_fingerprint", b"_abap_source_fingerprint", "abap_inactive_objects", b"abap_inactive_objects", "abap_last_source_change_utc", b"abap_last_source_change_utc", "abap_source_fingerprint", b"abap_source_fingerprint", "caps", b"caps"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_abap_source_fingerprint", b"_abap_source_fingerprint", "abap_inactive_objects", b"abap_inactive_objects", "abap_last_source_change_utc", b"abap_last_source_change_utc", "abap_package_version", b"abap_package_version", "abap_source_fingerprint", b"abap_source_fingerprint", "business_time_zone", b"business_time_zone", "caps", b"caps", "client", b"client", "intervals", b"intervals", "release", b"release", "service_version", b"service_version", "sid", b"sid", "units", b"units"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["_abap_source_fingerprint", b"_abap_source_fingerprint"]) -> typing.Literal["abap_source_fingerprint"] | None: ...
 
 global___SystemResponse = SystemResponse
+
+@typing.final
+class InactiveObjects(google.protobuf.message.Message):
+    """InactiveObjects reports the inactive ABAP objects of the package, or why that is unknown.
+    available true: count equals the number of names and reason is unset.
+    available false: reason is set (non-empty) and count and names are not.
+    """
+
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    AVAILABLE_FIELD_NUMBER: builtins.int
+    COUNT_FIELD_NUMBER: builtins.int
+    NAMES_FIELD_NUMBER: builtins.int
+    REASON_FIELD_NUMBER: builtins.int
+    available: builtins.bool
+    count: builtins.int
+    """Number of inactive objects; set exactly when available."""
+    reason: builtins.str
+    """Why the inactive objects are unknown; set exactly when not available."""
+    @property
+    def names(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
+        """Names of the inactive objects; empty when not available."""
+
+    def __init__(
+        self,
+        *,
+        available: builtins.bool = ...,
+        count: builtins.int | None = ...,
+        names: collections.abc.Iterable[builtins.str] | None = ...,
+        reason: builtins.str | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["_count", b"_count", "_reason", b"_reason", "count", b"count", "reason", b"reason"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_count", b"_count", "_reason", b"_reason", "available", b"available", "count", b"count", "names", b"names", "reason", b"reason"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_count", b"_count"]) -> typing.Literal["count"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_reason", b"_reason"]) -> typing.Literal["reason"] | None: ...
+
+global___InactiveObjects = InactiveObjects
 
 @typing.final
 class Caps(google.protobuf.message.Message):

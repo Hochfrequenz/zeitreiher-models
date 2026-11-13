@@ -27,6 +27,12 @@
     "select": "Selector = 2",
     "selector": "int64 = 1"
   },
+  "InactiveObjects": {
+    "available": "bool = 1",
+    "count": "optional int64 = 2",
+    "names": "repeated string = 3",
+    "reason": "optional string = 4"
+  },
   "ListVersionsRequest": {
     "from": "string = 2",
     "select": "repeated Selector = 1",
@@ -89,7 +95,10 @@
   },
   "SystemRequest": {},
   "SystemResponse": {
+    "abap_inactive_objects": "InactiveObjects = 11",
+    "abap_last_source_change_utc": "google.protobuf.Timestamp = 10",
     "abap_package_version": "string = 2",
+    "abap_source_fingerprint": "optional string = 12",
     "business_time_zone": "string = 6",
     "caps": "Caps = 9",
     "client": "string = 4",

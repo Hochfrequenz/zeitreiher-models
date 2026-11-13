@@ -1483,6 +1483,119 @@
       "type": "greater_than_equal"
     }
   },
+  "system_info/abap_inactive_objects_count_mismatch.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: count: 3 does not equal the number of names (2)",
+    "python": {
+      "loc": "abap_inactive_objects",
+      "type": "value_error",
+      "msg": "count 3 does not equal the number of names (2)"
+    }
+  },
+  "system_info/abap_inactive_objects_empty_name.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: names[0]: must not be empty",
+    "python": {
+      "loc": "abap_inactive_objects.names.0",
+      "type": "string_too_short"
+    }
+  },
+  "system_info/abap_inactive_objects_missing_available.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: available: is required",
+    "python": {
+      "loc": "abap_inactive_objects.available",
+      "type": "missing"
+    }
+  },
+  "system_info/abap_inactive_objects_missing_count.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: count: is required when available",
+    "python": {
+      "loc": "abap_inactive_objects",
+      "type": "value_error",
+      "msg": "count is required when available"
+    }
+  },
+  "system_info/abap_inactive_objects_negative_count.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: count: must not be negative",
+    "python": {
+      "loc": "abap_inactive_objects.count",
+      "type": "greater_than_equal"
+    }
+  },
+  "system_info/abap_inactive_objects_unavailable_empty_reason.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: reason: is required when not available",
+    "python": {
+      "loc": "abap_inactive_objects.reason",
+      "type": "string_too_short"
+    }
+  },
+  "system_info/abap_inactive_objects_unavailable_missing_reason.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: reason: is required when not available",
+    "python": {
+      "loc": "abap_inactive_objects",
+      "type": "value_error",
+      "msg": "reason is required when not available"
+    }
+  },
+  "system_info/abap_inactive_objects_unavailable_with_count.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: count: must be unset when not available",
+    "python": {
+      "loc": "abap_inactive_objects",
+      "type": "value_error",
+      "msg": "count must be unset when not available"
+    }
+  },
+  "system_info/abap_inactive_objects_unavailable_with_names.json": {
+    "go": "system info: abap_inactive_objects: inactive objects: names: must be unset when not available",
+    "python": {
+      "loc": "abap_inactive_objects",
+      "type": "value_error",
+      "msg": "names must be unset when not available"
+    }
+  },
+  "system_info/abap_last_source_change_utc_fractional.json": {
+    "go": "system info: abap_last_source_change_utc: \"2026-11-12T08:15:30.5Z\": fractional seconds are not allowed (whole seconds only)",
+    "python": {
+      "loc": "abap_last_source_change_utc",
+      "type": "instant",
+      "msg": "'2026-11-12T08:15:30.5Z': fractional seconds are not allowed (whole seconds only)"
+    }
+  },
+  "system_info/abap_last_source_change_utc_not_string.json": {
+    "go": "system info: abap_last_source_change_utc: must be an RFC 3339 timestamp string",
+    "python": {
+      "loc": "abap_last_source_change_utc",
+      "type": "instant",
+      "msg": "1794471330: must be an RFC 3339 timestamp string"
+    }
+  },
+  "system_info/abap_last_source_change_utc_offset.json": {
+    "go": "system info: abap_last_source_change_utc: \"2026-11-12T09:15:30+01:00\": response timestamps must be in UTC (Z)",
+    "python": {
+      "loc": "abap_last_source_change_utc",
+      "type": "instant",
+      "msg": "'2026-11-12T09:15:30+01:00': response timestamps must be in UTC (Z)"
+    }
+  },
+  "system_info/abap_source_fingerprint_not_hex.json": {
+    "go": "system info: abap_source_fingerprint: must be 64 lower-case hex characters (SHA-256)",
+    "python": {
+      "loc": "abap_source_fingerprint",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "system_info/abap_source_fingerprint_short.json": {
+    "go": "system info: abap_source_fingerprint: must be 64 lower-case hex characters (SHA-256)",
+    "python": {
+      "loc": "abap_source_fingerprint",
+      "type": "string_pattern_mismatch"
+    }
+  },
+  "system_info/abap_source_fingerprint_uppercase.json": {
+    "go": "system info: abap_source_fingerprint: must be 64 lower-case hex characters (SHA-256)",
+    "python": {
+      "loc": "abap_source_fingerprint",
+      "type": "string_pattern_mismatch"
+    }
+  },
   "system_info/caps_boolean.json": {
     "go": "system info: caps: max_window_seconds: json: cannot unmarshal bool into Go value of type int64",
     "python": {
