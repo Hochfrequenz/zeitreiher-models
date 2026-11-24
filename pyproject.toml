@@ -83,7 +83,7 @@ spell_check = [
     "codespell==2.4.3",
 ]
 coverage = [
-    "coverage==7.17.3",
+    "coverage==7.17.4",
     {include-group = "tests"},
 ]
 # Regenerates src/zeitreiher_models/grpc/v1 (scripts/generate_grpc.py). Pinned on purpose and kept in
